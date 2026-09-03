@@ -1225,31 +1225,53 @@
          * AUTO-FILL DEMO DATA
          * ========================================= */
         function autoFillDemoData() {
+            // Random Date of Birth (Between 1960 and 2005)
+            const start = new Date(1960, 0, 1);
+            const end = new Date(2005, 11, 31);
+            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
             const dobEl = document.getElementById('patient-dob');
-            if(dobEl) dobEl.value = "1995-03-20"; 
+            if(dobEl) dobEl.value = randomDate.toISOString().split('T')[0];
 
-            const dateEl = document.getElementById('assessment-date');
-            if(dateEl) dateEl.value = "2026-09-03";
-
-            const sexEl = document.querySelector('input[name="patient-sex"][value="Чоловіча"]');
+            // Random Sex
+            const sexes = ['Чоловіча', 'Жіноча', 'Інтерсекс'];
+            const randomSex = sexes[Math.floor(Math.random() * sexes.length)];
+            const sexEl = document.querySelector(`input[name="patient-sex"][value="${randomSex}"]`);
             if(sexEl) sexEl.checked = true;
 
+            // Random Gender
+            const genders = [
+                'Жінка (цисгендерна)',
+                'Чоловік (цисгендерний)',
+                'Трансгендерна жінка',
+                'Трансгендерний чоловік',
+                'Небінарна особа',
+                'Агендер / Гендерквір',
+                'Не бажаю відповідати'
+            ];
+            const randomGender = genders[Math.floor(Math.random() * genders.length)];
             const genderSelect = document.getElementById('patient-gender');
             if(genderSelect) {
-                genderSelect.value = "Трансгендерна жінка";
+                genderSelect.value = randomGender;
                 toggleCustomGender();
             }
 
-            userState.gad7 = { 0:3, 1:2, 2:2, 3:1, 4:1, 5:1, 6:1 }; 
-            userState.pclm = {
-                0:3, 1:4, 2:3, 3:3, 4:3, 5:2, 6:2, 7:1, 8:3, 9:3,
-                10:2, 11:3, 12:3, 13:4, 14:3, 15:3, 16:2
-            }; 
-            userState.phq9 = { 0:3, 1:1, 2:3, 3:3, 4:3, 5:0, 6:1, 7:1, 8:0 }; 
-            userState.phq9Impact = "Дуже важко";
+            // Random Test Answers
+            userState.gad7 = {};
+            for(let i=0; i<7; i++) userState.gad7[i] = Math.floor(Math.random() * 4);
             
+            userState.pclm = {};
+            for(let i=0; i<17; i++) userState.pclm[i] = Math.floor(Math.random() * 5) + 1;
+            
+            userState.phq9 = {};
+            for(let i=0; i<9; i++) userState.phq9[i] = Math.floor(Math.random() * 4);
+            
+            const impacts = ["Зовсім не важко", "Дещо важко", "Дуже важко", "Надзвичайно важко"];
+            userState.phq9Impact = impacts[Math.floor(Math.random() * impacts.length)];
+            
+            userState.des2 = {};
+            const des2Values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             for (let i = 0; i < 28; i++) {
-                userState.des2[i] = [10, 20, 30, 40, 50, 60][Math.floor(Math.random() * 6)];
+                userState.des2[i] = des2Values[Math.floor(Math.random() * des2Values.length)];
             }
 
             renderGAD7Form();
