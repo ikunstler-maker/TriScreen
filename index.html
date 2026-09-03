@@ -60,7 +60,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white" data-print-mode="all">
 
-    <!-- Header / Navbar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -91,14 +90,23 @@
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
 
-        <!-- Respondent Details Banner -->
+        <!-- Respondent Details Banner (Extended) -->
         <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 mb-6 no-print">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            
+            <!-- Row 1: Name, DOB, Assessment Date -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label for="patient-name" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ім'я респондента / Код</label>
                     <div class="relative">
                         <input type="text" id="patient-name" class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm font-medium transition" placeholder="Введіть ім'я">
                         <svg class="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                </div>
+                <div>
+                    <label for="patient-dob" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Дата народження</label>
+                    <div class="relative">
+                        <input type="date" id="patient-dob" class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm font-medium transition">
+                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                 </div>
                 <div>
@@ -108,7 +116,47 @@
                         <svg class="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                 </div>
-                <div class="flex items-center justify-end space-x-2">
+            </div>
+
+            <!-- Row 2: Sex, Gender, Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Стать</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="patient-sex" value="Чоловіча" class="peer sr-only">
+                            <div class="text-center py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 text-sm font-medium transition peer-checked:bg-sky-100 peer-checked:border-sky-500 peer-checked:text-sky-900 hover:bg-slate-100 flex items-center justify-center gap-1.5">
+                                <span class="text-sky-600 font-bold text-base">♂️</span> Чол.
+                            </div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="patient-sex" value="Жіноча" class="peer sr-only">
+                            <div class="text-center py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-700 text-sm font-medium transition peer-checked:bg-pink-100 peer-checked:border-pink-500 peer-checked:text-pink-900 hover:bg-slate-100 flex items-center justify-center gap-1.5">
+                                <span class="text-pink-600 font-bold text-base">♀️</span> Жін.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label for="patient-gender" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Гендер</label>
+                    <div class="relative">
+                        <select id="patient-gender" onchange="toggleCustomGender()" class="w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm font-medium transition appearance-none">
+                            <option value="" disabled selected>Оберіть...</option>
+                            <option value="Жінка (цисгендерна)">Жінка (цисгендерна)</option>
+                            <option value="Чоловік (цисгендерний)">Чоловік (цисгендерний)</option>
+                            <option value="Трансгендерна жінка">Трансгендерна жінка</option>
+                            <option value="Трансгендерний чоловік">Трансгендерний чоловік</option>
+                            <option value="Небінарна особа">Небінарна особа</option>
+                            <option value="Агендер / Гендерквір">Агендер / Гендерквір</option>
+                            <option value="Свій варіант">Свій варіант...</option>
+                            <option value="Не бажаю відповідати">Не бажаю відповідати</option>
+                        </select>
+                        <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <!-- Custom Gender Input (Hidden by default) -->
+                    <input type="text" id="patient-gender-custom" class="w-full mt-2 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm font-medium transition hidden placeholder:text-slate-400" placeholder="Введіть свій варіант">
+                </div>
+                <div class="flex items-center justify-end space-x-2 md:h-[60px]">
                     <button type="button" onclick="autoFillDemoData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 border border-slate-300">
                         <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Заповнити демо-даними
@@ -357,14 +405,15 @@
 
             <!-- Print Header (Visible only in print mode) -->
             <div class="hidden print-only mb-6 border-b pb-4">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-xl font-bold">Звіт психологічного опитування</h1>
                         <p class="text-xs text-slate-600" id="print-sub-title">Шкали: GAD-7, PCL-M, PHQ-9, DES-II</p>
                     </div>
                     <div class="text-right text-xs">
                         <div><strong>Респондент:</strong> <span id="print-res-name">-</span></div>
-                        <div><strong>Дата:</strong> <span id="print-res-date">-</span></div>
+                        <div id="print-res-demographics" class="text-slate-500 text-[10px] mt-0.5 mb-1">-</div>
+                        <div><strong>Дата опитування:</strong> <span id="print-res-date">-</span></div>
                     </div>
                 </div>
             </div>
@@ -391,7 +440,10 @@
                     <div>
                         <span class="text-xs font-semibold text-slate-500 uppercase">Підсумковий висновок</span>
                         <h2 class="text-2xl font-bold text-slate-900">Загальний профіль оцінювання</h2>
-                        <p class="text-sm text-slate-600">Респондент: <strong id="res-header-name" class="text-slate-800">Не вказано</strong> • Дата: <span id="res-header-date" class="font-medium text-slate-800"></span></p>
+                        <div class="mt-2 text-sm text-slate-600">
+                            <p>Респондент: <strong id="res-header-name" class="text-slate-800">Не вказано</strong><span id="res-header-demographics" class="text-slate-500"></span></p>
+                            <p class="mt-0.5">Дата опитування: <span id="res-header-date" class="font-medium text-slate-800"></span></p>
+                        </div>
                     </div>
                 </div>
 
@@ -821,7 +873,6 @@
             "Чуєте голоси всередині себе, які наказують вам щось робити або коментують те, що ви робите.",
             "Здається, ніби дивитесь на світ крізь туман, тому люди та предмети здаються далекими або нечіткими."
         ];
-        // Note: DES-II step values
         const DES2_OPTIONS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
 
@@ -849,8 +900,21 @@
         });
 
         /* =========================================
-         * TAB SWITCHING LOGIC
+         * UI HELPER LOGIC
          * ========================================= */
+         
+        // Shows custom text input if "Свій варіант" is selected
+        function toggleCustomGender() {
+            const select = document.getElementById('patient-gender');
+            const customInput = document.getElementById('patient-gender-custom');
+            if (select.value === 'Свій варіант') {
+                customInput.classList.remove('hidden');
+                customInput.focus();
+            } else {
+                customInput.classList.add('hidden');
+            }
+        }
+
         function switchTab(tabId) {
             const tabs = ['welcome', 'gad7', 'pclm', 'phq9', 'des2', 'results'];
             tabs.forEach(t => {
@@ -1070,6 +1134,20 @@
         function autoFillDemoData() {
             const nameEl = document.getElementById('patient-name');
             if(nameEl) nameEl.value = "Елайджа Кюнстлер";
+            
+            const dobEl = document.getElementById('patient-dob');
+            if(dobEl) dobEl.value = "2003-08-13"; // Set a demo DOB
+
+            // Set Sex
+            const sexEl = document.querySelector('input[name="patient-sex"][value="Чоловіча"]');
+            if(sexEl) sexEl.checked = true;
+
+            // Set Gender
+            const genderSelect = document.getElementById('patient-gender');
+            if(genderSelect) {
+                genderSelect.value = "Чоловік (цисгендерний)";
+                toggleCustomGender();
+            }
 
             // Mock patterns
             userState.gad7 = { 0:3, 1:2, 2:2, 3:1, 4:1, 5:1, 6:1 }; // Sum ~ 11
@@ -1082,7 +1160,6 @@
             
             // DES-2 Mock (Average around 35 - High)
             for (let i = 0; i < 28; i++) {
-                // Mix of 10, 20, 30, 40, 50, 60
                 userState.des2[i] = [10, 20, 30, 40, 50, 60][Math.floor(Math.random() * 6)];
             }
 
@@ -1099,6 +1176,16 @@
             userState.phq9 = {};
             userState.des2 = {};
             userState.phq9Impact = "Зовсім не важко";
+
+            document.getElementById('patient-name').value = '';
+            document.getElementById('patient-dob').value = '';
+            const sexes = document.querySelectorAll('input[name="patient-sex"]');
+            sexes.forEach(s => s.checked = false);
+            
+            const genderSelect = document.getElementById('patient-gender');
+            genderSelect.value = '';
+            toggleCustomGender();
+            document.getElementById('patient-gender-custom').value = '';
 
             renderGAD7Form();
             renderPCLMForm();
@@ -1118,7 +1205,6 @@
          * EXPORT LOGIC (INDIVIDUAL OR ALL)
          * ========================================= */
         function exportReport(mode) {
-            // mode can be: 'all', 'gad7', 'pclm', 'phq9', 'des2'
             document.body.setAttribute('data-print-mode', mode);
             
             const oldTitle = document.title;
@@ -1142,23 +1228,83 @@
             
             setTimeout(() => {
                 document.title = oldTitle;
-                document.body.setAttribute('data-print-mode', 'all'); // reset to normal
+                document.body.setAttribute('data-print-mode', 'all'); 
             }, 500);
+        }
+
+        // Helper to calculate accurate age
+        function calculateAgeString(dobStr, assessmentDateStr) {
+            if (!dobStr) return "Не вказано";
+            
+            const dob = new Date(dobStr);
+            const refDate = (assessmentDateStr && assessmentDateStr !== "Не вказано") ? new Date(assessmentDateStr) : new Date();
+            
+            if (isNaN(dob.getTime()) || isNaN(refDate.getTime())) return "Не вказано";
+
+            let age = refDate.getFullYear() - dob.getFullYear();
+            const m = refDate.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && refDate.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            if (age < 0) return "Не вказано";
+
+            const dd = String(dob.getDate()).padStart(2, '0');
+            const mm = String(dob.getMonth() + 1).padStart(2, '0');
+            const yyyy = dob.getFullYear();
+
+            // Correct grammar for Ukrainian word "років"
+            let ageWord = "років";
+            const lastDigit = age % 10;
+            const lastTwo = age % 100;
+            if (lastDigit === 1 && lastTwo !== 11) ageWord = "рік";
+            else if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(lastTwo)) ageWord = "роки";
+
+            return `${dd}.${mm}.${yyyy} (${age} ${ageWord})`;
         }
 
         /* =========================================
          * CALCULATION LOGIC
          * ========================================= */
         function calculateAndShowResults() {
+            // Demographics retrieval
             const nameInput = document.getElementById('patient-name');
             const dateInput = document.getElementById('assessment-date');
+            const dobInput = document.getElementById('patient-dob');
+            
             const nameVal = nameInput && nameInput.value ? nameInput.value : "Не вказано";
             const dateVal = dateInput && dateInput.value ? dateInput.value : "Не вказано";
+            const dobVal = dobInput && dobInput.value ? dobInput.value : null;
+
+            // Radio sex
+            const sexEl = document.querySelector('input[name="patient-sex"]:checked');
+            const sexVal = sexEl ? sexEl.value : "Не вказано";
+
+            // Gender select
+            const genderSelect = document.getElementById('patient-gender');
+            const genderCustom = document.getElementById('patient-gender-custom');
+            let genderVal = "Не вказано";
+            if (genderSelect && genderSelect.value) {
+                if (genderSelect.value === 'Свій варіант') {
+                    genderVal = genderCustom && genderCustom.value ? genderCustom.value : "Не вказано";
+                } else {
+                    genderVal = genderSelect.value;
+                }
+            }
+
+            const ageStr = calculateAgeString(dobVal, dateVal);
 
             safeSetText('res-header-name', nameVal);
             safeSetText('res-header-date', dateVal);
             safeSetText('print-res-name', nameVal);
             safeSetText('print-res-date', dateVal);
+
+            // Demographic String combination
+            const demoStrWeb = ` • Стать: ${sexVal} • Гендер: ${genderVal} • Вік: ${ageStr}`;
+            const demoStrPrint = `Стать: ${sexVal}, Гендер: ${genderVal}, Вік: ${ageStr}`;
+            
+            safeSetText('res-header-demographics', demoStrWeb);
+            safeSetText('print-res-demographics', demoStrPrint);
 
             // Notice if incomplete
             const totalAnswered = Object.keys(userState.gad7).length + Object.keys(userState.pclm).length + Object.keys(userState.phq9).length + Object.keys(userState.des2).length;
@@ -1354,7 +1500,6 @@
             des2Keys.forEach(k => { des2Sum += userState.des2[k]; });
             
             // Formula: Average of all questions. sum / 28
-            const answeredCount = des2Keys.length > 0 ? 28 : 1; // avoid division by 0 if completely empty but want 0 score
             const des2AvgRaw = des2Keys.length === 0 ? 0 : (des2Sum / 28);
             const des2Avg = parseFloat(des2AvgRaw.toFixed(1));
 
