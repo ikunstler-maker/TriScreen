@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uk" id="html-root">
+<html lang="uk" id="html-root" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Комплексне психологічне опитування: GAD-7, PCL-M, PHQ-9, DES-II</title>
+    <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -11,8 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Prevent FOUC for Dark Mode
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        // Force Dark Theme by Default
+        if (!localStorage.getItem('theme')) {
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
+        } else if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
@@ -44,7 +47,7 @@
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             
-            /* Ensure all colors, backgrounds, badges, and lines print exactly as seen on screen */
+            /* Print colors exactly as on screen */
             body, html { 
                 background: white !important; 
                 -webkit-print-color-adjust: exact !important; 
@@ -52,46 +55,48 @@
                 color: #0f172a !important; 
             }
             
-            /* Remove box shadows for a cleaner print */
             .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
-            
-            /* Print specific sections based on data attribute */
-            body[data-print-mode="gad7"] .test-section:not(#section-gad7) { display: none !important; }
-            body[data-print-mode="pclm"] .test-section:not(#section-pclm) { display: none !important; }
-            body[data-print-mode="phq9"] .test-section:not(#section-phq9) { display: none !important; }
-            body[data-print-mode="des2"] .test-section:not(#section-des2) { display: none !important; }
-            
-            /* Hide non-relevant summary cards if a specific test is printed */
-            body[data-print-mode="gad7"] .summary-card:not(#summary-card-gad7),
-            body[data-print-mode="pclm"] .summary-card:not(#summary-card-pclm),
-            body[data-print-mode="phq9"] .summary-card:not(#summary-card-phq9),
-            body[data-print-mode="des2"] .summary-card:not(#summary-card-des2) { display: none !important; }
+            .print-only-hide { display: none !important; }
             
             .test-section, .summary-card, .bg-white {
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
+
+            /* Force masks and badges to keep color when printing */
+            .bg-slate-200 { background-color: #e2e8f0 !important; }
+            .dark .dark\:bg-slate-700 { background-color: #e2e8f0 !important; } /* override dark mode mask for print */
         }
+
         /* Custom scrollbars */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        .dark ::-webkit-scrollbar-track { background: #1e293b; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* Static Gradients aligned to scoring thresholds */
-        .grad-gad7 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 33%, #f59e0b 57%, #e11d48 85%); }
-        .grad-pclm { background: linear-gradient(90deg, #10b981 10%, #f59e0b 30%, #f97316 45%, #e11d48 75%); }
-        .grad-phq9 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 27%, #f59e0b 45%, #f97316 63%, #e11d48 85%); }
-        .grad-des2 { background: linear-gradient(90deg, #94a3b8 15%, #e11d48 65%); }
+        /* Static Gradients aligned to unified scales */
+        .grad-gad7 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 33%, #f59e0b 66%, #e11d48 90%); }
+        .grad-pcl5 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
+        .grad-phq9 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
+        .grad-des2 { background: linear-gradient(90deg, #94a3b8 15%, #10b981 40%, #f59e0b 60%, #f97316 80%, #e11d48 95%); }
 
         /* Dynamic Glow Effect */
         @keyframes shadowPulse {
             0%, 100% { box-shadow: 0 0 3px var(--glow-color); }
             50% { box-shadow: 0 0 12px var(--glow-color); }
+        }
+        @keyframes progressSweep {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+        .progress-cyclic {
+            background: linear-gradient(90deg, #bae6fd 0%, #0ea5e9 25%, #38bdf8 50%, #0ea5e9 75%, #bae6fd 100%);
+            background-size: 200% auto;
+            animation: progressSweep 3s linear infinite;
         }
         .glow-effect {
             animation: shadowPulse 2.5s ease-in-out infinite;
@@ -103,34 +108,24 @@
         .glow-rose { --glow-color: rgba(225, 29, 72, 0.7); }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300" data-print-mode="all">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300">
 
     <!-- Header / Navbar -->
     <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm no-print transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                <!-- Clickable Logo leading to home -->
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('welcome')" title="На головну">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">
                         Ψ
                     </div>
                     <div>
-                        <h1 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">Психодіагностичний Комплекс</h1>
-                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">GAD-7 • PCL-M • PHQ-9 • DES-II</p>
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Психодіагностичний Комплекс</h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">GAD-7 • PCL-5 • PHQ-9 • DES-II</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-4 sm:gap-6">
-                    <!-- Dynamic Progress Indicator -->
-                    <div class="hidden md:flex items-center space-x-4">
-                        <div class="text-right">
-                            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" id="global-progress-label">Загальний прогрес</div>
-                            <div class="text-sm font-bold text-sky-700 dark:text-sky-400" id="global-progress-text">0 / 61 питань</div>
-                        </div>
-                        <div class="w-32 bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
-                            <div id="global-progress-bar" class="bg-sky-500 h-full w-0 transition-all duration-300"></div>
-                        </div>
-                    </div>
-                    
                     <!-- Theme Toggle Button -->
                     <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700" title="Змінити тему">
                         <!-- Sun Icon -->
@@ -141,16 +136,20 @@
                 </div>
             </div>
         </div>
+        <!-- Dynamic Top Progress Bar -->
+        <div id="top-progress-container" class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 hidden">
+            <div id="top-progress-bar" class="h-full progress-cyclic transition-all duration-300 w-0"></div>
+        </div>
     </header>
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
 
-        <!-- Respondent Details Banner -->
+        <!-- Respondent Details Banner (3 Columns Grid) -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-800 mb-6 no-print transition-colors duration-300">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-y-5 gap-x-4 lg:gap-x-6 items-start">
                 
-                <!-- COLUMN 1: Name & Sex -->
+                <!-- COLUMN 1: Name & Sex (Wider) -->
                 <div class="md:col-span-5 space-y-5">
                     <div>
                         <label for="patient-name" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Ім'я респондента / Код</label>
@@ -161,30 +160,30 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Стать</label>
-                        <div class="flex gap-2">
-                            <label class="flex-1 cursor-pointer">
-                                <input type="radio" name="patient-sex" value="Чоловіча" class="peer sr-only">
-                                <div class="text-center py-2 px-1 sm:px-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <span class="text-sky-600 dark:text-sky-400 font-bold text-base">♂️</span> Чол.
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="patient-sex" value="Чоловік" class="peer sr-only" onchange="syncSexAndGender('sex')">
+                                <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                                    <span class="text-sky-600 dark:text-sky-400 font-bold text-sm sm:text-base leading-none">♂️</span> <span class="truncate">Чоловік</span>
                                 </div>
                             </label>
-                            <label class="flex-1 cursor-pointer">
-                                <input type="radio" name="patient-sex" value="Жіноча" class="peer sr-only">
-                                <div class="text-center py-2 px-1 sm:px-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <span class="text-pink-600 dark:text-pink-400 font-bold text-base">♀️</span> Жін.
+                            <label class="cursor-pointer">
+                                <input type="radio" name="patient-sex" value="Жінка" class="peer sr-only" onchange="syncSexAndGender('sex')">
+                                <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                                    <span class="text-pink-600 dark:text-pink-400 font-bold text-sm sm:text-base leading-none">♀️</span> <span class="truncate">Жінка</span>
                                 </div>
                             </label>
-                            <label class="flex-1 cursor-pointer">
-                                <input type="radio" name="patient-sex" value="Інтерсекс" class="peer sr-only">
-                                <div class="text-center py-2 px-1 sm:px-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1.5 whitespace-nowrap">
-                                    <span class="text-purple-600 dark:text-purple-400 font-bold text-base">⚧️</span> Інтерсекс
+                            <label class="cursor-pointer">
+                                <input type="radio" name="patient-sex" value="Інтерсекс" class="peer sr-only" onchange="syncSexAndGender('sex')">
+                                <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                                    <span class="text-purple-600 dark:text-purple-400 font-bold text-sm sm:text-base leading-none">⚧️</span> <span class="truncate">Інтерсекс</span>
                                 </div>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <!-- COLUMN 2: DOB & Gender -->
+                <!-- COLUMN 2: DOB & Gender (Narrower) -->
                 <div class="md:col-span-3 space-y-5">
                     <div>
                         <label for="patient-dob" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Дата народження</label>
@@ -211,7 +210,7 @@
                     </div>
                 </div>
 
-                <!-- COLUMN 3: Date & Actions -->
+                <!-- COLUMN 3: Date & Actions (Shifted to right) -->
                 <div class="md:col-span-3 md:col-start-10 space-y-5">
                     <div>
                         <label for="assessment-date" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Дата опитування</label>
@@ -220,14 +219,21 @@
                             <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                     </div>
-                    <div>
-                        <label class="hidden md:block text-xs font-semibold text-transparent uppercase tracking-wider mb-1 pointer-events-none select-none">Дії</label>
-                        <div class="flex items-center justify-between gap-2 h-[38px]">
-                            <button type="button" onclick="autoFillDemoData()" class="flex-1 text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 h-full rounded-lg font-medium transition flex items-center justify-center border border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                    <div class="space-y-2.5">
+                        <div class="grid grid-cols-2 gap-2 h-[38px]">
+                            <button type="button" onclick="autoFillDemoData()" class="text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center border border-slate-300 dark:border-slate-600 whitespace-nowrap">
                                 🎲 Демо
                             </button>
-                            <button type="button" onclick="resetForm()" class="px-4 text-[13px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 h-full rounded-lg font-medium transition border border-rose-200 dark:border-rose-800 whitespace-nowrap">
+                            <button type="button" onclick="resetForm()" class="text-[13px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center border border-rose-200 dark:border-rose-800 whitespace-nowrap">
                                 Очистити
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 h-[38px]">
+                            <button type="button" onclick="switchTab('welcome')" class="text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center border border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                                Головна
+                            </button>
+                            <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="text-[13px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center whitespace-nowrap">
+                                Результати
                             </button>
                         </div>
                     </div>
@@ -235,83 +241,48 @@
             </div>
         </div>
 
-        <!-- Tabs Navigation -->
-        <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6 overflow-x-auto no-print space-x-1 sm:space-x-2 scrollbar-none pb-1 transition-colors duration-300">
-            <button onclick="switchTab('welcome')" id="tab-welcome" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-semibold text-sm border-b-2 border-sky-600 dark:border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition flex items-center gap-2">
-                <span>1. Вступ</span>
-            </button>
-            <button onclick="switchTab('gad7')" id="tab-gad7" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2">
-                <span>2. GAD-7</span>
-                <span id="badge-gad7" class="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0/7</span>
-            </button>
-            <button onclick="switchTab('pclm')" id="tab-pclm" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2">
-                <span>3. PCL-M</span>
-                <span id="badge-pclm" class="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0/17</span>
-            </button>
-            <button onclick="switchTab('phq9')" id="tab-phq9" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2">
-                <span>4. PHQ-9</span>
-                <span id="badge-phq9" class="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0/9</span>
-            </button>
-            <button onclick="switchTab('des2')" id="tab-des2" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2">
-                <span>5. DES-II</span>
-                <span id="badge-des2" class="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0/28</span>
-            </button>
-            <button onclick="switchTab('results')" id="tab-results" class="tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
-                <span>Результати</span>
-            </button>
-        </div>
-
         <!-- TAB 0: WELCOME & OVERVIEW -->
         <section id="content-welcome" class="tab-content block">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="max-w-4xl">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-4">Комплексна самодіагностика</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-4 border border-sky-200 dark:border-sky-800">Комплексна самодіагностика</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Психологічне опитування стан здоров'я</h2>
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                        Цей інструмент призначений для скринінгу та оцінки чотирьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії та дисоціативних переживань. Натисніть на будь-який блок, щоб одразу перейти до тесту.
+                        Цей інструмент призначений для скринінгу та оцінки чотирьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії та дисоціативних переживань. Ви можете обрати будь-який тест, натиснувши на його картку нижче:
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1">GAD-7</div>
+                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала тривожності</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">7 запитань про стан за останні <span class="font-semibold text-slate-800 dark:text-slate-200">2 тижні</span>.</p>
                         </div>
 
-                        <div onclick="switchTab('pclm')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1">PCL-M</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала ПТСР</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">17 запитань про реакції на стрес за <span class="font-semibold text-slate-800 dark:text-slate-200">минулий місяць</span>.</p>
+                        <div onclick="switchTab('pcl5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PCL-5</div>
+                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала ПТСР (DSM-5)</div>
+                            <p class="text-[11px] text-slate-600 dark:text-slate-400">20 запитань про реакції на стрес за <span class="font-semibold text-slate-800 dark:text-slate-200">минулий місяць</span>.</p>
                         </div>
 
-                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1">PHQ-9</div>
+                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PHQ-9</div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Опитувальник депресії</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">9 запитань про проблеми за останні <span class="font-semibold text-slate-800 dark:text-slate-200">2 тижні</span>.</p>
                         </div>
 
-                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1">DES-II</div>
+                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала дисоціації</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">28 запитань про повсякденні дисоціативні переживання.</p>
                         </div>
                     </div>
 
-                    <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm mb-8">
+                    <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm mb-4">
                         <div class="font-bold mb-1 flex items-center gap-2">
                             <svg class="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             Важливе застереження:
                         </div>
                         Дане опитування є інструментом самодіагностики та попередньої оцінки. Воно не замінює повноцінний клінічний огляд та консультацію кваліфікованого спеціаліста.
-                    </div>
-
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <span class="text-xs text-slate-500 dark:text-slate-400">Час проходження: близько 10–15 хвилин</span>
-                        <button type="button" onclick="switchTab('gad7')" class="bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md transition flex items-center gap-2">
-                            <span>Розпочати тестування</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -321,57 +292,116 @@
         <section id="content-gad7" class="tab-content hidden">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Частина 1 з 4</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Тест на тривожність (GAD-7)</h2>
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Тест на тривожність (GAD-7)</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('gad7')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Період: останні 2 тижні</span>
                         </div>
-                        <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold">Період: останні 2 тижні</span>
                     </div>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                        Опитування містить 7 запитань для оцінки вираженості симптомів тривожності. Оберіть варіант відповіді:
-                    </p>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Опитування містить 7 запитань для оцінки вираженості симптомів тривожності.</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-gad7" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/7</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="gad7-questions-container" class="space-y-6"></div>
 
-                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (GAD-7)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-gad7">0 / 21</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-gad7">⚪ Мінімальний</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                        ← Назад
+                        ← На головну до списку тестів
                     </button>
-                    <button type="button" onclick="switchTab('pclm')" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
-                        <span>Перейти до PCL-M</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Сформувати результат</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: PCL-M QUESTIONNAIRE -->
-        <section id="content-pclm" class="tab-content hidden">
+        <!-- TAB 2: PCL-5 QUESTIONNAIRE -->
+        <section id="content-pcl5" class="tab-content hidden">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Частина 2 з 4</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Шкала самооцінки PCL-M (ПТСР)</h2>
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Шкала ПТСР PCL-5 (згідно з DSM-5)</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('pcl5')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Період: минулий місяць</span>
                         </div>
-                        <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold">Період: минулий місяць</span>
                     </div>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                        Перераховано проблеми, які можуть виникати внаслідок стресового (травматичного) досвіду. Оцініть частоту їх прояву:
-                    </p>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Вкажіть, наскільки сильно вас турбували нижченаведені проблеми протягом останнього місяця у зв'язку з дуже стресовим досвідом.</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-pcl5" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/20</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="pclm-questions-container" class="space-y-6"></div>
+                <!-- CRITERION A (FILTER) -->
+                <div class="mb-6 bg-sky-50/70 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-6 rounded-2xl transition-colors">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">Критерій А (Наявність травматичної події):</h3>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 mb-4">
+                        Чи переживали ви або чи були ви свідком події, що загрожувала життю, серйозної травми або сексуального насильства?
+                    </p>
+                    <div class="flex gap-4">
+                        <label class="flex-1 p-3 rounded-xl border border-sky-200 dark:border-sky-800 cursor-pointer bg-white dark:bg-slate-900 text-center font-semibold hover:bg-sky-50 dark:hover:bg-sky-900/30 transition" id="lbl-pcl5-yes">
+                            <input type="radio" name="pcl5-crit-a" value="yes" class="sr-only" onchange="setPCL5CritA('yes')">
+                            Так
+                        </label>
+                        <label class="flex-1 p-3 rounded-xl border border-sky-200 dark:border-sky-800 cursor-pointer bg-white dark:bg-slate-900 text-center font-semibold hover:bg-sky-50 dark:hover:bg-sky-900/30 transition" id="lbl-pcl5-no">
+                            <input type="radio" name="pcl5-crit-a" value="no" class="sr-only" onchange="setPCL5CritA('no')">
+                            Ні
+                        </label>
+                    </div>
+                </div>
 
-                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <button type="button" onclick="switchTab('gad7')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                        ← Назад (GAD-7)
+                <!-- STOP MESSAGE -->
+                <div id="pcl5-stop-msg" class="hidden mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 rounded-xl text-sm font-semibold transition-colors">
+                    Оскільки ви не стикалися з травматичною подією, подальше тестування на ПТСР не є доцільним. Ваш результат буде оцінено як мінімальний.
+                </div>
+
+                <div id="pcl5-questions-wrapper" class="space-y-6 hidden">
+                    <div id="pcl5-questions-container" class="space-y-6"></div>
+                </div>
+
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (PCL-5)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-pcl5">0 / 80</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-pcl5">⚪ Мінімальний</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
+                        ← На головну до списку тестів
                     </button>
-                    <button type="button" onclick="switchTab('phq9')" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
-                        <span>Перейти до PHQ-9</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Сформувати результат</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
@@ -381,16 +411,20 @@
         <section id="content-phq9" class="tab-content hidden">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Частина 3 з 4</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Опитувальник стан здоров'я (PHQ-9)</h2>
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Опитувальник стан здоров'я (PHQ-9)</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('phq9')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Період: останні 2 тижні</span>
                         </div>
-                        <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold">Період: останні 2 тижні</span>
                     </div>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                        Визначте, як часто за останні 2 тижні вас турбували наступні проблеми:
-                    </p>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Визначте, як часто за останні 2 тижні вас турбували наступні проблеми.</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-phq9" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/9</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="phq9-questions-container" class="space-y-6"></div>
@@ -405,13 +439,26 @@
                     </div>
                 </div>
 
-                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <button type="button" onclick="switchTab('pclm')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                        ← Назад (PCL-M)
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (PHQ-9)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-phq9">0 / 27</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-phq9">⚪ Мінімальний</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
+                        ← На головну до списку тестів
                     </button>
-                    <button type="button" onclick="switchTab('des2')" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-semibold text-sm transition shadow-sm flex items-center gap-2">
-                        <span>Перейти до DES-II</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Сформувати результат</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
@@ -421,27 +468,44 @@
         <section id="content-des2" class="tab-content hidden">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Частина 4 з 4</span>
-                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Шкала дисоціативних переживань (DES-II)</h2>
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Шкала дисоціативних переживань (DES-II)</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('des2')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Повсякденне життя</span>
                         </div>
-                        <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold">Повсякденне життя</span>
                     </div>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                        Оберіть відсоток, який показує, як часто ці переживання трапляються з вами у повсякденному житті (без впливу алкоголю чи ліків).
-                    </p>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Оберіть відсоток, який показує, як часто ці переживання трапляються з вами у повсякденному житті.</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-des2" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/28</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="des2-questions-container" class="space-y-6"></div>
 
-                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <button type="button" onclick="switchTab('phq9')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                        ← Назад (PHQ-9)
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (DES-II)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-des2">0</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-des2">⚪ Мінімальний</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
+                        ← На головну до списку тестів
                     </button>
-                    <button type="button" onclick="switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Сформувати підсумковий результат</span>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Сформувати результат</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
@@ -450,62 +514,99 @@
         <!-- TAB 5: RESULTS & DETAILED ANALYSIS -->
         <section id="content-results" class="tab-content hidden">
             
-            <div class="flex justify-between items-center mb-4 no-print">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Попередній перегляд результатів</h2>
-                <button type="button" onclick="calculateAndShowResults();" class="px-5 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+            <div class="flex items-center justify-between mb-6 no-print">
+                <button type="button" onclick="switchTab('welcome')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold text-sm transition flex items-center gap-2 border border-slate-200 dark:border-slate-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>На головну</span>
+                </button>
+                <button type="button" onclick="calculateAndShowResults()" class="px-5 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>Оновити підрахунок</span>
+                    <span>Оновити результат</span>
                 </button>
             </div>
 
-            <div id="incomplete-notice" class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 p-4 rounded-xl mb-6 text-sm flex items-center justify-between hidden no-print transition-colors">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <span>Увага: Деякі питання ще не заповнено. Підрахунок виконано для наданих відповідей.</span>
-                </div>
-                <button type="button" onclick="autoFillDemoData();" class="text-xs bg-amber-200 dark:bg-amber-800 hover:bg-amber-300 dark:hover:bg-amber-700 px-3 py-1.5 rounded-lg font-semibold text-amber-900 dark:text-amber-100 transition-colors">Заповнити решту</button>
-            </div>
-
-            <!-- EXPORT ACTION BAR -->
-            <div class="bg-slate-800 dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-lg mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print text-white transition-colors border dark:border-slate-800">
+            <!-- EXPORT ACTION BAR (CHECKBOXES) -->
+            <div class="bg-slate-800 dark:bg-slate-900 rounded-2xl p-5 shadow-lg mb-6 flex flex-col gap-4 no-print text-white border border-slate-700 transition-colors">
                 <div>
                     <h3 class="font-bold text-sm text-slate-100">Експорт результатів (PDF / Друк)</h3>
-                    <p class="text-xs text-slate-400">Оберіть, що саме ви хочете зберегти чи роздрукувати</p>
+                    <p class="text-xs text-slate-400 mt-1">Відмітьте галочками тести, які бажаєте включити до звіту. Ви можете обрати один, декілька або всі варіанти.</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="exportReport('all')" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">📄 Повний звіт</button>
-                    <div class="h-6 w-px bg-slate-600 hidden md:block mx-1"></div>
-                    <button onclick="exportReport('gad7')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition border border-slate-600">Тільки GAD-7</button>
-                    <button onclick="exportReport('pclm')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition border border-slate-600">Тільки PCL-M</button>
-                    <button onclick="exportReport('phq9')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition border border-slate-600">Тільки PHQ-9</button>
-                    <button onclick="exportReport('des2')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold transition border border-slate-600">Тільки DES-II</button>
+                
+                <!-- Export Warning (Incomplete Tests) -->
+                <div id="export-warning-container" class="hidden p-3 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-medium flex items-start gap-2">
+                    <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span id="export-warning-text"></span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer bg-sky-900/30 hover:bg-sky-800/50 px-3 py-2 rounded-lg border border-sky-700 transition">
+                        <input type="checkbox" id="chk-export-all" onchange="toggleSelectAllExports()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-bold text-white">Обрати всі</span>
+                    </label>
+                    <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                        <input type="checkbox" id="chk-export-gad7" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-semibold text-slate-200">GAD-7</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                        <input type="checkbox" id="chk-export-pcl5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-semibold text-slate-200">PCL-5</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                        <input type="checkbox" id="chk-export-phq9" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-semibold text-slate-200">PHQ-9</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                        <input type="checkbox" id="chk-export-des2" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-semibold text-slate-200">DES-II</span>
+                    </label>
+                    <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
+                    <button onclick="handlePrintCustom()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        <span>Експортувати обране</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Print Only Header -->
+            <div class="hidden print-only mb-6 border-b border-slate-300 pb-4">
+                <div class="flex justify-between items-end">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl print-color-exact" style="background-color: #0ea5e9 !important; color: white !important; width: 40px; height: 40px; border-radius: 0.75rem;">
+                            Ψ
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
+                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Dashboard Summary Header -->
             <div id="dashboard-summary" class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-6 transition-colors duration-300">
-                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex flex-col sm:flex-row justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                     <div class="w-full relative">
-                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Підсумковий висновок</span>
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider print-only-hide">Підсумковий висновок</span>
                         <div class="absolute right-0 top-0 text-sm font-medium text-slate-700 dark:text-slate-300">
-                            📅 <span id="res-top-date" class="font-bold text-slate-800 dark:text-slate-100">Не вказано</span>
+                            📅 <span id="res-top-date" class="font-bold text-slate-800 dark:text-slate-100 print-color-exact">Не вказано</span>
                         </div>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Звіт психологічного опитування</h2>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1 print-only-hide">Звіт психологічного опитування</h2>
                         
                         <div class="flex flex-wrap items-center gap-3 mt-5">
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
                                 <span class="text-base leading-none">👤</span>
                                 <span><strong id="res-header-name" class="text-slate-900 dark:text-white font-semibold">Не вказано</strong></span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
                                 <span class="text-base leading-none">⚧️</span>
                                 <span id="res-header-sex" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
                                 <span class="text-base leading-none">🫀</span>
                                 <span id="res-header-gender" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5">
+                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
                                 <span class="text-base leading-none">⏳</span>
                                 <span id="res-header-age" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
                             </div>
@@ -520,7 +621,7 @@
                     <div id="summary-card-gad7" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full print-color-exact">GAD-7 (Тривога)</span>
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">GAD-7 (Тривога)</span>
                                 <span id="gad7-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 21</span>
                             </div>
                             <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Останні 2 тижні</div>
@@ -529,30 +630,28 @@
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <!-- Gradient Glow Wrapper -->
-                            <div id="gad7-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect glow-slate print-color-exact">
-                                <!-- Base Static Gradient -->
+                            <div id="gad7-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
                                 <div class="absolute inset-0 grad-gad7 print-color-exact"></div>
-                                <!-- Reveal Mask (Solid Color matching track background) -->
-                                <div id="gad7-res-mask" class="mask-print absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                                <div id="gad7-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- PCL-M Summary Box -->
-                    <div id="summary-card-pclm" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <!-- PCL-5 Summary Box -->
+                    <div id="summary-card-pcl5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full print-color-exact">PCL-M (ПТСР)</span>
-                                <span id="pclm-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">17 / 85</span>
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">PCL-5 (ПТСР)</span>
+                                <span id="pcl5-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 80</span>
                             </div>
                             <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Минулий місяць</div>
-                            <div id="pclm-res-badge" class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact">🟢 Низький</div>
-                            <p id="pclm-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Мінімальна присутність ПТСР.</p>
+                            <div id="pcl5-res-badge" class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact">⚪ Мінімальний</div>
+                            <p id="pcl5-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Мінімальна присутність ПТСР.</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <div id="pclm-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect glow-emerald print-color-exact">
-                                <div class="absolute inset-0 grad-pclm print-color-exact"></div>
-                                <div id="pclm-res-mask" class="mask-print absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                            <div id="pcl5-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
+                                <div class="absolute inset-0 grad-pcl5 print-color-exact"></div>
+                                <div id="pcl5-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -561,7 +660,7 @@
                     <div id="summary-card-phq9" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full print-color-exact">PHQ-9 (Депресія)</span>
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">PHQ-9 (Депресія)</span>
                                 <span id="phq9-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 27</span>
                             </div>
                             <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Останні 2 тижні</div>
@@ -569,9 +668,9 @@
                             <p id="phq9-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Депресивні симптоми відсутні.</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <div id="phq9-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect glow-slate print-color-exact">
+                            <div id="phq9-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
                                 <div class="absolute inset-0 grad-phq9 print-color-exact"></div>
-                                <div id="phq9-res-mask" class="mask-print absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                                <div id="phq9-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -580,7 +679,7 @@
                     <div id="summary-card-des2" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full print-color-exact">DES-II (Дисоціація)</span>
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">DES-II (Дисоціація)</span>
                                 <span id="des2-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</span>
                             </div>
                             <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Повсякденне життя</div>
@@ -588,9 +687,9 @@
                             <p id="des2-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Дисоціативні прояви в нормі.</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <div id="des2-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect glow-slate print-color-exact">
+                            <div id="des2-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
                                 <div class="absolute inset-0 grad-des2 print-color-exact"></div>
-                                <div id="des2-res-mask" class="mask-print absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                                <div id="des2-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -629,10 +728,10 @@
                     <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
                         <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали GAD-7:</div>
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-slate-600 dark:text-slate-400">
-                            <div id="gad7-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ <strong>0–4 бали:</strong> Без симптомів</div>
-                            <div id="gad7-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 <strong>5–9 балів:</strong> Легкі симптоми</div>
-                            <div id="gad7-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 <strong>10–14 балів:</strong> Помірні симптоми</div>
-                            <div id="gad7-interp-4" class="p-2 rounded border border-transparent transition-colors">🔴 <strong>15–21 бал:</strong> Клінічно значимі симптоми</div>
+                            <div id="gad7-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0–4 бали: Мінімальний</div>
+                            <div id="gad7-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 5–9 балів: Легкий</div>
+                            <div id="gad7-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 10–14 балів: Помірний</div>
+                            <div id="gad7-interp-4" class="p-2 rounded border border-transparent transition-colors">🔴 15–21 бал: Високий</div>
                         </div>
                     </div>
 
@@ -642,7 +741,7 @@
                                 <tr>
                                     <th class="py-2.5 px-3 rounded-l-lg">№</th>
                                     <th class="py-2.5 px-3">Запитання (Симптом)</th>
-                                    <th class="py-2.5 px-3">Обрана відповідь</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь</th>
                                 </tr>
                             </thead>
                             <tbody id="gad7-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
@@ -650,23 +749,38 @@
                     </div>
                 </div>
 
-                <!-- 2. PCL-M DETAILED BLOCK -->
-                <div id="section-pclm" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <!-- 2. PCL-5 DETAILED BLOCK -->
+                <div id="section-pcl5" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: PCL-M (Шкала самооцінки ПТСР)</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: PCL-5 (Шкала ПТСР DSM-5)</h3>
                         </div>
-                        <span id="pclm-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">Сума: 17 / 85 балів</span>
+                        <span id="pcl5-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">Сума: 0 / 80 балів</span>
+                    </div>
+
+                    <!-- DSM-5 Checklist logic -->
+                    <div class="bg-sky-50/80 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl p-4 mb-6 transition-colors">
+                        <div class="text-xs font-bold text-sky-900 dark:text-sky-300 uppercase tracking-wider mb-2">Діагностичні критерії DSM-5 (Симптоматичний метод):</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-sky-950 dark:text-sky-100 print-color-exact">
+                            <div id="pcl5-crit-b" class="bg-white dark:bg-slate-900 p-2 rounded-lg border border-sky-100 dark:border-sky-800">Критерій B (Нав'язливі спогади): <span class="font-bold">Не виконано</span></div>
+                            <div id="pcl5-crit-c" class="bg-white dark:bg-slate-900 p-2 rounded-lg border border-sky-100 dark:border-sky-800">Критерій C (Уникнення): <span class="font-bold">Не виконано</span></div>
+                            <div id="pcl5-crit-d" class="bg-white dark:bg-slate-900 p-2 rounded-lg border border-sky-100 dark:border-sky-800">Критерій D (Когніції та настрій): <span class="font-bold">Не виконано</span></div>
+                            <div id="pcl5-crit-e" class="bg-white dark:bg-slate-900 p-2 rounded-lg border border-sky-100 dark:border-sky-800">Критерій E (Збудливість): <span class="font-bold">Не виконано</span></div>
+                        </div>
+                        <div class="mt-3 text-center bg-white dark:bg-slate-900 p-2 rounded-lg border border-sky-100 dark:border-sky-800 font-bold" id="pcl5-dsm-result">
+                            Попередній діагноз ПТСР: Не підтверджено
+                        </div>
                     </div>
 
                     <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали PCL-M:</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-slate-600 dark:text-slate-400">
-                            <div id="pclm-interp-1" class="p-2 rounded border border-transparent transition-colors">🟢 <strong>17–29 балів:</strong> Низький рівень</div>
-                            <div id="pclm-interp-2" class="p-2 rounded border border-transparent transition-colors">🟡 <strong>30–43 бали:</strong> Помірний рівень</div>
-                            <div id="pclm-interp-3" class="p-2 rounded border border-transparent transition-colors">🟠 <strong>44–50 балів:</strong> Підвищений рівень</div>
-                            <div id="pclm-interp-4" class="p-2 rounded border border-transparent transition-colors">🔴 <strong>51–85 балів:</strong> Високий рівень</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали PCL-5 (загальний бал):</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-slate-600 dark:text-slate-400">
+                            <div id="pcl5-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0–10 балів: Мінімальний</div>
+                            <div id="pcl5-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 11–20 балів: Легкий</div>
+                            <div id="pcl5-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 21–32 бали: Помірний</div>
+                            <div id="pcl5-interp-4" class="p-2 rounded border border-transparent transition-colors">🟠 33–49 балів: Підвищений</div>
+                            <div id="pcl5-interp-5" class="p-2 rounded border border-transparent transition-colors">🔴 50–80 балів: Високий</div>
                         </div>
                     </div>
 
@@ -675,11 +789,11 @@
                             <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
                                 <tr>
                                     <th class="py-2.5 px-3 rounded-l-lg">№</th>
-                                    <th class="py-2.5 px-3">Запитання (Скарги / Проблеми)</th>
-                                    <th class="py-2.5 px-3">Обрана відповідь</th>
+                                    <th class="py-2.5 px-3">Запитання (Симптом ПТСР)</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь</th>
                                 </tr>
                             </thead>
-                            <tbody id="pclm-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                            <tbody id="pcl5-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
@@ -705,15 +819,15 @@
                     <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
                         <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали PHQ-9:</div>
                         <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-slate-600 dark:text-slate-400">
-                            <div id="phq9-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ <strong>0–4:</strong> Мінімальна</div>
-                            <div id="phq9-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 <strong>5–9:</strong> Легка</div>
-                            <div id="phq9-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 <strong>10–14:</strong> Помірна</div>
-                            <div id="phq9-interp-4" class="p-2 rounded border border-transparent transition-colors">🟠 <strong>15–19:</strong> Виражена</div>
-                            <div id="phq9-interp-5" class="p-2 rounded border border-transparent transition-colors">🔴 <strong>20–27:</strong> Тяжка</div>
+                            <div id="phq9-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0–4: Мінімальний</div>
+                            <div id="phq9-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 5–9: Низький</div>
+                            <div id="phq9-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 10–14: Помірний</div>
+                            <div id="phq9-interp-4" class="p-2 rounded border border-transparent transition-colors">🟠 15–19: Виражений</div>
+                            <div id="phq9-interp-5" class="p-2 rounded border border-transparent transition-colors">🔴 20–27: Важкий</div>
                         </div>
                     </div>
 
-                    <div class="mb-6 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs border border-slate-200 dark:border-slate-700 transition-colors">
+                    <div class="mb-6 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs border border-slate-200 dark:border-slate-700 transition-colors print-color-exact">
                         <strong class="text-slate-700 dark:text-slate-300">Оцінка важкості повсякденних справ:</strong>
                         <span id="phq9-impact-res-text" class="ml-1 font-semibold text-slate-800 dark:text-slate-100">Не вказано</span>
                     </div>
@@ -745,8 +859,8 @@
                     <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
                         <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали DES-II:</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 dark:text-slate-400">
-                            <div id="des2-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ <strong>0–29 балів:</strong> Низький рівень дисоціації</div>
-                            <div id="des2-interp-2" class="p-2 rounded border border-transparent transition-colors">🔴 <strong>30–100 балів:</strong> Високий рівень дисоціації</div>
+                            <div id="des2-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0–29 балів: Мінімальний</div>
+                            <div id="des2-interp-2" class="p-2 rounded border border-transparent transition-colors">🔴 30–100 балів: Високий</div>
                         </div>
                     </div>
 
@@ -817,10 +931,31 @@
         let currentActiveTab = 'welcome';
 
         const GAD7_QUESTIONS = ["Підвищена нервова збудливість, неспокій чи дратівливість", "Нездатність впоратися із хвилюванням", "Надмірне занепокоєння з різного приводу", "Нездатність розслабитися", "Крайній рівень неспокою: Місця собі не знаходжу", "Легко піддаюся відчуттю неспокою чи дратівливості", "Страх через відчуття, ніби станеться щось жахливе"];
-        const GAD7_OPTIONS = [{ text: "⚪ Ніколи", value: 0 }, { text: "🟡 Кілька днів", value: 1 }, { text: "🟠 Понад половину часу", value: 2 }, { text: "🔴 Майже щодня", value: 3 }];
+        const GAD7_OPTIONS = [{ text: "⚪ Ніколи", value: 0 }, { text: "🟢 Кілька днів", value: 1 }, { text: "🟡 Понад половину часу", value: 2 }, { text: "🔴 Майже щодня", value: 3 }];
 
-        const PCLM_QUESTIONS = ["Думки і спогади, що повторюються", "Повторювані, турбуючі сни", "Відчуття, ніби ситуація повторюється (флешбеки)", "Засмучення при нагадуванні про ситуацію", "Фізичні реакції на нагадування (прискорене серцебиття, пітливість тощо)", "Уникання думок або розмов про минулі події", "Уникання діяльності або ситуацій, що нагадують про минуле", "Труднощі з пригадуванням важливих деталей травматичного досвіду", "Втрата інтересу до задоволень та звичної діяльності", "Відчуття відстороненості або відчуженості від інших людей", "Емоційне заціпеніння (нездатність відчувати любов чи теплі почуття)", "Відчуття обмеженого майбутнього (наче життя буде коротшим)", "Труднощі зі сном (засинання або переривчастий сон)", "Роздратування або вибухи гніву", "Труднощі з концентрацією уваги", "Постійна настороженість або надмірна пильність", "Відчуття знервованості або підвищеного переляку"];
-        const PCLM_OPTIONS = [{ text: "⚪ Не було зовсім", value: 1 }, { text: "🟢 Інколи", value: 2 }, { text: "🟡 Помірно", value: 3 }, { text: "🟠 Часто", value: 4 }, { text: "🔴 Дуже часто", value: 5 }];
+        const PCL5_QUESTIONS = [
+            "Повторювані, тривожні та мимовільні спогади про стресовий досвід?",
+            "Повторювані, тривожні сни про стресовий досвід?",
+            "Раптове відчуття або поведінка, ніби стресовий досвід відбувається знову (ніби ви знову переживаєте його)?",
+            "Сильне емоційне потрясіння при нагадуванні про стресовий досвід?",
+            "Сильні фізичні реакції при нагадуванні про стресовий досвід (наприклад, прискорене серцебиття, утруднене дихання, пітливість)?",
+            "Уникнення спогадів, думок або почуттів, пов'язаних зі стресовим досвідом?",
+            "Уникнення зовнішніх нагадувань (людей, місць, розмов, занять, об'єктів або ситуацій), які викликають спогади про стресовий досвід?",
+            "Нездатність згадати важливі частини стресового досвіду?",
+            "Наявність сильних негативних переконань про себе, інших людей або світ (наприклад, «я поганий», «нікому не можна довіряти», «світ дуже небезпечний»)?",
+            "Звинувачення себе або інших за стресовий досвід або те, що сталося після нього?",
+            "Наявність сильних негативних почуттів (страх, жах, гнів, провина або сором)?",
+            "Втрата інтересу до занять, які раніше приносили задоволення?",
+            "Відчуття відстороненості або відчуженості від інших людей?",
+            "Нездатність відчувати позитивні емоції (наприклад, щастя або любов)?",
+            "Дратівливість, спалахи гніву або агресивна поведінка?",
+            "Схильність до ризикованої або руйнівної поведінки?",
+            "Стан постійної настороженості, очікування небезпеки (гіперпильність)?",
+            "Надмірна лякливість (легко здригаєтесь)?",
+            "Труднощі з концентрацією уваги?",
+            "Труднощі із засинанням або підтриманням сну?"
+        ];
+        const PCL5_OPTIONS = [{ text: "⚪ Зовсім ні", value: 0 }, { text: "🟢 Трохи", value: 1 }, { text: "🟡 Помірно", value: 2 }, { text: "🟠 Значною мірою", value: 3 }, { text: "🔴 Дуже сильно", value: 4 }];
 
         const PHQ9_QUESTIONS = ["Вам було не дуже цікаво або подобалося чимось займатися", "Ви почувалися сумними, пригніченими або безнадійними", "Вам було важко засинати або не прокидатися, або Ви спали надто довго", "Ви відчували втому або мало сил", "У Вас був поганий апетит, або Ви переїдали", "Ви погано про себе думали", "Вам було важко зосередитися", "Ви рухалися або розмовляли надто повільно або надто швидко", "У Вас були думки про заподіяння собі шкоди або що краще було б померти"];
         const PHQ9_OPTIONS = [{ text: "⚪ Зовсім не турбували", value: 0 }, { text: "🟢 Декілька днів", value: 1 }, { text: "🟡 Більш половини всіх днів", value: 2 }, { text: "🔴 Майже щоденно", value: 3 }];
@@ -829,7 +964,7 @@
         const DES2_QUESTIONS = ["Керуючи автомобілем, автобусом чи метро, раптово усвідомлюєте, що не пам'ятаєте, що сталося протягом усієї поїздки або її частини.", "Слухаючи чиюсь розмову, раптом усвідомлюєте, що не почули частину або все сказане.", "Опиняєтесь в певному місці і не маєте уявлення, як туди потрапили.", "Опиняєтесь в одязі, який не пам'ятаєте, щоб одягали.", "Знаходите серед своїх речей нові речі, які не пам'ятаєте, щоб купували.", "До вас звертаються незнайомі люди, які називають вас іншим ім'ям або наполягають, що зустрічалися з вами раніше.", "Відчуваєте, ніби стоїте поруч самі з собою або спостерігаєте за собою, коли щось робите.", "Вам кажуть, що ви іноді не впізнаєте друзів чи членів родини.", "Не пам'ятаєте деякі важливі події у своєму житті (наприклад, весілля чи випускний).", "Вас звинувачують у брехні, навіть якщо ви не вважаєте, що брехали.", "Дивлячись в дзеркало, не впізнаєте себе.", "Відчуваєте, що інші люди, предмети та світ навколо вас не є реальними.", "Відчуваєте, що ваше тіло ніби вам не належить.", "Настільки яскраво згадуєте минулу подію, що здається, ніби ви переживаєте її знову.", "Не впевнені, чи те, що ви пам'ятаєте, справді сталося, чи це вам просто наснилося.", "Буваєте у знайомому місці, але вважаєте його дивним і незнайомим.", "Під час перегляду телевізора або фільму настільки поглинаєтесь історією, що не помічаєте інших подій навколо.", "Настільки захоплюєтесь фантазіями чи мріями, що відчуваєте, ніби це відбувається насправді.", "Виявляєте, що іноді здатні ігнорувати біль.", "Сидите, вдивляючись у порожнечу, ні про що не думаючи, і не усвідомлюєте плину часу.", "Коли ви самі, розмовляєте самі з собою.", "В одній ситуації дієте настільки по-різному порівняно з іншою, що відчуваєте себе майже як дві різні людини.", "В певних ситуаціях здатні з дивовижною легкістю та спонтанністю робити речі, які зазвичай були б складними.", "Не можете згадати, чи ви щось зробили, чи просто подумали про це.", "Знаходите докази того, що ви робили речі, яких ви не пам'ятаєте.", "Знаходите серед своїх речей нотатки або малюнки, які ви зробили, але не пам'ятаєте про це.", "Чуєте голоси всередині себе, які наказують вам щось робити або коментують те, що ви робите.", "Здається, ніби дивитесь на світ крізь туман, тому люди та предмети здаються далекими або нечіткими."];
         const DES2_OPTIONS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-        const userState = { gad7: {}, pclm: {}, phq9: {}, des2: {}, phq9Impact: "Зовсім не важко" };
+        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, phq9Impact: "Зовсім не важко" };
 
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
@@ -837,13 +972,74 @@
             if(dateEl && !dateEl.value) dateEl.value = today;
 
             renderGAD7Form();
-            renderPCLMForm();
+            renderPCL5Form();
             renderPHQ9Form();
             renderDES2Form();
-            updateProgress();
+            updateProgressCounters();
+            updateInlineResults();
         });
 
+        function syncSexAndGender(source) {
+            const sexRadios = document.querySelectorAll('input[name="patient-sex"]');
+            const genderSelect = document.getElementById('patient-gender');
+            if (!genderSelect || !sexRadios) return;
+            
+            let selectedSex = Array.from(sexRadios).find(r => r.checked)?.value;
+            let selectedGender = genderSelect.value;
+            
+            if (source === 'sex') {
+                Array.from(genderSelect.options).forEach(opt => {
+                    opt.disabled = false;
+                    if(opt.value === 'Жінка (цисгендерна)') opt.text = 'Жінка (цисгендерна)';
+                    if(opt.value === 'Чоловік (цисгендерний)') opt.text = 'Чоловік (цисгендерний)';
+                    if(opt.value === 'Трансгендерна жінка') opt.text = 'Трансгендерна жінка';
+                    if(opt.value === 'Трансгендерний чоловік') opt.text = 'Трансгендерний чоловік';
+                });
+                
+                if (selectedSex === 'Чоловік') {
+                    const opt1 = Array.from(genderSelect.options).find(o => o.value === 'Жінка (цисгендерна)');
+                    const opt2 = Array.from(genderSelect.options).find(o => o.value === 'Трансгендерний чоловік');
+                    if (opt1) { opt1.disabled = true; opt1.text = 'Жінка (цисгендерна) 🚫'; }
+                    if (opt2) { opt2.disabled = true; opt2.text = 'Трансгендерний чоловік 🚫'; }
+                    
+                    if (selectedGender === 'Жінка (цисгендерна)' || selectedGender === 'Трансгендерний чоловік') {
+                        genderSelect.value = '';
+                        toggleCustomGender();
+                    }
+                } else if (selectedSex === 'Жінка') {
+                    const opt1 = Array.from(genderSelect.options).find(o => o.value === 'Чоловік (цисгендерний)');
+                    const opt2 = Array.from(genderSelect.options).find(o => o.value === 'Трансгендерна жінка');
+                    if (opt1) { opt1.disabled = true; opt1.text = 'Чоловік (цисгендерний) 🚫'; }
+                    if (opt2) { opt2.disabled = true; opt2.text = 'Трансгендерна жінка 🚫'; }
+                    
+                    if (selectedGender === 'Чоловік (цисгендерний)' || selectedGender === 'Трансгендерна жінка') {
+                        genderSelect.value = '';
+                        toggleCustomGender();
+                    }
+                }
+            } else if (source === 'gender') {
+                const maleRadio = Array.from(sexRadios).find(r => r.value === 'Чоловік');
+                const femaleRadio = Array.from(sexRadios).find(r => r.value === 'Жінка');
+                
+                if (maleRadio) maleRadio.disabled = false;
+                if (femaleRadio) femaleRadio.disabled = false;
+                
+                if (selectedGender === 'Жінка (цисгендерна)' || selectedGender === 'Трансгендерний чоловік') {
+                    if (maleRadio) maleRadio.disabled = true;
+                    if (selectedSex === 'Чоловік' && maleRadio) {
+                        maleRadio.checked = false;
+                    }
+                } else if (selectedGender === 'Чоловік (цисгендерний)' || selectedGender === 'Трансгендерна жінка') {
+                    if (femaleRadio) femaleRadio.disabled = true;
+                    if (selectedSex === 'Жінка' && femaleRadio) {
+                        femaleRadio.checked = false;
+                    }
+                }
+            }
+        }
+
         function toggleCustomGender() {
+            syncSexAndGender('gender');
             const select = document.getElementById('patient-gender');
             const customInput = document.getElementById('patient-gender-custom');
             if (select.value === 'Свій варіант') {
@@ -856,24 +1052,45 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            const tabs = ['welcome', 'gad7', 'pclm', 'phq9', 'des2', 'results'];
-            tabs.forEach(t => {
+            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'results'];
+            
+            contentTabs.forEach(t => {
                 const contentEl = document.getElementById(`content-${t}`);
-                const btnEl = document.getElementById(`tab-${t}`);
-                if (contentEl && btnEl) {
+                if (contentEl) {
                     if (t === tabId) {
                         contentEl.classList.remove('hidden');
-                        btnEl.className = `tab-btn px-3 sm:px-4 py-2 sm:py-3 font-semibold text-sm border-b-2 border-sky-600 dark:border-sky-500 text-sky-600 dark:text-sky-400 whitespace-nowrap transition flex items-center gap-2`;
                     } else {
                         contentEl.classList.add('hidden');
-                        btnEl.className = `tab-btn px-3 sm:px-4 py-2 sm:py-3 font-medium text-sm text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap transition flex items-center gap-2`;
                     }
                 }
             });
             
             if (tabId === 'results') calculateAndShowResults();
-            updateProgress(); 
+            updateProgressCounters(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearTest(testId) {
+            if (testId === 'gad7') { userState.gad7 = {}; renderGAD7Form(); }
+            if (testId === 'pcl5') {
+                userState.pcl5 = {};
+                userState.pcl5CritA = null;
+                document.getElementById('lbl-pcl5-yes').className = "flex-1 p-3 rounded-xl border border-sky-200 dark:border-sky-800 cursor-pointer bg-white dark:bg-slate-900 text-center font-semibold hover:bg-sky-50 dark:hover:bg-sky-900/30 transition";
+                document.getElementById('lbl-pcl5-no').className = "flex-1 p-3 rounded-xl border border-sky-200 dark:border-sky-800 cursor-pointer bg-white dark:bg-slate-900 text-center font-semibold hover:bg-sky-50 dark:hover:bg-sky-900/30 transition";
+                document.getElementById('pcl5-questions-wrapper').classList.add('hidden');
+                document.getElementById('pcl5-stop-msg').classList.add('hidden');
+                renderPCL5Form();
+            }
+            if (testId === 'phq9') {
+                userState.phq9 = {};
+                userState.phq9Impact = "Зовсім не важко";
+                renderPHQ9Form();
+            }
+            if (testId === 'des2') { userState.des2 = {}; renderDES2Form(); }
+
+            updateProgressCounters();
+            updateInlineResults();
+            if (currentActiveTab === 'results') calculateAndShowResults();
         }
 
         function renderGAD7Form() {
@@ -893,17 +1110,46 @@
             });
         }
 
-        function renderPCLMForm() {
-            const container = document.getElementById('pclm-questions-container');
+        function setPCL5CritA(val) {
+            userState.pcl5CritA = val;
+            const wrap = document.getElementById('pcl5-questions-wrapper');
+            const msg = document.getElementById('pcl5-stop-msg');
+            const lblYes = document.getElementById('lbl-pcl5-yes');
+            const lblNo = document.getElementById('lbl-pcl5-no');
+
+            if(val === 'yes') {
+                wrap.classList.remove('hidden');
+                msg.classList.add('hidden');
+                lblYes.classList.add('bg-sky-50', 'border-sky-500', 'text-sky-900', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                lblYes.classList.remove('bg-white', 'dark:bg-slate-900');
+                lblNo.classList.remove('bg-sky-50', 'border-sky-500', 'text-sky-900', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                lblNo.classList.add('bg-white', 'dark:bg-slate-900');
+            } else if (val === 'no') {
+                wrap.classList.add('hidden');
+                msg.classList.remove('hidden');
+                lblNo.classList.add('bg-sky-50', 'border-sky-500', 'text-sky-900', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                lblNo.classList.remove('bg-white', 'dark:bg-slate-900');
+                lblYes.classList.remove('bg-sky-50', 'border-sky-500', 'text-sky-900', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                lblYes.classList.add('bg-white', 'dark:bg-slate-900');
+                userState.pcl5 = {};
+                renderPCL5Form();
+            }
+            updateProgressCounters();
+            updateInlineResults();
+            if(currentActiveTab === 'results') calculateAndShowResults();
+        }
+
+        function renderPCL5Form() {
+            const container = document.getElementById('pcl5-questions-container');
             container.innerHTML = '';
-            PCLM_QUESTIONS.forEach((qText, index) => {
+            PCL5_QUESTIONS.forEach((qText, index) => {
                 const qCard = document.createElement('div');
                 qCard.className = 'p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300';
                 let optionsHTML = '';
-                PCLM_OPTIONS.forEach((opt) => {
-                    const isChecked = userState.pclm[index] === opt.value;
+                PCL5_OPTIONS.forEach((opt) => {
+                    const isChecked = userState.pcl5[index] === opt.value;
                     const baseClass = isChecked ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-500 text-sky-900 dark:text-sky-300 ring-1 ring-sky-500' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800';
-                    optionsHTML += `<label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition-colors text-xs font-medium ${baseClass}"><input type="radio" name="pclm-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setPCLMAnswer(${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
+                    optionsHTML += `<label class="flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition-colors text-xs font-medium ${baseClass}"><input type="radio" name="pcl5-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setPCL5Answer(${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
                 });
                 qCard.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="w-6 h-6 rounded-full bg-sky-100 text-sky-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${index + 1}</span><div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">${qText}</div></div><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 pl-0 sm:pl-9">${optionsHTML}</div>`;
                 container.appendChild(qCard);
@@ -955,35 +1201,96 @@
             });
         }
 
-        function setGAD7Answer(idx, val) { userState.gad7[idx] = val; updateProgress(); renderGAD7Form(); if(currentActiveTab === 'results') calculateAndShowResults(); }
-        function setPCLMAnswer(idx, val) { userState.pclm[idx] = val; updateProgress(); renderPCLMForm(); if(currentActiveTab === 'results') calculateAndShowResults(); }
-        function setPHQ9Answer(idx, val) { userState.phq9[idx] = val; updateProgress(); renderPHQ9Form(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+        function setGAD7Answer(idx, val) { userState.gad7[idx] = val; updateProgressCounters(); renderGAD7Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+        function setPCL5Answer(idx, val) { userState.pcl5[idx] = val; updateProgressCounters(); renderPCL5Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+        function setPHQ9Answer(idx, val) { userState.phq9[idx] = val; updateProgressCounters(); renderPHQ9Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPHQ9Impact(valText) { userState.phq9Impact = valText; renderPHQ9Form(); if(currentActiveTab === 'results') calculateAndShowResults(); }
-        function setDES2Answer(idx, val) { userState.des2[idx] = val; updateProgress(); renderDES2Form(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+        function setDES2Answer(idx, val) { userState.des2[idx] = val; updateProgressCounters(); renderDES2Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
 
-        function updateProgress() {
+        function updateProgressCounters() {
             const gad7Count = Object.keys(userState.gad7).length;
-            const pclmCount = Object.keys(userState.pclm).length;
+            const pcl5Count = Object.keys(userState.pcl5).length;
             const phq9Count = Object.keys(userState.phq9).length;
             const des2Count = Object.keys(userState.des2).length;
-            const totalAnswered = gad7Count + pclmCount + phq9Count + des2Count;
 
             document.getElementById('badge-gad7').textContent = `${gad7Count}/7`;
-            document.getElementById('badge-pclm').textContent = `${pclmCount}/17`;
+            
+            if (userState.pcl5CritA === 'no') {
+                document.getElementById('badge-pcl5').textContent = `Фільтр`;
+            } else {
+                document.getElementById('badge-pcl5').textContent = `${pcl5Count}/20`;
+            }
+            
             document.getElementById('badge-phq9').textContent = `${phq9Count}/9`;
             document.getElementById('badge-des2').textContent = `${des2Count}/28`;
 
-            let displayCount = 0; let displayTotal = 0; let labelText = "Загальний прогрес";
-            if (currentActiveTab === 'gad7') { displayCount = gad7Count; displayTotal = 7; labelText = "Прогрес GAD-7"; } 
-            else if (currentActiveTab === 'pclm') { displayCount = pclmCount; displayTotal = 17; labelText = "Прогрес PCL-M"; } 
-            else if (currentActiveTab === 'phq9') { displayCount = phq9Count; displayTotal = 9; labelText = "Прогрес PHQ-9"; } 
-            else if (currentActiveTab === 'des2') { displayCount = des2Count; displayTotal = 28; labelText = "Прогрес DES-II"; } 
-            else { displayCount = totalAnswered; displayTotal = 61; labelText = "Загальний прогрес"; }
+            // Update Top Progress Bar dynamically
+            const topBar = document.getElementById('top-progress-bar');
+            const topContainer = document.getElementById('top-progress-container');
+            
+            if (['gad7', 'pcl5', 'phq9', 'des2'].includes(currentActiveTab)) {
+                topContainer.classList.remove('hidden');
+                let percent = 0;
+                if (currentActiveTab === 'gad7') percent = (gad7Count / 7) * 100;
+                else if (currentActiveTab === 'pcl5') {
+                    if (userState.pcl5CritA === 'no') percent = 100;
+                    else percent = (pcl5Count / 20) * 100;
+                }
+                else if (currentActiveTab === 'phq9') percent = (phq9Count / 9) * 100;
+                else if (currentActiveTab === 'des2') percent = (des2Count / 28) * 100;
+                
+                topBar.style.width = `${percent}%`;
+            } else {
+                topContainer.classList.add('hidden');
+            }
+        }
+        
+        function updateInlineResults() {
+            // GAD-7 Inline
+            let gad7Sum = 0; Object.values(userState.gad7).forEach(v => gad7Sum += v);
+            let gad7Badge = "⚪ Мінімальний"; let gad7Class = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            if (gad7Sum >= 15) { gad7Badge = "🔴 Високий"; gad7Class = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
+            else if (gad7Sum >= 10) { gad7Badge = "🟡 Помірний"; gad7Class = "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-800"; }
+            else if (gad7Sum >= 5) { gad7Badge = "🟢 Легкий"; gad7Class = "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"; }
+            safeSetText('inline-score-gad7', `${gad7Sum} / 21`);
+            safeSetText('inline-badge-gad7', gad7Badge);
+            safeSetClass('inline-badge-gad7', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${gad7Class}`);
 
-            const percent = displayTotal > 0 ? Math.round((displayCount / displayTotal) * 100) : 0;
-            document.getElementById('global-progress-label').textContent = labelText;
-            document.getElementById('global-progress-text').textContent = `${displayCount} / ${displayTotal} питань (${percent}%)`;
-            document.getElementById('global-progress-bar').style.width = `${percent}%`;
+            // PCL-5 Inline
+            let pcl5Sum = 0; 
+            if (userState.pcl5CritA === 'yes') Object.values(userState.pcl5).forEach(v => pcl5Sum += v);
+            
+            let pcl5Badge = "⚪ Мінімальний"; let pcl5Class = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            if (userState.pcl5CritA !== 'no') {
+                if (pcl5Sum >= 50) { pcl5Badge = "🔴 Високий"; pcl5Class = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
+                else if (pcl5Sum >= 33) { pcl5Badge = "🟠 Підвищений"; pcl5Class = "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-800"; }
+                else if (pcl5Sum >= 21) { pcl5Badge = "🟡 Помірний"; pcl5Class = "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-800"; }
+                else if (pcl5Sum >= 11) { pcl5Badge = "🟢 Легкий"; pcl5Class = "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"; }
+            }
+            safeSetText('inline-score-pcl5', `${pcl5Sum} / 80`);
+            safeSetText('inline-badge-pcl5', pcl5Badge);
+            safeSetClass('inline-badge-pcl5', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${pcl5Class}`);
+
+            // PHQ-9 Inline
+            let phq9Sum = 0; Object.values(userState.phq9).forEach(v => phq9Sum += v);
+            let phq9Badge = "⚪ Мінімальний"; let phq9Class = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            if (phq9Sum >= 20) { phq9Badge = "🔴 Важкий"; phq9Class = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
+            else if (phq9Sum >= 15) { phq9Badge = "🟠 Виражений"; phq9Class = "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-800"; }
+            else if (phq9Sum >= 10) { phq9Badge = "🟡 Помірний"; phq9Class = "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-800"; }
+            else if (phq9Sum >= 5) { phq9Badge = "🟢 Низький"; phq9Class = "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"; }
+            safeSetText('inline-score-phq9', `${phq9Sum} / 27`);
+            safeSetText('inline-badge-phq9', phq9Badge);
+            safeSetClass('inline-badge-phq9', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${phq9Class}`);
+
+            // DES-II Inline
+            let des2Sum = 0; const des2Keys = Object.keys(userState.des2);
+            des2Keys.forEach(k => des2Sum += userState.des2[k]);
+            const des2Avg = des2Keys.length === 0 ? 0 : parseFloat((des2Sum / 28).toFixed(1));
+            let des2Badge = des2Avg >= 30 ? "🔴 Високий" : "⚪ Мінімальний";
+            let des2Class = des2Avg >= 30 ? "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            safeSetText('inline-score-des2', des2Avg);
+            safeSetText('inline-badge-des2', des2Badge);
+            safeSetClass('inline-badge-des2', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${des2Class}`);
         }
 
         function autoFillDemoData() {
@@ -992,18 +1299,38 @@
             const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
             document.getElementById('patient-dob').value = randomDate.toISOString().split('T')[0];
 
-            const sexes = ['Чоловіча', 'Жіноча', 'Інтерсекс'];
+            const sexes = ['Чоловік', 'Жінка', 'Інтерсекс'];
             const randomSex = sexes[Math.floor(Math.random() * sexes.length)];
             const sexEl = document.querySelector(`input[name="patient-sex"][value="${randomSex}"]`);
             if(sexEl) sexEl.checked = true;
 
+            syncSexAndGender('sex');
+
             const genders = ['Жінка (цисгендерна)', 'Чоловік (цисгендерний)', 'Трансгендерна жінка', 'Трансгендерний чоловік', 'Небінарна особа', 'Агендер / Гендерквір', 'Не бажаю відповідати'];
-            const randomGender = genders[Math.floor(Math.random() * genders.length)];
+            
+            // Try picking a valid gender until it's not disabled
+            let validGender = false;
+            let randomGender = '';
+            let attempts = 0;
             const genderSelect = document.getElementById('patient-gender');
-            if(genderSelect) { genderSelect.value = randomGender; toggleCustomGender(); }
+            
+            while (!validGender && attempts < 20) {
+                randomGender = genders[Math.floor(Math.random() * genders.length)];
+                const option = Array.from(genderSelect.options).find(o => o.value === randomGender);
+                if (option && !option.disabled) validGender = true;
+                attempts++;
+            }
+
+            if(genderSelect && validGender) { 
+                genderSelect.value = randomGender; 
+                toggleCustomGender(); 
+            }
 
             userState.gad7 = {}; for(let i=0; i<7; i++) userState.gad7[i] = Math.floor(Math.random() * 4);
-            userState.pclm = {}; for(let i=0; i<17; i++) userState.pclm[i] = Math.floor(Math.random() * 5) + 1;
+            
+            setPCL5CritA('yes');
+            userState.pcl5 = {}; for(let i=0; i<20; i++) userState.pcl5[i] = Math.floor(Math.random() * 5);
+            
             userState.phq9 = {}; for(let i=0; i<9; i++) userState.phq9[i] = Math.floor(Math.random() * 4);
             
             const impacts = ["Зовсім не важко", "Дещо важко", "Дуже важко", "Надзвичайно важко"];
@@ -1013,54 +1340,100 @@
             const des2Values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             for (let i = 0; i < 28; i++) userState.des2[i] = des2Values[Math.floor(Math.random() * des2Values.length)];
 
-            renderGAD7Form(); renderPCLMForm(); renderPHQ9Form(); renderDES2Form();
-            updateProgress();
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form();
+            updateProgressCounters();
+            updateInlineResults();
             if (currentActiveTab === 'results') calculateAndShowResults();
         }
 
         function resetForm() {
-            userState.gad7 = {}; userState.pclm = {}; userState.phq9 = {}; userState.des2 = {};
-            userState.phq9Impact = "Зовсім не важко";
-            document.getElementById('patient-name').value = '';
-            document.getElementById('patient-dob').value = '';
-            document.querySelectorAll('input[name="patient-sex"]').forEach(s => s.checked = false);
+            userState.gad7 = {}; 
+            userState.pcl5CritA = null; 
+            document.querySelectorAll('input[name="patient-sex"]').forEach(s => {
+                s.checked = false;
+                s.disabled = false;
+            });
             const genderSelect = document.getElementById('patient-gender');
-            if(genderSelect) { genderSelect.value = ''; toggleCustomGender(); }
+            if(genderSelect) { 
+                genderSelect.value = ''; 
+                Array.from(genderSelect.options).forEach(opt => {
+                    opt.disabled = false;
+                    if(opt.value === 'Жінка (цисгендерна)') opt.text = 'Жінка (цисгендерна)';
+                    if(opt.value === 'Чоловік (цисгендерний)') opt.text = 'Чоловік (цисгендерний)';
+                    if(opt.value === 'Трансгендерна жінка') opt.text = 'Трансгендерна жінка';
+                    if(opt.value === 'Трансгендерний чоловік') opt.text = 'Трансгендерний чоловік';
+                });
+                toggleCustomGender(); 
+            }
             document.getElementById('patient-gender-custom').value = '';
 
-            renderGAD7Form(); renderPCLMForm(); renderPHQ9Form(); renderDES2Form();
-            updateProgress();
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form();
+            updateProgressCounters();
+            updateInlineResults();
             if (currentActiveTab === 'results') calculateAndShowResults();
         }
 
-        function exportReport(mode) {
-            // Тимчасово вимикаємо темну тему для коректного та яскравого експорту на білий папір
+        function toggleSelectAllExports() {
+            const isAll = document.getElementById('chk-export-all').checked;
+            ['gad7', 'pcl5', 'phq9', 'des2'].forEach(id => {
+                const el = document.getElementById(`chk-export-${id}`);
+                if (el) el.checked = isAll;
+            });
+        }
+
+        function updateSelectAllCheckbox() {
+            const checks = ['gad7', 'pcl5', 'phq9', 'des2'].map(id => document.getElementById(`chk-export-${id}`).checked);
+            const allChecked = checks.every(c => c);
+            const elAll = document.getElementById('chk-export-all');
+            if(elAll) elAll.checked = allChecked;
+        }
+
+        function handlePrintCustom() {
+            const checks = ['gad7', 'pcl5', 'phq9', 'des2'];
+            const selected = checks.filter(id => document.getElementById(`chk-export-${id}`).checked);
+
+            if (selected.length === 0) {
+                alert("Оберіть хоча б один тест для експорту.");
+                return;
+            }
+
+            // Hide unselected sections for print
+            checks.forEach(id => {
+                const section = document.getElementById(`section-${id}`);
+                const card = document.getElementById(`summary-card-${id}`);
+                if (!selected.includes(id)) {
+                    section.classList.add('print-only-hide');
+                    card.classList.add('print-only-hide');
+                } else {
+                    section.classList.remove('print-only-hide');
+                    card.classList.remove('print-only-hide');
+                }
+            });
+
+            // Set Title for Filename
+            const oldTitle = document.title;
+            const now = new Date();
+            const dateStr = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}`;
+            let titleParts = [];
+            selected.forEach(s => titleParts.push(s.toUpperCase().replace('PCL5', 'PCL-5').replace('DES2', 'DES-II')));
+            document.title = `Психодіагностичний_Комплекс_${titleParts.join('_')}_${dateStr}`;
+
+            // Momentarily remove dark mode for pure white print
             const html = document.documentElement;
             const wasDark = html.classList.contains('dark');
             if (wasDark) html.classList.remove('dark');
 
-            document.body.setAttribute('data-print-mode', mode);
-            const oldTitle = document.title;
-            const now = new Date();
-            const dd = String(now.getDate()).padStart(2, '0');
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const yy = String(now.getFullYear()).slice(-2);
-            const dateStr = `${dd}${mm}${yy}`;
-            
-            let prefix = "Психодіагностичний_Комплекс";
-            if (mode !== 'all') prefix += `_Тільки_${mode.toUpperCase()}`;
-            else prefix += `_GAD-7_PCL-M_PHQ-9_DES-II`;
-            
-            document.title = `${prefix}_${dateStr}`;
-            
-            // Даємо браузеру 150мс оновити стилі світлої теми перед викликом вікна друку
             setTimeout(() => {
                 window.print();
                 
-                // Повертаємо початкові налаштування після друку
+                // Restore settings
                 document.title = oldTitle;
-                document.body.setAttribute('data-print-mode', 'all');
                 if (wasDark) html.classList.add('dark');
+                
+                checks.forEach(id => {
+                    document.getElementById(`section-${id}`).classList.remove('print-only-hide');
+                    document.getElementById(`summary-card-${id}`).classList.remove('print-only-hide');
+                });
             }, 150);
         }
 
@@ -1115,29 +1488,56 @@
             safeSetText('res-header-age', ageStr);
             safeSetText('res-top-date', dateVal);
 
-            const totalAnswered = Object.keys(userState.gad7).length + Object.keys(userState.pclm).length + Object.keys(userState.phq9).length + Object.keys(userState.des2).length;
-            const noticeEl = document.getElementById('incomplete-notice');
-            if(noticeEl) {
-                if (totalAnswered < 61) noticeEl.classList.remove('hidden');
-                else noticeEl.classList.add('hidden');
+            // Auto-check export boxes for fully completed tests
+            const isGad7Complete = Object.keys(userState.gad7).length === 7;
+            const isPcl5Complete = userState.pcl5CritA === 'no' || (userState.pcl5CritA === 'yes' && Object.keys(userState.pcl5).length === 20);
+            const isPhq9Complete = Object.keys(userState.phq9).length === 9;
+            const isDes2Complete = Object.keys(userState.des2).length === 28;
+
+            const elGad7 = document.getElementById('chk-export-gad7');
+            const elPcl5 = document.getElementById('chk-export-pcl5');
+            const elPhq9 = document.getElementById('chk-export-phq9');
+            const elDes2 = document.getElementById('chk-export-des2');
+
+            if(elGad7) elGad7.checked = isGad7Complete;
+            if(elPcl5) elPcl5.checked = isPcl5Complete;
+            if(elPhq9) elPhq9.checked = isPhq9Complete;
+            if(elDes2) elDes2.checked = isDes2Complete;
+            updateSelectAllCheckbox();
+
+            // Incomplete Warning Logic
+            let incompleteTests = [];
+            if (Object.keys(userState.gad7).length > 0 && !isGad7Complete) incompleteTests.push("GAD-7");
+            if (userState.pcl5CritA === 'yes' && Object.keys(userState.pcl5).length > 0 && !isPcl5Complete) incompleteTests.push("PCL-5");
+            if (Object.keys(userState.phq9).length > 0 && !isPhq9Complete) incompleteTests.push("PHQ-9");
+            if (Object.keys(userState.des2).length > 0 && !isDes2Complete) incompleteTests.push("DES-II");
+
+            const warnContainer = document.getElementById('export-warning-container');
+            const warnText = document.getElementById('export-warning-text');
+            if (warnContainer && warnText) {
+                if (incompleteTests.length > 0) {
+                    warnContainer.classList.remove('hidden');
+                    warnText.textContent = `Увага: Наступні тести були розпочаті, але не завершені: ${incompleteTests.join(', ')}. Заповніть їх до кінця для точного результату.`;
+                } else {
+                    warnContainer.classList.add('hidden');
+                }
             }
 
-            // GAD-7 SCORING & BADGE
+            // GAD-7 SCORING
             let gad7Sum = 0; Object.values(userState.gad7).forEach(v => gad7Sum += v);
-            let gad7Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", glow: "glow-slate" };
+            let gad7Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
             let gad7Desc = "Симптоми тривожності відсутні або незначні (0-4 бали).";
             let gad7InterpIdx = 1;
 
-            if (gad7Sum >= 15) { gad7Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400", glow: "glow-rose" }; gad7Desc = "Виражений рівень тривожності. Рекомендовано консультацію спеціаліста."; gad7InterpIdx = 4; } 
-            else if (gad7Sum >= 10) { gad7Badge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400", glow: "glow-amber" }; gad7Desc = "Помірний рівень тривоги. Потребує уваги та додаткового спостереження."; gad7InterpIdx = 3; } 
-            else if (gad7Sum >= 5) { gad7Badge = { text: "🟢 Легкий", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400", glow: "glow-emerald" }; gad7Desc = "Легкі прояви тривожності. Рекомендовано техніки релаксації."; gad7InterpIdx = 2; }
+            if (gad7Sum >= 15) { gad7Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; gad7Desc = "Виражений рівень тривожності. Рекомендовано консультацію спеціаліста."; gad7InterpIdx = 4; } 
+            else if (gad7Sum >= 10) { gad7Badge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800", glow: "glow-amber" }; gad7Desc = "Помірний рівень тривоги. Потребує уваги та додаткового спостереження."; gad7InterpIdx = 3; } 
+            else if (gad7Sum >= 5) { gad7Badge = { text: "🟢 Легкий", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800", glow: "glow-emerald" }; gad7Desc = "Легкі прояви тривожності. Рекомендовано техніки релаксації."; gad7InterpIdx = 2; }
 
             safeSetText('gad7-res-score', `${gad7Sum} / 21`);
             safeSetText('gad7-res-badge', gad7Badge.text);
-            safeSetClass('gad7-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact ${gad7Badge.class}`);
+            safeSetClass('gad7-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${gad7Badge.class}`);
             safeSetText('gad7-res-desc', gad7Desc);
             
-            // Mask Width (100% width means fully hidden. 0% means fully revealed)
             const gad7RevealPercent = Math.min(100, Math.round((gad7Sum / 21) * 100));
             safeSetStyleWidth('gad7-res-mask', `${100 - gad7RevealPercent}%`);
             safeSetClass('gad7-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${gad7Badge.glow}`);
@@ -1146,7 +1546,7 @@
             [1, 2, 3, 4].forEach(i => {
                 const el = document.getElementById(`gad7-interp-${i}`);
                 if(el) {
-                    if (i === gad7InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors";
+                    if (i === gad7InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
                     else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
                 }
             });
@@ -1163,45 +1563,75 @@
                 });
             }
 
-            // PCL-M SCORING
-            let pclmSum = 0; Object.values(userState.pclm).forEach(v => pclmSum += v);
-            if (Object.keys(userState.pclm).length === 0) pclmSum = 17;
+            // PCL-5 SCORING
+            let pcl5Sum = 0; 
+            if (userState.pcl5CritA === 'yes') Object.values(userState.pcl5).forEach(v => pcl5Sum += v);
 
-            let pclmBadge = { text: "🟢 Низький", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400", glow: "glow-emerald" };
-            let pclmDesc = "Симптоми ПТСР практично відсутні або мінімальні (17-29 балів).";
-            let pclmInterpIdx = 1;
+            let pcl5Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
+            let pcl5Desc = "Симптоми ПТСР практично відсутні (0-10 балів).";
+            let pcl5InterpIdx = 1;
 
-            if (pclmSum >= 51) { pclmBadge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400", glow: "glow-rose" }; pclmDesc = "Виражена симптоматика ПТСР. Потрібна фахова клінічна підтримка."; pclmInterpIdx = 4; } 
-            else if (pclmSum >= 44) { pclmBadge = { text: "🟠 Підвищений", class: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-400", glow: "glow-orange" }; pclmDesc = "Висока ймовірність ПТСР. Рекомендована консультація психіатра."; pclmInterpIdx = 3; } 
-            else if (pclmSum >= 30) { pclmBadge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400", glow: "glow-amber" }; pclmDesc = "Помірні прояви стресових реакцій. Рекомендовано моніторинг стану."; pclmInterpIdx = 2; }
+            if (userState.pcl5CritA === 'no') {
+                pcl5Desc = "Критерій А не виконано. Травматичний досвід відсутній, ПТСР не підозрюється.";
+            } else if (userState.pcl5CritA === 'yes') {
+                if (pcl5Sum >= 50) { pcl5Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; pcl5Desc = "Виражена симптоматика ПТСР. Потрібна фахова клінічна підтримка."; pcl5InterpIdx = 5; } 
+                else if (pcl5Sum >= 33) { pcl5Badge = { text: "🟠 Підвищений", class: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-400 border-orange-200 dark:border-orange-800", glow: "glow-orange" }; pcl5Desc = "Висока ймовірність ПТСР (бал вище 33). Рекомендована консультація психіатра."; pcl5InterpIdx = 4; } 
+                else if (pcl5Sum >= 21) { pcl5Badge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800", glow: "glow-amber" }; pcl5Desc = "Помірні прояви стресових реакцій. Рекомендовано моніторинг стану."; pcl5InterpIdx = 3; }
+                else if (pcl5Sum >= 11) { pcl5Badge = { text: "🟢 Легкий", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800", glow: "glow-emerald" }; pcl5Desc = "Легкі стресові реакції. Зазвичай не потребують втручання."; pcl5InterpIdx = 2; }
+            } else {
+                pcl5Desc = "Опитування не пройдено.";
+            }
 
-            safeSetText('pclm-res-score', `${pclmSum} / 85`);
-            safeSetText('pclm-res-badge', pclmBadge.text);
-            safeSetClass('pclm-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact ${pclmBadge.class}`);
-            safeSetText('pclm-res-desc', pclmDesc);
+            safeSetText('pcl5-res-score', `${pcl5Sum} / 80`);
+            safeSetText('pcl5-res-badge', pcl5Badge.text);
+            safeSetClass('pcl5-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${pcl5Badge.class}`);
+            safeSetText('pcl5-res-desc', pcl5Desc);
             
-            const pclmRevealPercent = Math.min(100, Math.round(((pclmSum - 17) / 68) * 100));
-            safeSetStyleWidth('pclm-res-mask', `${100 - pclmRevealPercent}%`);
-            safeSetClass('pclm-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${pclmBadge.glow}`);
-            safeSetText('pclm-detailed-score-text', `Сума: ${pclmSum} / 85 балів`);
+            const pcl5RevealPercent = Math.min(100, Math.round((pcl5Sum / 80) * 100));
+            safeSetStyleWidth('pcl5-res-mask', `${100 - pcl5RevealPercent}%`);
+            safeSetClass('pcl5-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${pcl5Badge.glow}`);
+            safeSetText('pcl5-detailed-score-text', `Сума: ${pcl5Sum} / 80 балів`);
 
-            [1, 2, 3, 4].forEach(i => {
-                const el = document.getElementById(`pclm-interp-${i}`);
+            [1, 2, 3, 4, 5].forEach(i => {
+                const el = document.getElementById(`pcl5-interp-${i}`);
                 if(el) {
-                    if (i === pclmInterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors";
+                    if (i === pcl5InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
                     else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
                 }
             });
 
-            const pclmTbody = document.getElementById('pclm-answers-tbody');
-            if(pclmTbody) {
-                pclmTbody.innerHTML = '';
-                PCLM_QUESTIONS.forEach((q, idx) => {
-                    const val = userState.pclm[idx] !== undefined ? userState.pclm[idx] : null;
-                    const optObj = val !== null ? PCLM_OPTIONS.find(o => o.value === val) : null;
+            // DSM-5 Checks
+            let critB = 0, critC = 0, critD = 0, critE = 0;
+            if (userState.pcl5CritA === 'yes') {
+                for(let i=0; i<5; i++) if(userState.pcl5[i] >= 2) critB++;
+                for(let i=5; i<7; i++) if(userState.pcl5[i] >= 2) critC++;
+                for(let i=7; i<14; i++) if(userState.pcl5[i] >= 2) critD++;
+                for(let i=14; i<20; i++) if(userState.pcl5[i] >= 2) critE++;
+            }
+            
+            const isCritA = userState.pcl5CritA === 'yes';
+            const isB = critB >= 1; const isC = critC >= 1; const isD = critD >= 2; const isE = critE >= 2;
+            const dsmResult = isCritA && isB && isC && isD && isE;
+
+            const formatCrit = (met, text) => `<span class="${met ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}">${met ? '✅ Виконано' : '❌ Не виконано'}</span> (${text})`;
+            safeSetText('pcl5-crit-b', ''); document.getElementById('pcl5-crit-b').innerHTML = `Критерій B (Нав'язливі спогади): <span class="font-bold">${formatCrit(isB, `${critB} / 1 мін.`)}</span>`;
+            safeSetText('pcl5-crit-c', ''); document.getElementById('pcl5-crit-c').innerHTML = `Критерій C (Уникнення): <span class="font-bold">${formatCrit(isC, `${critC} / 1 мін.`)}</span>`;
+            safeSetText('pcl5-crit-d', ''); document.getElementById('pcl5-crit-d').innerHTML = `Критерій D (Когніції та настрій): <span class="font-bold">${formatCrit(isD, `${critD} / 2 мін.`)}</span>`;
+            safeSetText('pcl5-crit-e', ''); document.getElementById('pcl5-crit-e').innerHTML = `Критерій E (Збудливість): <span class="font-bold">${formatCrit(isE, `${critE} / 2 мін.`)}</span>`;
+            
+            let dsmTitle = dsmResult ? '<span class="text-rose-600 dark:text-rose-400">Підтверджено</span>' : '<span class="text-emerald-600 dark:text-emerald-400">Не підтверджено</span>';
+            if (userState.pcl5CritA === 'no') dsmTitle = '<span class="text-emerald-600 dark:text-emerald-400">Відхилено (Критерій А)</span>';
+            document.getElementById('pcl5-dsm-result').innerHTML = `Попередній діагноз ПТСР (DSM-5): ${dsmTitle}`;
+
+            const pcl5Tbody = document.getElementById('pcl5-answers-tbody');
+            if(pcl5Tbody) {
+                pcl5Tbody.innerHTML = '';
+                PCL5_QUESTIONS.forEach((q, idx) => {
+                    const val = userState.pcl5[idx] !== undefined ? userState.pcl5[idx] : null;
+                    const optObj = val !== null ? PCL5_OPTIONS.find(o => o.value === val) : null;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">${idx + 1}</td><td class="py-2.5 px-3 dark:text-slate-200">${q}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td>`;
-                    pclmTbody.appendChild(tr);
+                    pcl5Tbody.appendChild(tr);
                 });
             }
 
@@ -1215,18 +1645,18 @@
             safeSetText('phq-c1', count1); safeSetText('phq-c2', count2); safeSetText('phq-c3', count3);
             safeSetText('phq-calc-total', `${phq9Sum} балів`);
 
-            let phq9Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", glow: "glow-slate" };
+            let phq9Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
             let phq9Desc = "Депресивні симптоми відсутні або мінімально виражені (0-4 бали).";
             let phq9InterpIdx = 1;
 
-            if (phq9Sum >= 20) { phq9Badge = { text: "🔴 Важкий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400", glow: "glow-rose" }; phq9Desc = "Тяжкий ступінь депресії. Потрібне термінове направлення до фахівця."; phq9InterpIdx = 5; } 
-            else if (phq9Sum >= 15) { phq9Badge = { text: "🟠 Виражений", class: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-400", glow: "glow-orange" }; phq9Desc = "Помірно-тяжка депресія. Рекомендовано спеціалізоване лікування."; phq9InterpIdx = 4; } 
-            else if (phq9Sum >= 10) { phq9Badge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400", glow: "glow-amber" }; phq9Desc = "Помірний ступінь депресивних симптомів."; phq9InterpIdx = 3; } 
-            else if (phq9Sum >= 5) { phq9Badge = { text: "🟢 Низький", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400", glow: "glow-emerald" }; phq9Desc = "Легка депресивна симптоматика."; phq9InterpIdx = 2; }
+            if (phq9Sum >= 20) { phq9Badge = { text: "🔴 Важкий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; phq9Desc = "Тяжкий ступінь депресії. Потрібне термінове направлення до фахівця."; phq9InterpIdx = 5; } 
+            else if (phq9Sum >= 15) { phq9Badge = { text: "🟠 Виражений", class: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-400 border-orange-200 dark:border-orange-800", glow: "glow-orange" }; phq9Desc = "Помірно-тяжка депресія. Рекомендовано спеціалізоване лікування."; phq9InterpIdx = 4; } 
+            else if (phq9Sum >= 10) { phq9Badge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800", glow: "glow-amber" }; phq9Desc = "Помірний ступінь депресивних симптомів."; phq9InterpIdx = 3; } 
+            else if (phq9Sum >= 5) { phq9Badge = { text: "🟢 Низький", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800", glow: "glow-emerald" }; phq9Desc = "Легка депресивна симптоматика."; phq9InterpIdx = 2; }
 
             safeSetText('phq9-res-score', `${phq9Sum} / 27`);
             safeSetText('phq9-res-badge', phq9Badge.text);
-            safeSetClass('phq9-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact ${phq9Badge.class}`);
+            safeSetClass('phq9-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${phq9Badge.class}`);
             safeSetText('phq9-res-desc', phq9Desc);
             
             const phq9RevealPercent = Math.min(100, Math.round((phq9Sum / 27) * 100));
@@ -1239,7 +1669,7 @@
             [1, 2, 3, 4, 5].forEach(i => {
                 const el = document.getElementById(`phq9-interp-${i}`);
                 if(el) {
-                    if (i === phq9InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors";
+                    if (i === phq9InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
                     else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
                 }
             });
@@ -1250,7 +1680,7 @@
                 PHQ9_QUESTIONS.forEach((q, idx) => {
                     const val = userState.phq9[idx] !== undefined ? userState.phq9[idx] : null;
                     const optObj = val !== null ? PHQ9_OPTIONS.find(o => o.value === val) : null;
-                    const attention = idx === 8 && val > 0 ? '<span class="text-xs bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 px-2 py-0.5 rounded font-bold ml-2">Сигнал уваги</span>' : '';
+                    const attention = idx === 8 && val > 0 ? '<span class="text-xs bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 px-2 py-0.5 rounded font-bold ml-2 print-color-exact">Сигнал уваги</span>' : '';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">${idx + 1}</td><td class="py-2.5 px-3 dark:text-slate-200">${q} ${attention}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td>`;
                     phq9Tbody.appendChild(tr);
@@ -1262,15 +1692,15 @@
             des2Keys.forEach(k => { des2Sum += userState.des2[k]; });
             const des2Avg = des2Keys.length === 0 ? 0 : parseFloat((des2Sum / 28).toFixed(1));
 
-            let des2Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", glow: "glow-slate" };
+            let des2Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
             let des2Desc = "Дисоціативні прояви в нормі.";
             let des2InterpIdx = 1;
 
-            if (des2Avg >= 30) { des2Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400", glow: "glow-rose" }; des2Desc = "Високий рівень дисоціації. Рекомендоване клінічне інтерв'ю."; des2InterpIdx = 2; }
+            if (des2Avg >= 30) { des2Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; des2Desc = "Високий рівень дисоціації. Рекомендоване клінічне інтерв'ю."; des2InterpIdx = 2; }
 
             safeSetText('des2-res-score', des2Avg);
             safeSetText('des2-res-badge', des2Badge.text);
-            safeSetClass('des2-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact ${des2Badge.class}`);
+            safeSetClass('des2-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${des2Badge.class}`);
             safeSetText('des2-res-desc', des2Desc);
             
             const des2RevealPercent = Math.min(100, Math.round(des2Avg));
@@ -1282,7 +1712,7 @@
             [1, 2].forEach(i => {
                 const el = document.getElementById(`des2-interp-${i}`);
                 if(el) {
-                    if (i === des2InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors";
+                    if (i === des2InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
                     else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
                 }
             });
@@ -1299,7 +1729,7 @@
             }
 
             const hasSelfHarmThoughts = userState.phq9[8] && userState.phq9[8] > 0;
-            const isHighOverall = gad7Sum >= 15 || pclmSum >= 51 || phq9Sum >= 20 || des2Avg >= 30;
+            const isHighOverall = gad7Sum >= 15 || pcl5Sum >= 33 || phq9Sum >= 20 || des2Avg >= 30;
             const safetyBox = document.getElementById('safety-alert-box');
 
             if(safetyBox) {
