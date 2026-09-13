@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II</title>
+    <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -83,6 +83,7 @@
         .grad-pcl5 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
         .grad-phq9 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
         .grad-des2 { background: linear-gradient(90deg, #94a3b8 15%, #10b981 40%, #f59e0b 60%, #f97316 80%, #e11d48 95%); }
+        .grad-lec5 { background: linear-gradient(90deg, #94a3b8 10%, #f59e0b 50%, #e11d48 90%); } /* Added LEC-5 gradient */
 
         /* Dynamic Glow Effect */
         @keyframes shadowPulse {
@@ -121,7 +122,7 @@
                     </div>
                     <div>
                         <h1 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Психодіагностичний Комплекс</h1>
-                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">GAD-7 • PCL-5 • PHQ-9 • DES-II</p>
+                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">GAD-7 • PCL-5 • PHQ-9 • DES-II • LEC-5</p>
                     </div>
                 </div>
 
@@ -248,10 +249,10 @@
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-4 border border-sky-200 dark:border-sky-800">Комплексна самодіагностика</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Психологічне опитування стан здоров'я</h2>
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                        Цей інструмент призначений для скринінгу та оцінки чотирьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії та дисоціативних переживань. Ви можете обрати будь-який тест, натиснувши на його картку нижче:
+                        Цей інструмент призначений для скринінгу та оцінки п'ятьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії, дисоціативних переживань та впливу життєвих подій. Ви можете обрати будь-який тест, натиснувши на його картку нижче:
                     </p>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                         <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
                             <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала тривожності</div>
@@ -274,6 +275,12 @@
                             <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала дисоціації</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">28 запитань про повсякденні дисоціативні переживання.</p>
+                        </div>
+                        
+                        <div onclick="switchTab('lec5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">LEC-5</div>
+                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Список життєвих подій</div>
+                            <p class="text-[11px] text-slate-600 dark:text-slate-400">11 запитань про вплив стресових або травматичних подій.</p>
                         </div>
                     </div>
 
@@ -511,6 +518,53 @@
             </div>
         </section>
 
+        <!-- TAB 6: LEC-5 QUESTIONNAIRE -->
+        <section id="content-lec5" class="tab-content hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Список життєвих подій (LEC-5) by CETA</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('lec5')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Життєвий досвід</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Нижче наведено перелік важких або стресових подій, які іноді трапляються з людьми. Чи відчували Ви особисто щось з наведеного нижче у Вашому житті?</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-lec5" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/11</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lec5-questions-container" class="space-y-6"></div>
+
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (LEC-5)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-lec5">0 / 22</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-lec5">⚪ Мінімальний</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
+                        ← На головну до списку тестів
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Сформувати результат</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- TAB 5: RESULTS & DETAILED ANALYSIS -->
         <section id="content-results" class="tab-content hidden">
             
@@ -560,6 +614,10 @@
                         <input type="checkbox" id="chk-export-des2" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
                         <span class="text-sm font-semibold text-slate-200">DES-II</span>
                     </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                        <input type="checkbox" id="chk-export-lec5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                        <span class="text-sm font-semibold text-slate-200">LEC-5</span>
+                    </label>
                     <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
                     <button onclick="handlePrintCustom()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -577,7 +635,7 @@
                         </div>
                         <div>
                             <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
-                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II</p>
+                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5</p>
                         </div>
                     </div>
                 </div>
@@ -614,8 +672,8 @@
                     </div>
                 </div>
 
-                <!-- 4 Module Cards Row -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
+                <!-- 5 Module Cards Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mt-6">
                     
                     <!-- GAD-7 Summary Box -->
                     <div id="summary-card-gad7" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -690,6 +748,25 @@
                             <div id="des2-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
                                 <div class="absolute inset-0 grad-des2 print-color-exact"></div>
                                 <div id="des2-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- LEC-5 Summary Box -->
+                    <div id="summary-card-lec5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">LEC-5 (Життєві події)</span>
+                                <span id="lec5-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 22</span>
+                            </div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Життєвий досвід</div>
+                            <div id="lec5-res-badge" class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact">⚪ Мінімальний</div>
+                            <p id="lec5-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Мінімальний вплив травматичних подій.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <div id="lec5-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
+                                <div class="absolute inset-0 grad-lec5 print-color-exact"></div>
+                                <div id="lec5-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -878,6 +955,39 @@
                     </div>
                 </div>
 
+                <!-- 5. LEC-5 DETAILED BLOCK -->
+                <div id="section-lec5" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: LEC-5 (Список життєвих подій)</h3>
+                        </div>
+                        <span id="lec5-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">Сума: 0 / 22 балів</span>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали LEC-5:</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-600 dark:text-slate-400">
+                            <div id="lec5-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0 балів: Мінімальний досвід травми</div>
+                            <div id="lec5-interp-2" class="p-2 rounded border border-transparent transition-colors">🟠 1-10 балів: Помірний вплив</div>
+                            <div id="lec5-interp-3" class="p-2 rounded border border-transparent transition-colors">🔴 11-22 балів: Високий вплив (множинні події)</div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
+                                <tr>
+                                    <th class="py-2.5 px-3 rounded-l-lg">№</th>
+                                    <th class="py-2.5 px-3">Життєва подія</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lec5-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -963,8 +1073,27 @@
 
         const DES2_QUESTIONS = ["Керуючи автомобілем, автобусом чи метро, раптово усвідомлюєте, що не пам'ятаєте, що сталося протягом усієї поїздки або її частини.", "Слухаючи чиюсь розмову, раптом усвідомлюєте, що не почули частину або все сказане.", "Опиняєтесь в певному місці і не маєте уявлення, як туди потрапили.", "Опиняєтесь в одязі, який не пам'ятаєте, щоб одягали.", "Знаходите серед своїх речей нові речі, які не пам'ятаєте, щоб купували.", "До вас звертаються незнайомі люди, які називають вас іншим ім'ям або наполягають, що зустрічалися з вами раніше.", "Відчуваєте, ніби стоїте поруч самі з собою або спостерігаєте за собою, коли щось робите.", "Вам кажуть, що ви іноді не впізнаєте друзів чи членів родини.", "Не пам'ятаєте деякі важливі події у своєму житті (наприклад, весілля чи випускний).", "Вас звинувачують у брехні, навіть якщо ви не вважаєте, що брехали.", "Дивлячись в дзеркало, не впізнаєте себе.", "Відчуваєте, що інші люди, предмети та світ навколо вас не є реальними.", "Відчуваєте, що ваше тіло ніби вам не належить.", "Настільки яскраво згадуєте минулу подію, що здається, ніби ви переживаєте її знову.", "Не впевнені, чи те, що ви пам'ятаєте, справді сталося, чи це вам просто наснилося.", "Буваєте у знайомому місці, але вважаєте його дивним і незнайомим.", "Під час перегляду телевізора або фільму настільки поглинаєтесь історією, що не помічаєте інших подій навколо.", "Настільки захоплюєтесь фантазіями чи мріями, що відчуваєте, ніби це відбувається насправді.", "Виявляєте, що іноді здатні ігнорувати біль.", "Сидите, вдивляючись у порожнечу, ні про що не думаючи, і не усвідомлюєте плину часу.", "Коли ви самі, розмовляєте самі з собою.", "В одній ситуації дієте настільки по-різному порівняно з іншою, що відчуваєте себе майже як дві різні людини.", "В певних ситуаціях здатні з дивовижною легкістю та спонтанністю робити речі, які зазвичай були б складними.", "Не можете згадати, чи ви щось зробили, чи просто подумали про це.", "Знаходите докази того, що ви робили речі, яких ви не пам'ятаєте.", "Знаходите серед своїх речей нотатки або малюнки, які ви зробили, але не пам'ятаєте про це.", "Чуєте голоси всередині себе, які наказують вам щось робити або коментують те, що ви робите.", "Здається, ніби дивитесь на світ крізь туман, тому люди та предмети здаються далекими або нечіткими."];
         const DES2_OPTIONS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        
+        const LEC5_QUESTIONS = [
+            "Стихійне лихо / пожежа / вибух, в якому люди отримали поранення або загинули",
+            "Серйозні події вдома / на роботі / десь ще, в яких хтось отримав поранення або загинув",
+            "Фізичне насильство з чи без зброї",
+            "Сексуальне насильство / зґвалтування",
+            "Битви або знаходження в зоні військових дій",
+            "Викраденння / торгівля людьми або полон",
+            "Серйозне поранення, ушкодження або смерть, які Ви нанесли кому-небудь",
+            "Втратили контакт з близькими людьми і відчуваєте страх за їх безпеку",
+            "Голод або страх голоду",
+            "Втрата укриття або страх втрати укриття",
+            "Раптова втрата майна до точки бідності"
+        ];
+        const LEC5_OPTIONS = [
+            { text: "⚪ Ні", value: 0 },
+            { text: "🟠 Так, 1 раз", value: 1 },
+            { text: "🔴 Так, більше одного разу", value: 2 }
+        ];
 
-        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, phq9Impact: "Зовсім не важко" };
+        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, phq9Impact: "Зовсім не важко" };
 
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
@@ -975,6 +1104,7 @@
             renderPCL5Form();
             renderPHQ9Form();
             renderDES2Form();
+            renderLEC5Form();
             updateProgressCounters();
             updateInlineResults();
         });
@@ -1052,7 +1182,7 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'results'];
+            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'results'];
             
             contentTabs.forEach(t => {
                 const contentEl = document.getElementById(`content-${t}`);
@@ -1087,6 +1217,7 @@
                 renderPHQ9Form();
             }
             if (testId === 'des2') { userState.des2 = {}; renderDES2Form(); }
+            if (testId === 'lec5') { userState.lec5 = {}; renderLEC5Form(); }
 
             updateProgressCounters();
             updateInlineResults();
@@ -1200,18 +1331,37 @@
                 container.appendChild(qCard);
             });
         }
+        
+        function renderLEC5Form() {
+            const container = document.getElementById('lec5-questions-container');
+            container.innerHTML = '';
+            LEC5_QUESTIONS.forEach((qText, index) => {
+                const qCard = document.createElement('div');
+                qCard.className = 'p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300';
+                let optionsHTML = '';
+                LEC5_OPTIONS.forEach((opt) => {
+                    const isChecked = userState.lec5[index] === opt.value;
+                    const baseClass = isChecked ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-500 text-sky-900 dark:text-sky-300 ring-1 ring-sky-500' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800';
+                    optionsHTML += `<label class="flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors text-xs sm:text-sm font-medium ${baseClass}"><input type="radio" name="lec5-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setLEC5Answer(${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
+                });
+                qCard.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="w-6 h-6 rounded-full bg-sky-100 text-sky-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${index + 1}</span><div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">${qText}</div></div><div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-2.5 pl-0 sm:pl-9">${optionsHTML}</div>`;
+                container.appendChild(qCard);
+            });
+        }
 
         function setGAD7Answer(idx, val) { userState.gad7[idx] = val; updateProgressCounters(); renderGAD7Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPCL5Answer(idx, val) { userState.pcl5[idx] = val; updateProgressCounters(); renderPCL5Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPHQ9Answer(idx, val) { userState.phq9[idx] = val; updateProgressCounters(); renderPHQ9Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPHQ9Impact(valText) { userState.phq9Impact = valText; renderPHQ9Form(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setDES2Answer(idx, val) { userState.des2[idx] = val; updateProgressCounters(); renderDES2Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+        function setLEC5Answer(idx, val) { userState.lec5[idx] = val; updateProgressCounters(); renderLEC5Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
 
         function updateProgressCounters() {
             const gad7Count = Object.keys(userState.gad7).length;
             const pcl5Count = Object.keys(userState.pcl5).length;
             const phq9Count = Object.keys(userState.phq9).length;
             const des2Count = Object.keys(userState.des2).length;
+            const lec5Count = Object.keys(userState.lec5).length;
 
             document.getElementById('badge-gad7').textContent = `${gad7Count}/7`;
             
@@ -1223,12 +1373,13 @@
             
             document.getElementById('badge-phq9').textContent = `${phq9Count}/9`;
             document.getElementById('badge-des2').textContent = `${des2Count}/28`;
+            document.getElementById('badge-lec5').textContent = `${lec5Count}/11`;
 
             // Update Top Progress Bar dynamically
             const topBar = document.getElementById('top-progress-bar');
             const topContainer = document.getElementById('top-progress-container');
             
-            if (['gad7', 'pcl5', 'phq9', 'des2'].includes(currentActiveTab)) {
+            if (['gad7', 'pcl5', 'phq9', 'des2', 'lec5'].includes(currentActiveTab)) {
                 topContainer.classList.remove('hidden');
                 let percent = 0;
                 if (currentActiveTab === 'gad7') percent = (gad7Count / 7) * 100;
@@ -1238,6 +1389,7 @@
                 }
                 else if (currentActiveTab === 'phq9') percent = (phq9Count / 9) * 100;
                 else if (currentActiveTab === 'des2') percent = (des2Count / 28) * 100;
+                else if (currentActiveTab === 'lec5') percent = (lec5Count / 11) * 100;
                 
                 topBar.style.width = `${percent}%`;
             } else {
@@ -1291,6 +1443,15 @@
             safeSetText('inline-score-des2', des2Avg);
             safeSetText('inline-badge-des2', des2Badge);
             safeSetClass('inline-badge-des2', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${des2Class}`);
+            
+            // LEC-5 Inline
+            let lec5Sum = 0; Object.values(userState.lec5).forEach(v => lec5Sum += v);
+            let lec5Badge = "⚪ Мінімальний"; let lec5Class = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            if (lec5Sum >= 11) { lec5Badge = "🔴 Високий"; lec5Class = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
+            else if (lec5Sum >= 1) { lec5Badge = "🟠 Помірний"; lec5Class = "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-800"; }
+            safeSetText('inline-score-lec5', `${lec5Sum} / 22`);
+            safeSetText('inline-badge-lec5', lec5Badge);
+            safeSetClass('inline-badge-lec5', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${lec5Class}`);
         }
 
         function autoFillDemoData() {
@@ -1339,8 +1500,10 @@
             userState.des2 = {};
             const des2Values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
             for (let i = 0; i < 28; i++) userState.des2[i] = des2Values[Math.floor(Math.random() * des2Values.length)];
+            
+            userState.lec5 = {}; for(let i=0; i<11; i++) userState.lec5[i] = Math.floor(Math.random() * 3);
 
-            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form();
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form();
             updateProgressCounters();
             updateInlineResults();
             if (currentActiveTab === 'results') calculateAndShowResults();
@@ -1367,7 +1530,7 @@
             }
             document.getElementById('patient-gender-custom').value = '';
 
-            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form();
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form();
             updateProgressCounters();
             updateInlineResults();
             if (currentActiveTab === 'results') calculateAndShowResults();
@@ -1375,21 +1538,21 @@
 
         function toggleSelectAllExports() {
             const isAll = document.getElementById('chk-export-all').checked;
-            ['gad7', 'pcl5', 'phq9', 'des2'].forEach(id => {
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5'].forEach(id => {
                 const el = document.getElementById(`chk-export-${id}`);
                 if (el) el.checked = isAll;
             });
         }
 
         function updateSelectAllCheckbox() {
-            const checks = ['gad7', 'pcl5', 'phq9', 'des2'].map(id => document.getElementById(`chk-export-${id}`).checked);
+            const checks = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5'].map(id => document.getElementById(`chk-export-${id}`).checked);
             const allChecked = checks.every(c => c);
             const elAll = document.getElementById('chk-export-all');
             if(elAll) elAll.checked = allChecked;
         }
 
         function handlePrintCustom() {
-            const checks = ['gad7', 'pcl5', 'phq9', 'des2'];
+            const checks = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5'];
             const selected = checks.filter(id => document.getElementById(`chk-export-${id}`).checked);
 
             if (selected.length === 0) {
@@ -1415,7 +1578,7 @@
             const now = new Date();
             const dateStr = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}`;
             let titleParts = [];
-            selected.forEach(s => titleParts.push(s.toUpperCase().replace('PCL5', 'PCL-5').replace('DES2', 'DES-II')));
+            selected.forEach(s => titleParts.push(s.toUpperCase().replace('PCL5', 'PCL-5').replace('DES2', 'DES-II').replace('LEC5', 'LEC-5')));
             document.title = `Психодіагностичний_Комплекс_${titleParts.join('_')}_${dateStr}`;
 
             // Momentarily remove dark mode for pure white print
@@ -1493,16 +1656,19 @@
             const isPcl5Complete = userState.pcl5CritA === 'no' || (userState.pcl5CritA === 'yes' && Object.keys(userState.pcl5).length === 20);
             const isPhq9Complete = Object.keys(userState.phq9).length === 9;
             const isDes2Complete = Object.keys(userState.des2).length === 28;
+            const isLec5Complete = Object.keys(userState.lec5).length === 11;
 
             const elGad7 = document.getElementById('chk-export-gad7');
             const elPcl5 = document.getElementById('chk-export-pcl5');
             const elPhq9 = document.getElementById('chk-export-phq9');
             const elDes2 = document.getElementById('chk-export-des2');
+            const elLec5 = document.getElementById('chk-export-lec5');
 
             if(elGad7) elGad7.checked = isGad7Complete;
             if(elPcl5) elPcl5.checked = isPcl5Complete;
             if(elPhq9) elPhq9.checked = isPhq9Complete;
             if(elDes2) elDes2.checked = isDes2Complete;
+            if(elLec5) elLec5.checked = isLec5Complete;
             updateSelectAllCheckbox();
 
             // Incomplete Warning Logic
@@ -1511,6 +1677,7 @@
             if (userState.pcl5CritA === 'yes' && Object.keys(userState.pcl5).length > 0 && !isPcl5Complete) incompleteTests.push("PCL-5");
             if (Object.keys(userState.phq9).length > 0 && !isPhq9Complete) incompleteTests.push("PHQ-9");
             if (Object.keys(userState.des2).length > 0 && !isDes2Complete) incompleteTests.push("DES-II");
+            if (Object.keys(userState.lec5).length > 0 && !isLec5Complete) incompleteTests.push("LEC-5");
 
             const warnContainer = document.getElementById('export-warning-container');
             const warnText = document.getElementById('export-warning-text');
@@ -1725,6 +1892,46 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">${idx + 1}</td><td class="py-2.5 px-3 pr-6 leading-snug dark:text-slate-200">${q}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${val !== null ? val + '%' : 'Не відповідав(ла)'}</td>`;
                     des2Tbody.appendChild(tr);
+                });
+            }
+            
+            // LEC-5 SCORING
+            let lec5Sum = 0; Object.values(userState.lec5).forEach(v => lec5Sum += v);
+            let lec5Badge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
+            let lec5Desc = "Мінімальний вплив травматичних подій.";
+            let lec5InterpIdx = 1;
+
+            if (lec5Sum >= 11) { lec5Badge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; lec5Desc = "Високий рівень впливу (множинні події). Рекомендована детальна оцінка."; lec5InterpIdx = 3; }
+            else if (lec5Sum >= 1) { lec5Badge = { text: "🟠 Помірний", class: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-400 border-orange-200 dark:border-orange-800", glow: "glow-orange" }; lec5Desc = "Помірний вплив стресових життєвих подій."; lec5InterpIdx = 2; }
+
+            safeSetText('lec5-res-score', `${lec5Sum} / 22`);
+            safeSetText('lec5-res-badge', lec5Badge.text);
+            safeSetClass('lec5-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${lec5Badge.class}`);
+            safeSetText('lec5-res-desc', lec5Desc);
+            
+            const lec5RevealPercent = Math.min(100, Math.round((lec5Sum / 22) * 100));
+            safeSetStyleWidth('lec5-res-mask', `${100 - lec5RevealPercent}%`);
+            safeSetClass('lec5-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${lec5Badge.glow}`);
+            
+            safeSetText('lec5-detailed-score-text', `Сума: ${lec5Sum} / 22 балів`);
+
+            [1, 2, 3].forEach(i => {
+                const el = document.getElementById(`lec5-interp-${i}`);
+                if(el) {
+                    if (i === lec5InterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
+                    else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
+                }
+            });
+
+            const lec5Tbody = document.getElementById('lec5-answers-tbody');
+            if(lec5Tbody) {
+                lec5Tbody.innerHTML = '';
+                LEC5_QUESTIONS.forEach((q, idx) => {
+                    const val = userState.lec5[idx] !== undefined ? userState.lec5[idx] : null;
+                    const optObj = val !== null ? LEC5_OPTIONS.find(o => o.value === val) : null;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">${idx + 1}</td><td class="py-2.5 px-3 dark:text-slate-200">${q}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td>`;
+                    lec5Tbody.appendChild(tr);
                 });
             }
 
