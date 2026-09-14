@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5</title>
+    <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -84,7 +84,7 @@
         .grad-phq9 { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
         .grad-des2 { background: linear-gradient(90deg, #94a3b8 15%, #10b981 40%, #f59e0b 60%, #f97316 80%, #e11d48 95%); }
         .grad-lec5 { background: linear-gradient(90deg, #94a3b8 10%, #f59e0b 50%, #e11d48 90%); } /* Added LEC-5 gradient */
-        .grad-tmcq { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 50%, #f97316 75%, #e11d48 90%); }
+        .grad-tmcq { background: linear-gradient(90deg, #bae6fd 0%, #38bdf8 50%, #0369a1 100%); } /* Neutral single-hue scale: TMCQ shows scores only, no severity levels */
 
         /* Dynamic Glow Effect */
         @keyframes shadowPulse {
@@ -108,6 +108,7 @@
         .glow-amber { --glow-color: rgba(245, 158, 11, 0.7); }
         .glow-orange { --glow-color: rgba(249, 115, 22, 0.7); }
         .glow-rose { --glow-color: rgba(225, 29, 72, 0.7); }
+        .glow-sky { --glow-color: rgba(14, 165, 233, 0.7); }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300">
@@ -250,7 +251,7 @@
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-4 border border-sky-200 dark:border-sky-800">Комплексна самодіагностика</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Психологічне опитування стан здоров'я</h2>
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                        Цей інструмент призначений для скринінгу та оцінки п'ятьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії, дисоціативних переживань та впливу життєвих подій. Ви можете обрати будь-який тест, натиснувши на його картку нижче:
+                        Цей інструмент призначений для скринінгу та оцінки п'ятьох важливих компонентів ментального здоров'я: генералізованої тривожності, симптомів посттравматичного стресу, проявів депресії, дисоціативних переживань та впливу життєвих подій, а також для щотижневого моніторингу стану клієнта за формою CETA (TMCQ). Ви можете обрати будь-який тест, натиснувши на його картку нижче:
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -285,9 +286,9 @@
                         </div>
 
                         <div onclick="switchTab('tmcq')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ (CETA)</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Огляд проблем</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">21 запитання про самопочуття протягом <span class="font-semibold text-slate-800 dark:text-slate-200">останнього тижня</span>.</p>
+                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">by CETA</span></div>
+                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Щотижневий моніторинг стану клієнта</div>
+                            <p class="text-[11px] text-slate-600 dark:text-slate-400">26 запитань про самопочуття за <span class="font-semibold text-slate-800 dark:text-slate-200">останній тиждень</span> та звіт по сесії.</p>
                         </div>
                     </div>
 
@@ -339,13 +340,13 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
-                            ← На головну до списку тестів
-                        </button>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
-                            💡 Результати зберігаються до оновлення сторінки, ви можете обрати інші тести.
-                        </span>
-                    </div>
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -416,13 +417,13 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
-                            ← На головну до списку тестів
-                        </button>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
-                            💡 Результати зберігаються до оновлення сторінки, ви можете обрати інші тести.
-                        </span>
-                    </div>
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -478,13 +479,13 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
-                            ← На головну до списку тестів
-                        </button>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
-                            💡 Результати зберігаються до оновлення сторінки, ви можете обрати інші тести.
-                        </span>
-                    </div>
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -530,13 +531,13 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
-                            ← На головну до списку тестів
-                        </button>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
-                            💡 Результати зберігаються до оновлення сторінки, ви можете обрати інші тести.
-                        </span>
-                    </div>
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -582,13 +583,13 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
-                            ← На головну до списку тестів
-                        </button>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
-                            💡 Результати зберігаються до оновлення сторінки, ви можете обрати інші тести.
-                        </span>
-                    </div>
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -597,40 +598,110 @@
             </div>
         </section>
 
-        <!-- TAB 7: TMCQ QUESTIONNAIRE -->
+        <!-- TAB 7: TMCQ by CETA QUESTIONNAIRE -->
         <section id="content-tmcq" class="tab-content hidden">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Щотижнева форма моніторингу стану (TMCQ)</h2>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Щотижнева форма моніторингу стану клієнта (TMCQ) by CETA</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Trauma and Mental Health Checklist/Questionnaire</p>
+                        </div>
                         <div class="flex items-center gap-2">
                             <button type="button" onclick="clearTest('tmcq')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
-                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Останній тиждень</span>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Період: останній тиждень</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-4">
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Як часто виникала кожна з наступних проблем протягом ОСТАННЬОГО ТИЖНЯ?</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Форма містить 26 запитань (огляд проблем, вживання ПАР, моніторинг безпеки) та звіт по сесії для консультанта.</p>
                         <div class="flex items-center gap-2 min-w-max">
                             <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
-                            <span id="badge-tmcq" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/21</span>
+                            <span id="badge-tmcq" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/26</span>
                         </div>
                     </div>
                 </div>
-                <div id="tmcq-questions-container" class="space-y-6"></div>
-                <!-- Inline Result Block -->
+
+                <!-- SESSION REPORT (filled in by the counselor) -->
+                <div class="mb-8 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 p-5 sm:p-6 rounded-2xl transition-colors">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base mb-1">Звіт по сесії</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Заповнює консультант. ID клієнта та дата сесії беруться з полів «Ім'я респондента / Код» і «Дата опитування» вгорі сторінки.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                        <div>
+                            <label for="tmcq-counselor-id" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">ID номер консультанта</label>
+                            <input type="text" id="tmcq-counselor-id" oninput="onTMCQFieldChange()" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="Напр., C-017">
+                        </div>
+                        <div>
+                            <label for="tmcq-session-duration" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Тривалість зустрічі, хв</label>
+                            <input type="number" id="tmcq-session-duration" min="0" step="5" inputmode="numeric" oninput="onTMCQSessionChange()" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition placeholder:text-slate-400 dark:placeholder:text-slate-600 [color-scheme:light] dark:[color-scheme:dark]" placeholder="Напр., 60">
+                        </div>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Використані компоненти та час на кожен, хв</div>
+                    <div id="tmcq-session-components" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+                    <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                        <span class="text-slate-600 dark:text-slate-400">Разом за компонентами: <strong id="tmcq-session-sum" class="text-slate-900 dark:text-white">0 хв</strong></span>
+                        <span id="tmcq-session-warning" class="hidden text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">Сума часу за компонентами перевищує тривалість зустрічі</span>
+                    </div>
+                </div>
+
+                <!-- PROBLEMS REVIEW (P1–P21) -->
+                <h3 class="font-bold text-slate-900 dark:text-white text-base mb-2">Огляд проблем</h3>
+                <p class="text-sm text-slate-700 dark:text-slate-300 mb-5 p-4 bg-sky-50/70 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl">Наступні питання стосуються Вашого самопочуття ПРОТЯГОМ ОСТАННЬОГО ТИЖНЯ. Деякі з наведених нижче проблем стосуються того, як люди можуть себе почувати після переживання травматичних або стресових подій у їхньому житті. Відповідаючи на питання, будь ласка, пригадуйте лише ОСТАННІЙ ТИЖДЕНЬ. Як часто виникала кожна з наступних проблем протягом ОСТАННЬОГО ТИЖНЯ?</p>
+                <div id="tmcq-p-container" class="space-y-6"></div>
+                <div class="mt-4 text-right text-sm text-slate-600 dark:text-slate-400">Загальна кількість П балів: <strong id="tmcq-p-subtotal" class="text-slate-900 dark:text-white">0 / 63</strong></div>
+
+                <!-- SUBSTANCE USE REVIEW (SU1–SU3) -->
+                <h3 class="font-bold text-slate-900 dark:text-white text-base mt-8 mb-4">Огляд вживання ПАР</h3>
+                <div id="tmcq-su-container" class="space-y-6"></div>
+                <div id="tmcq-su-calendar-note" class="hidden mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm">Отримано відповідь «1 раз» або більше на питання SU1 чи SU3 — будь ласка, скористайтеся формою <strong>«Календар вживання психоактивних речовин»</strong>.</div>
+                <div class="mt-4 flex flex-wrap justify-end gap-x-6 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                    <span>Загальна кількість балів за ПАР: <strong id="tmcq-su-subtotal" class="text-slate-900 dark:text-white">0 / 14</strong></span>
+                    <span>Загальна кількість балів (П+ПАР): <strong id="tmcq-total-subtotal" class="text-slate-900 dark:text-white">0 / 77</strong></span>
+                </div>
+
+                <!-- SAFETY MONITORING (S1–S2, not part of the total) -->
+                <div class="mt-8 bg-rose-50/60 dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/50 p-5 sm:p-6 rounded-2xl transition-colors">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base mb-4">Моніторинг безпеки</h3>
+                    <div id="tmcq-safety-container" class="space-y-6"></div>
+                    <div id="tmcq-safety-alert" class="hidden mt-5 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-900 dark:text-red-200 text-sm">
+                        <div class="font-bold">⚠️ Сигнал безпеки: отримано відповідь, відмінну від «Ніколи»</div>
+                        <p class="text-xs mt-1 text-red-800 dark:text-red-300">Опишіть відповідь у деталях, а також Ваші дії. Гаряча лінія запобігання суїцидам (Lifeline Ukraine): <strong>7333</strong> • Лінія психологічної підтримки: <strong>0 800 501 212</strong></p>
+                    </div>
+                    <label for="tmcq-safety-note" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-5 mb-1">Якщо отримано відповідь «так» на будь-яке з питань, опишіть відповідь у деталях, а також Ваші дії</label>
+                    <textarea id="tmcq-safety-note" rows="3" oninput="onTMCQFieldChange()" class="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="Опис відповіді та вжитих дій"></textarea>
+                </div>
+
+                <!-- OTHER SERVICES -->
+                <div class="mt-8">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base mb-1">Інші психологічні послуги за останній тиждень</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Чи отримували Ви будь-які інші психологічні послуги чи консультування за останній тиждень? Позначте всі пункти.</p>
+                    <div id="tmcq-services-container" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+                    <input type="text" id="tmcq-svc-other" oninput="onTMCQFieldChange()" class="hidden w-full mt-2 px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="Вкажіть інші послуги">
+                </div>
+
+                <!-- Inline Result Block (scores only) -->
                 <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
                     <div>
                         <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (TMCQ)</h4>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал.</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Загальна кількість балів (П+ПАР). Форма призначена для відстеження динаміки, тому рівні не визначаються.</p>
                     </div>
                     <div class="text-right">
-                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-tmcq">0 / 63</div>
-                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-tmcq">⚪ Мінімальний</div>
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-tmcq">0 / 77</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-tmcq">П 0/63 · ПАР 0/14</div>
                     </div>
                 </div>
+
+                <p class="mt-4 text-[11px] text-slate-500 dark:text-slate-400">Більше інформації про програму CETA в Україні: <a href="http://www.ceta.org.ua/" target="_blank" rel="noopener noreferrer" class="text-sky-700 dark:text-sky-400 hover:underline">ceta.org.ua</a> • про CETA Global: <a href="https://www.cetaglobal.org/" target="_blank" rel="noopener noreferrer" class="text-sky-700 dark:text-sky-400 hover:underline">cetaglobal.org</a></p>
+
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">← На головну до списку тестів</button>
+                    <div class="flex items-center gap-3">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                            ← На головну до списку тестів
+                        </button>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 max-w-[200px] sm:max-w-xs leading-snug">
+                            💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.
+                        </span>
+                    </div>
                     <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
                         <span>Сформувати результат</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -849,19 +920,23 @@
                         </div>
                     </div>
 
-                    <!-- TMCQ Summary Box -->
+                    <!-- TMCQ Summary Box (scores only: the CETA form has no severity cut-offs) -->
                     <div id="summary-card-tmcq" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">TMCQ (Моніторинг)</span>
-                                <span id="tmcq-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 63</span>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">TMCQ (Моніторинг CETA)</span>
+                                <span id="tmcq-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white whitespace-nowrap">0 / 77</span>
                             </div>
-                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Останній тиждень</div>
-                            <div id="tmcq-res-badge" class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact">⚪ Мінімальний</div>
-                            <p id="tmcq-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Симптоми відсутні або мінімальні.</p>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Останній тиждень · П+ПАР</div>
+                            <div class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border bg-sky-50 text-sky-800 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-800 print-color-exact">📊 Щотижневий моніторинг</div>
+                            <div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+                                <div class="flex items-center justify-between gap-2"><span>Огляд проблем (П)</span><strong id="tmcq-res-p" class="text-slate-900 dark:text-white">0 / 63</strong></div>
+                                <div class="flex items-center justify-between gap-2"><span>Вживання ПАР</span><strong id="tmcq-res-su" class="text-slate-900 dark:text-white">0 / 14</strong></div>
+                                <div class="flex items-center justify-between gap-2"><span>Безпека</span><span id="tmcq-res-safety" class="px-2 py-0.5 rounded-md text-[11px] font-bold border bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 print-color-exact">Не заповнено</span></div>
+                            </div>
                         </div>
                         <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <div id="tmcq-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
+                            <div id="tmcq-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect glow-sky print-color-exact">
                                 <div class="absolute inset-0 grad-tmcq print-color-exact"></div>
                                 <div id="tmcq-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
@@ -1085,24 +1160,75 @@
                     </div>
                 </div>
 
-                <!-- 6. TMCQ DETAILED BLOCK -->
+                <!-- 6. TMCQ by CETA DETAILED BLOCK -->
                 <div id="section-tmcq" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: TMCQ (Моніторинг стану клієнта)</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: TMCQ by CETA (Щотижнева форма моніторингу стану клієнта)</h3>
                         </div>
-                        <span id="tmcq-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">Сума: 0 / 63 балів</span>
+                        <span id="tmcq-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">П 0/63 • ПАР 0/14 • Разом 0/77</span>
                     </div>
 
-                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Інтерпретація шкали TMCQ (P1-P21):</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-slate-600 dark:text-slate-400">
-                            <div id="tmcq-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0-15: Мінімальний</div>
-                            <div id="tmcq-interp-2" class="p-2 rounded border border-transparent transition-colors">🟢 16-31: Легкий</div>
-                            <div id="tmcq-interp-3" class="p-2 rounded border border-transparent transition-colors">🟡 32-47: Помірний</div>
-                            <div id="tmcq-interp-4" class="p-2 rounded border border-transparent transition-colors">🔴 48-63: Високий</div>
+                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs text-slate-600 dark:text-slate-400 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
+                        Форма CETA не має порогових значень для інтерпретації: бали використовуються для відстеження динаміки стану клієнта від тижня до тижня та для вибору компонентів (див. таблицю прийняття рішень нижче).
+                    </div>
+
+                    <!-- Session report -->
+                    <div class="mb-6">
+                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Звіт по сесії</div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mb-3">
+                            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 print-color-exact"><div class="text-slate-500 dark:text-slate-400">ID консультанта</div><div id="tmcq-res-counselor" class="font-semibold text-slate-900 dark:text-white mt-0.5 break-words">Не вказано</div></div>
+                            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 print-color-exact"><div class="text-slate-500 dark:text-slate-400">ID клієнта</div><div id="tmcq-res-client" class="font-semibold text-slate-900 dark:text-white mt-0.5 break-words">Не вказано</div></div>
+                            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 print-color-exact"><div class="text-slate-500 dark:text-slate-400">Дата сесії</div><div id="tmcq-res-date" class="font-semibold text-slate-900 dark:text-white mt-0.5">Не вказано</div></div>
+                            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 print-color-exact"><div class="text-slate-500 dark:text-slate-400">Тривалість зустрічі</div><div id="tmcq-res-duration" class="font-semibold text-slate-900 dark:text-white mt-0.5">Не вказано</div></div>
                         </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
+                                    <tr>
+                                        <th class="py-2.5 px-3 rounded-l-lg">Використаний компонент</th>
+                                        <th class="py-2.5 px-3 rounded-r-lg text-right">Час, хв</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tmcq-session-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Component decision table (Ukraine) -->
+                    <div class="mb-6">
+                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Таблиця прийняття рішень по компонентах (Україна)</div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Враховуйте три джерела інформації: 1) бали клієнта — наскільки високими вони є порівняно з максимально можливою оцінкою; 2) що бачить і чує консультант, коли працює з клієнтом; 3) обговорення із супервізором.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
+                                    <tr>
+                                        <th class="py-2.5 px-3 rounded-l-lg">Компонент / Запитання</th>
+                                        <th class="py-2.5 px-3 text-right">Бал клієнта</th>
+                                        <th class="py-2.5 px-3 rounded-r-lg text-right">Макс. бал</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tmcq-decision-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Safety monitoring -->
+                    <div id="tmcq-res-safety-block" class="mb-6 p-4 rounded-xl border bg-slate-50 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800 print-color-exact transition-colors">
+                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Моніторинг безпеки</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                                <tbody id="tmcq-safety-tbody" class="divide-y divide-slate-200/70 dark:divide-slate-800"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 text-xs text-slate-700 dark:text-slate-300"><strong>Опис відповіді та дії:</strong> <span id="tmcq-res-safety-note" class="whitespace-pre-line">Не вказано</span></div>
+                    </div>
+
+                    <!-- Other services -->
+                    <div class="mb-6">
+                        <div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Інші психологічні послуги за останній тиждень</div>
+                        <ul id="tmcq-res-services" class="list-disc pl-5 space-y-1 text-sm text-slate-700 dark:text-slate-300"></ul>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -1110,8 +1236,8 @@
                             <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
                                 <tr>
                                     <th class="py-2.5 px-3 rounded-l-lg">№</th>
-                                    <th class="py-2.5 px-3">Запитання (Проблема)</th>
-                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь</th>
+                                    <th class="py-2.5 px-3">Запитання (П та ПАР)</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь (бал)</th>
                                 </tr>
                             </thead>
                             <tbody id="tmcq-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
@@ -1224,17 +1350,65 @@
             { text: "🟠 Так, 1 раз", value: 1 },
             { text: "🔴 Так, більше одного разу", value: 2 }
         ];
-        const TMCQ_QUESTIONS = [
-            "Відчуття суму", "Втрата інтересу до щоденних справ", "Плаксивість", "Відчуття самотності; відчуття ізоляції", "Відчуття втоми, нестача енергії або її зниження", "Відчуття, ніби ти у пастці або тебе піймали", "Відчуття непотрібності, нікчемності", "Рухи або мова настільки повільні чи швидкі, що це помічають інші люди", "Повторювані або нав'язливі спогади про травму, у тому числі думки, образи", "Погіршення настрою, коли будь-що нагадує про стресову подію", "Відчуття, ніби тебе ніхто не розуміє", "Уникання думок/спогадів, пов'язаних з минулою стресовою подією", "Уникнення в цілому безпечних дій чи ситуацій, які нагадують про минулу стресову подію", "Відчуття втрати сенсу життя", "Тремтіння чи тремор", "Знервованість чи пітливість", "Відчуття напруженості", "Напад страху або паніки", "Труднощі з виконанням щоденних справ удома чи на роботі", "Відчуття, ніби у Вас більше проблем, аніж Ви здатні впоратися", "Труднощі з адаптацією до місцевої громади або відчуття зради з боку місцевих"
+
+        // ===== TMCQ by CETA (Trauma and Mental Health Checklist/Questionnaire) =====
+        const TMCQ_P_QUESTIONS = [
+            "Відчуття суму",
+            "Втрата інтересу до щоденних справ",
+            "Плаксивість",
+            "Відчуття самотності; відчуття ізоляції",
+            "Відчуття втоми, нестача енергії або її зниження",
+            "Відчуття, ніби ти у пастці або тебе піймали",
+            "Відчуття непотрібності, нікчемності",
+            "Рухи або мова настільки повільні чи швидкі, що це помічають інші люди",
+            "Повторювані або нав'язливі спогади про травму, у тому числі думки, образи",
+            "Погіршення настрою, коли будь-що нагадує про стресову подію",
+            "Відчуття, ніби тебе ніхто не розуміє",
+            "Уникання думок/спогадів, пов'язаних з минулою стресовою подією",
+            "Уникнення в цілому безпечних дій чи ситуацій, які нагадують про минулу стресову подію",
+            "Відчуття втрати сенсу життя",
+            "Тремтіння чи тремор",
+            "Знервованість чи пітливість",
+            "Відчуття напруженості",
+            "Напад страху або паніки",
+            "Труднощі з виконанням щоденних справ удома чи на роботі",
+            "Відчуття, ніби у Вас більше проблем, аніж Ви здатні впоратися",
+            "Труднощі з адаптацією до місцевої громади або відчуття зради з боку місцевих"
         ];
-        const TMCQ_OPTIONS = [
-            { text: "⚪ Ніколи", value: 0 },
-            { text: "🟢 Інколи", value: 1 },
-            { text: "🟡 Часто", value: 2 },
-            { text: "🔴 Майже завжди", value: 3 }
+        const TMCQ_FREQ_OPTIONS = [{ text: "⚪ Ніколи", value: 0 }, { text: "🟢 Інколи", value: 1 }, { text: "🟡 Часто", value: 2 }, { text: "🔴 Майже завжди", value: 3 }];
+        // Substance use items score non-linearly (as printed on the CETA form): SU1 0/2/3/4, SU2–SU3 0/3/4/5
+        const TMCQ_SU_LABELS = ["⚪ Ніколи", "🟢 1 раз", "🟡 Декілька днів", "🔴 Щоденно або майже щоденно"];
+        const TMCQ_SU_QUESTIONS = [
+            { text: "За останній тиждень як часто Ви вживали алкогольні напої?", scores: [0, 2, 3, 4] },
+            { text: "За останній тиждень, як часто Ви відчували надмірно сильний потяг вжити алкогольні напої?", scores: [0, 3, 4, 5] },
+            { text: "За останній тиждень скільки ви вживали таких речовин, як марихуана, інгалянти, кокаїн, амфетамін, заспокійливі засоби, галюциногени, опіоїди, ін'єкційні наркотики чи інші речовини, НЕ включаючи алкоголь?", scores: [0, 3, 4, 5] }
+        ].map(q => ({ text: q.text, options: q.scores.map((value, i) => ({ text: TMCQ_SU_LABELS[i], value })) }));
+        const TMCQ_SAFETY_QUESTIONS = [
+            "Думки про бажання вбити себе; схильність до самогубства",
+            "У Вас коли-небудь виникали думки про те, що Ви хочете нанести тілесні ушкодження іншій людині або позбавити її життя?"
+        ];
+        const TMCQ_ITEM_COUNT = TMCQ_P_QUESTIONS.length + TMCQ_SU_QUESTIONS.length + TMCQ_SAFETY_QUESTIONS.length;
+        const TMCQ_SERVICES = [
+            "Я приймав(ла) ліки, призначені лікарем первинної медичної допомоги для психічного здоров'я",
+            "Я приймав(ла) ліки, призначені психіатром для психічного здоров'я",
+            "Я відвідував(ла) психологічні консультації CETA",
+            "Я відвідував(ла) психологічні консультації інших (не CETA) служб психічного здоров'я",
+            "Я відвідував(ла) лікування залежності",
+            "Я відвідував(ла) консультації побратимів (або громади за принципом «рівний рівному») або інші програми підтримки",
+            "Інше"
+        ];
+        // Session components (standard CETA set); the last entry "Інше" gets a free-text name
+        const TMCQ_SESSION_COMPONENTS = ["Залучення", "Психоосвіта", "Релаксація", "Відновлення активності", "Когнітивне подолання / реструктуризація", "Уявна поступова експозиція", "Експозиція в реальному житті", "Безпека (оцінка та планування)", "Вживання алкоголю / ПАР", "Завершення", "Інше"];
+        // Component decision table (Ukraine); item indices are 0-based, e.g. P16 → ['p', 15]
+        const TMCQ_DECISION_COMPONENTS = [
+            { name: "1. Релаксація", items: [['p', 15], ['p', 17], ['p', 16]] },
+            { name: "2. Загальна депресія / Смуток", items: [['p', 0], ['p', 2]] },
+            { name: "3. Відновлення активності", items: [['p', 1], ['p', 4], ['p', 3], ['p', 18]] },
+            { name: "4. Експозиція в реальному житті", items: [['p', 12]] },
+            { name: "5. Вживання алкоголю/психоактивних речовин", items: [['su', 0], ['su', 1]] }
         ];
 
-        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, tmcq: {}, phq9Impact: "Зовсім не важко" };
+        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, tmcqP: {}, tmcqSU: {}, tmcqSafety: {}, phq9Impact: "Зовсім не важко" };
 
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
@@ -1247,6 +1421,7 @@
             renderDES2Form();
             renderLEC5Form();
             renderTMCQForm();
+            renderTMCQStaticForm();
             updateProgressCounters();
             updateInlineResults();
         });
@@ -1360,7 +1535,10 @@
             }
             if (testId === 'des2') { userState.des2 = {}; renderDES2Form(); }
             if (testId === 'lec5') { userState.lec5 = {}; renderLEC5Form(); }
-            if (testId === 'tmcq') { userState.tmcq = {}; renderTMCQForm(); }
+            if (testId === 'tmcq') {
+                userState.tmcqP = {}; userState.tmcqSU = {}; userState.tmcqSafety = {};
+                renderTMCQForm(); renderTMCQStaticForm();
+            }
 
             updateProgressCounters();
             updateInlineResults();
@@ -1492,24 +1670,6 @@
             });
         }
 
-        function renderTMCQForm() {
-            const container = document.getElementById('tmcq-questions-container');
-            container.innerHTML = '';
-            TMCQ_QUESTIONS.forEach((qText, index) => {
-                const qCard = document.createElement('div');
-                qCard.className = 'p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300';
-                let optionsHTML = '';
-                TMCQ_OPTIONS.forEach((opt) => {
-                    const isChecked = userState.tmcq[index] === opt.value;
-                    const baseClass = isChecked ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-500 text-sky-900 dark:text-sky-300 ring-1 ring-sky-500' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800';
-                    optionsHTML += `<label class="flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors text-xs sm:text-sm font-medium ${baseClass}"><input type="radio" name="tmcq-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setTMCQAnswer(${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
-                });
-                qCard.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="w-6 h-6 rounded-full bg-sky-100 text-sky-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">P${index + 1}</span><div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">${qText}</div></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pl-0 sm:pl-9">${optionsHTML}</div>`;
-                container.appendChild(qCard);
-            });
-        }
-
-        function setTMCQAnswer(idx, val) { userState.tmcq[idx] = val; updateProgressCounters(); renderTMCQForm(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setGAD7Answer(idx, val) { userState.gad7[idx] = val; updateProgressCounters(); renderGAD7Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPCL5Answer(idx, val) { userState.pcl5[idx] = val; updateProgressCounters(); renderPCL5Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setPHQ9Answer(idx, val) { userState.phq9[idx] = val; updateProgressCounters(); renderPHQ9Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
@@ -1517,13 +1677,193 @@
         function setDES2Answer(idx, val) { userState.des2[idx] = val; updateProgressCounters(); renderDES2Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
         function setLEC5Answer(idx, val) { userState.lec5[idx] = val; updateProgressCounters(); renderLEC5Form(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
 
+        // ===== TMCQ by CETA: form, session report and scoring =====
+        function renderTMCQForm() {
+            const renderGroup = (containerId, group, prefix, questions, optionsFor) => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                questions.forEach((qText, index) => {
+                    const qCard = document.createElement('div');
+                    qCard.className = 'p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300';
+                    let optionsHTML = '';
+                    optionsFor(index).forEach((opt) => {
+                        const isChecked = userState[group][index] === opt.value;
+                        const baseClass = isChecked ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-500 text-sky-900 dark:text-sky-300 ring-1 ring-sky-500' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800';
+                        optionsHTML += `<label class="flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors text-xs sm:text-sm font-medium ${baseClass}"><input type="radio" name="${group}-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setTMCQAnswer('${group}', ${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
+                    });
+                    qCard.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="min-w-[2.25rem] h-6 px-1.5 rounded-full bg-sky-100 text-sky-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${prefix}${index + 1}</span><div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">${qText}</div></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pl-0 sm:pl-12">${optionsHTML}</div>`;
+                    container.appendChild(qCard);
+                });
+            };
+            renderGroup('tmcq-p-container', 'tmcqP', 'P', TMCQ_P_QUESTIONS, () => TMCQ_FREQ_OPTIONS);
+            renderGroup('tmcq-su-container', 'tmcqSU', 'SU', TMCQ_SU_QUESTIONS.map(q => q.text), (i) => TMCQ_SU_QUESTIONS[i].options);
+            renderGroup('tmcq-safety-container', 'tmcqSafety', 'S', TMCQ_SAFETY_QUESTIONS, () => TMCQ_FREQ_OPTIONS);
+        }
+
+        // Session rows and services are rendered once (not on every answer click), so typed values are kept
+        function renderTMCQStaticForm() {
+            const inputCls = 'px-2 py-1 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm transition placeholder:text-slate-400 dark:placeholder:text-slate-600 [color-scheme:light] dark:[color-scheme:dark]';
+            const otherIdx = TMCQ_SESSION_COMPONENTS.length - 1;
+            document.getElementById('tmcq-session-components').innerHTML = TMCQ_SESSION_COMPONENTS.map((name, i) => {
+                const nameHTML = i === otherIdx
+                    ? `<input type="text" id="tmcq-comp-other-name" oninput="onTMCQComponentInput(${i})" class="flex-1 min-w-0 ${inputCls}" placeholder="Інший компонент">`
+                    : `<span class="min-w-0">${name}</span>`;
+                return `<div class="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"><label class="flex items-center gap-2 flex-1 min-w-0 cursor-pointer text-sm text-slate-700 dark:text-slate-300"><input type="checkbox" id="tmcq-comp-${i}" onchange="onTMCQComponentToggle(${i})" class="w-4 h-4 accent-sky-500 flex-shrink-0">${nameHTML}</label><input type="number" id="tmcq-comp-min-${i}" min="0" step="5" inputmode="numeric" oninput="onTMCQComponentInput(${i})" class="w-20 text-right ${inputCls}" placeholder="хв" aria-label="Хвилини: ${name}"></div>`;
+            }).join('');
+            document.getElementById('tmcq-services-container').innerHTML = TMCQ_SERVICES.map((text, i) => `<label class="flex items-start gap-2.5 p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors"><input type="checkbox" id="tmcq-svc-${i}" onchange="onTMCQFieldChange()" class="w-4 h-4 mt-0.5 accent-sky-500 flex-shrink-0"><span>${text}</span></label>`).join('');
+            ['tmcq-counselor-id', 'tmcq-session-duration', 'tmcq-safety-note', 'tmcq-svc-other'].forEach(id => { document.getElementById(id).value = ''; });
+            onTMCQSessionChange();
+        }
+
+        function setTMCQAnswer(group, idx, val) { userState[group][idx] = val; updateProgressCounters(); renderTMCQForm(); updateInlineResults(); if(currentActiveTab === 'results') calculateAndShowResults(); }
+
+        function onTMCQComponentToggle(i) {
+            if (!document.getElementById(`tmcq-comp-${i}`).checked) {
+                document.getElementById(`tmcq-comp-min-${i}`).value = '';
+                if (i === TMCQ_SESSION_COMPONENTS.length - 1) document.getElementById('tmcq-comp-other-name').value = '';
+            }
+            onTMCQSessionChange();
+        }
+
+        // Typing minutes (or a name for "Інше") ticks the component automatically
+        function onTMCQComponentInput(i) {
+            const minutes = Number(document.getElementById(`tmcq-comp-min-${i}`).value) || 0;
+            const hasOtherName = i === TMCQ_SESSION_COMPONENTS.length - 1 && document.getElementById('tmcq-comp-other-name').value.trim() !== '';
+            if (minutes > 0 || hasOtherName) document.getElementById(`tmcq-comp-${i}`).checked = true;
+            onTMCQSessionChange();
+        }
+
+        function onTMCQSessionChange() {
+            const session = getTMCQSession();
+            safeSetText('tmcq-session-sum', `${session.sumMinutes} хв`);
+            document.getElementById('tmcq-session-warning').classList.toggle('hidden', !(session.duration > 0 && session.sumMinutes > session.duration));
+            onTMCQFieldChange();
+        }
+
+        function onTMCQFieldChange() {
+            const otherServiceChecked = document.getElementById(`tmcq-svc-${TMCQ_SERVICES.length - 1}`)?.checked;
+            document.getElementById('tmcq-svc-other').classList.toggle('hidden', !otherServiceChecked);
+            if (currentActiveTab === 'results') calculateAndShowResults();
+        }
+
+        function getTMCQSession() {
+            const otherIdx = TMCQ_SESSION_COMPONENTS.length - 1;
+            const components = [];
+            TMCQ_SESSION_COMPONENTS.forEach((name, i) => {
+                if (!document.getElementById(`tmcq-comp-${i}`)?.checked) return;
+                const label = i === otherIdx ? (document.getElementById('tmcq-comp-other-name').value.trim() || name) : name;
+                components.push({ name: label, minutes: Math.max(0, Number(document.getElementById(`tmcq-comp-min-${i}`).value) || 0) });
+            });
+            return {
+                counselorId: document.getElementById('tmcq-counselor-id').value.trim(),
+                duration: Math.max(0, Number(document.getElementById('tmcq-session-duration').value) || 0),
+                components,
+                sumMinutes: components.reduce((sum, c) => sum + c.minutes, 0)
+            };
+        }
+
+        function getTMCQScores() {
+            const sumOf = obj => Object.values(obj).reduce((sum, v) => sum + v, 0);
+            const p = sumOf(userState.tmcqP), su = sumOf(userState.tmcqSU);
+            return {
+                p, su, total: p + su,
+                answered: Object.keys(userState.tmcqP).length + Object.keys(userState.tmcqSU).length + Object.keys(userState.tmcqSafety).length,
+                safetyFlag: Object.values(userState.tmcqSafety).some(v => v > 0),
+                // CETA rule: "1 раз" or more on SU1 or SU3 → use the substance use calendar form
+                calendarFlag: userState.tmcqSU[0] > 0 || userState.tmcqSU[2] > 0
+            };
+        }
+
+        function escapeHTML(str) { return String(str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])); }
+
+        function renderTMCQResults(s, clientId, dateVal) {
+            const cell = 'py-2.5 px-3';
+            const notSpecified = '<span class="text-slate-400 dark:text-slate-500 italic">Не вказано</span>';
+
+            // Summary card: scores only, no severity levels
+            safeSetText('tmcq-res-score', `${s.total} / 77`);
+            safeSetText('tmcq-res-p', `${s.p} / 63`);
+            safeSetText('tmcq-res-su', `${s.su} / 14`);
+            const safetyAnswered = Object.keys(userState.tmcqSafety).length > 0;
+            safeSetText('tmcq-res-safety', s.safetyFlag ? '⚠️ Сигнал безпеки' : (safetyAnswered ? '✅ Без сигналів' : 'Не заповнено'));
+            safeSetClass('tmcq-res-safety', `px-2 py-0.5 rounded-md text-[11px] font-bold border print-color-exact ${s.safetyFlag ? 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800' : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'}`);
+            safeSetStyleWidth('tmcq-res-mask', `${100 - Math.min(100, Math.round((s.total / 77) * 100))}%`);
+            safeSetText('tmcq-detailed-score-text', `П ${s.p}/63 • ПАР ${s.su}/14 • Разом ${s.total}/77`);
+
+            // Session report
+            const session = getTMCQSession();
+            safeSetText('tmcq-res-counselor', session.counselorId || 'Не вказано');
+            safeSetText('tmcq-res-client', clientId);
+            safeSetText('tmcq-res-date', dateVal);
+            safeSetText('tmcq-res-duration', session.duration > 0 ? `${session.duration} хв` : 'Не вказано');
+            const sessionTbody = document.getElementById('tmcq-session-tbody');
+            if (sessionTbody) {
+                sessionTbody.innerHTML = session.components.length === 0
+                    ? `<tr><td class="${cell}" colspan="2">${notSpecified}</td></tr>`
+                    : session.components.map(c => `<tr><td class="${cell} dark:text-slate-200">${escapeHTML(c.name)}</td><td class="${cell} text-right font-medium">${c.minutes || '—'}</td></tr>`).join('')
+                        + `<tr class="font-bold text-slate-900 dark:text-white"><td class="${cell}">Разом за компонентами</td><td class="${cell} text-right">${session.sumMinutes}</td></tr>`;
+            }
+
+            // Component decision table (Ukraine)
+            const itemInfo = ([group, idx]) => group === 'p'
+                ? { label: `${TMCQ_P_QUESTIONS[idx]} (P${idx + 1})`, val: userState.tmcqP[idx], max: 3 }
+                : { label: `${TMCQ_SU_QUESTIONS[idx].text} (SU${idx + 1})`, val: userState.tmcqSU[idx], max: Math.max(...TMCQ_SU_QUESTIONS[idx].options.map(o => o.value)) };
+            const decisionTbody = document.getElementById('tmcq-decision-tbody');
+            if (decisionTbody) {
+                decisionTbody.innerHTML = TMCQ_DECISION_COMPONENTS.map(comp => {
+                    const items = comp.items.map(itemInfo);
+                    const sum = items.reduce((acc, it) => acc + (it.val || 0), 0);
+                    const max = items.reduce((acc, it) => acc + it.max, 0);
+                    return `<tr class="bg-sky-50/60 dark:bg-sky-900/20 font-bold text-slate-900 dark:text-white print-color-exact"><td class="${cell}">${comp.name}</td><td class="${cell} text-right">${sum}</td><td class="${cell} text-right">${max}</td></tr>`
+                        + items.map(it => `<tr><td class="${cell} pl-7 text-slate-600 dark:text-slate-300">${it.label}</td><td class="${cell} text-right">${it.val !== undefined ? it.val : '—'}</td><td class="${cell} text-right text-slate-500 dark:text-slate-400">${it.max}</td></tr>`).join('');
+                }).join('');
+            }
+
+            // Safety monitoring
+            const safetyTbody = document.getElementById('tmcq-safety-tbody');
+            if (safetyTbody) {
+                safetyTbody.innerHTML = TMCQ_SAFETY_QUESTIONS.map((q, idx) => {
+                    const val = userState.tmcqSafety[idx];
+                    const optObj = TMCQ_FREQ_OPTIONS.find(o => o.value === val);
+                    const attention = val > 0 ? '<span class="text-xs bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 px-2 py-0.5 rounded font-bold ml-2 print-color-exact">Сигнал уваги</span>' : '';
+                    return `<tr><td class="${cell} font-bold text-slate-500 dark:text-slate-400">S${idx + 1}</td><td class="${cell} dark:text-slate-200">${q} ${attention}</td><td class="${cell} font-medium ${optObj ? '' : 'text-slate-400 dark:text-slate-500 italic'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td></tr>`;
+                }).join('');
+            }
+            safeSetText('tmcq-res-safety-note', document.getElementById('tmcq-safety-note').value.trim() || 'Не вказано');
+            safeSetClass('tmcq-res-safety-block', `mb-6 p-4 rounded-xl border print-color-exact transition-colors ${s.safetyFlag ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800'}`);
+
+            // Other services received during the last week
+            const servicesList = document.getElementById('tmcq-res-services');
+            if (servicesList) {
+                const otherIdx = TMCQ_SERVICES.length - 1;
+                const otherText = document.getElementById('tmcq-svc-other').value.trim();
+                const selected = TMCQ_SERVICES
+                    .map((text, i) => document.getElementById(`tmcq-svc-${i}`)?.checked ? (i === otherIdx && otherText ? `Інше: ${otherText}` : text) : null)
+                    .filter(Boolean);
+                servicesList.innerHTML = selected.length ? selected.map(t => `<li>${escapeHTML(t)}</li>`).join('') : `<li class="list-none -ml-5">${notSpecified}</li>`;
+            }
+
+            // Answers: problems and substance use (safety items are listed in their own block)
+            const answersTbody = document.getElementById('tmcq-answers-tbody');
+            if (answersTbody) {
+                const rows = [
+                    ...TMCQ_P_QUESTIONS.map((q, idx) => ({ label: `P${idx + 1}`, q, val: userState.tmcqP[idx], options: TMCQ_FREQ_OPTIONS })),
+                    ...TMCQ_SU_QUESTIONS.map((q, idx) => ({ label: `SU${idx + 1}`, q: q.text, val: userState.tmcqSU[idx], options: q.options }))
+                ];
+                answersTbody.innerHTML = rows.map(r => {
+                    const optObj = r.options.find(o => o.value === r.val);
+                    return `<tr><td class="${cell} font-bold text-slate-500 dark:text-slate-400">${r.label}</td><td class="${cell} dark:text-slate-200">${r.q}</td><td class="${cell} font-medium ${optObj ? 'text-slate-800 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500 italic'}">${optObj ? `${optObj.text} (${optObj.value} б.)` : 'Не відповідав(ла)'}</td></tr>`;
+                }).join('');
+            }
+        }
+
         function updateProgressCounters() {
             const gad7Count = Object.keys(userState.gad7).length;
             const pcl5Count = Object.keys(userState.pcl5).length;
             const phq9Count = Object.keys(userState.phq9).length;
             const des2Count = Object.keys(userState.des2).length;
             const lec5Count = Object.keys(userState.lec5).length;
-            const tmcqCount = Object.keys(userState.tmcq).length;
+            const tmcqCount = getTMCQScores().answered;
 
             document.getElementById('badge-gad7').textContent = `${gad7Count}/7`;
             
@@ -1536,7 +1876,7 @@
             document.getElementById('badge-phq9').textContent = `${phq9Count}/9`;
             document.getElementById('badge-des2').textContent = `${des2Count}/28`;
             document.getElementById('badge-lec5').textContent = `${lec5Count}/11`;
-            document.getElementById('badge-tmcq').textContent = `${tmcqCount}/21`;
+            document.getElementById('badge-tmcq').textContent = `${tmcqCount}/${TMCQ_ITEM_COUNT}`;
 
             // Update Top Progress Bar dynamically
             const topBar = document.getElementById('top-progress-bar');
@@ -1553,7 +1893,7 @@
                 else if (currentActiveTab === 'phq9') percent = (phq9Count / 9) * 100;
                 else if (currentActiveTab === 'des2') percent = (des2Count / 28) * 100;
                 else if (currentActiveTab === 'lec5') percent = (lec5Count / 11) * 100;
-                else if (currentActiveTab === 'tmcq') percent = (tmcqCount / 21) * 100;
+                else if (currentActiveTab === 'tmcq') percent = (tmcqCount / TMCQ_ITEM_COUNT) * 100;
                 
                 topBar.style.width = `${percent}%`;
             } else {
@@ -1617,15 +1957,15 @@
             safeSetText('inline-badge-lec5', lec5Badge);
             safeSetClass('inline-badge-lec5', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${lec5Class}`);
 
-            // TMCQ Inline
-            let tmcqSum = 0; Object.values(userState.tmcq).forEach(v => tmcqSum += v);
-            let tmcqBadge = "⚪ Мінімальний"; let tmcqClass = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
-            if (tmcqSum >= 48) { tmcqBadge = "🔴 Високий"; tmcqClass = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
-            else if (tmcqSum >= 32) { tmcqBadge = "🟡 Помірний"; tmcqClass = "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-800"; }
-            else if (tmcqSum >= 16) { tmcqBadge = "🟢 Легкий"; tmcqClass = "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"; }
-            safeSetText('inline-score-tmcq', `${tmcqSum} / 63`);
-            safeSetText('inline-badge-tmcq', tmcqBadge);
-            safeSetClass('inline-badge-tmcq', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${tmcqClass}`);
+            // TMCQ Inline (scores only: the CETA form has no severity cut-offs)
+            const tmcq = getTMCQScores();
+            safeSetText('inline-score-tmcq', `${tmcq.total} / 77`);
+            safeSetText('inline-badge-tmcq', `П ${tmcq.p}/63 · ПАР ${tmcq.su}/14`);
+            safeSetText('tmcq-p-subtotal', `${tmcq.p} / 63`);
+            safeSetText('tmcq-su-subtotal', `${tmcq.su} / 14`);
+            safeSetText('tmcq-total-subtotal', `${tmcq.total} / 77`);
+            document.getElementById('tmcq-su-calendar-note').classList.toggle('hidden', !tmcq.calendarFlag);
+            document.getElementById('tmcq-safety-alert').classList.toggle('hidden', !tmcq.safetyFlag);
         }
 
         function autoFillDemoData() {
@@ -1676,17 +2016,27 @@
             for (let i = 0; i < 28; i++) userState.des2[i] = des2Values[Math.floor(Math.random() * des2Values.length)];
             
             userState.lec5 = {}; for(let i=0; i<11; i++) userState.lec5[i] = Math.floor(Math.random() * 3);
-            userState.tmcq = {}; for(let i=0; i<21; i++) userState.tmcq[i] = Math.floor(Math.random() * 4);
 
-            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form(); renderTMCQForm();
+            userState.tmcqP = {}; for(let i=0; i<21; i++) userState.tmcqP[i] = Math.floor(Math.random() * 4);
+            userState.tmcqSU = {}; TMCQ_SU_QUESTIONS.forEach((q, i) => { userState.tmcqSU[i] = q.options[Math.floor(Math.random() * q.options.length)].value; });
+            userState.tmcqSafety = {}; for(let i=0; i<2; i++) userState.tmcqSafety[i] = Math.random() < 0.8 ? 0 : 1 + Math.floor(Math.random() * 3);
+            renderTMCQForm(); renderTMCQStaticForm();
+            document.getElementById('tmcq-counselor-id').value = `C-${100 + Math.floor(Math.random() * 900)}`;
+            document.getElementById('tmcq-session-duration').value = 60;
+            [...Array(TMCQ_SESSION_COMPONENTS.length - 1).keys()].sort(() => Math.random() - 0.5).slice(0, 1 + Math.floor(Math.random() * 3)).forEach(i => {
+                document.getElementById(`tmcq-comp-${i}`).checked = true;
+                document.getElementById(`tmcq-comp-min-${i}`).value = 5 * (2 + Math.floor(Math.random() * 3));
+            });
+            TMCQ_SERVICES.slice(0, -1).forEach((_, i) => { document.getElementById(`tmcq-svc-${i}`).checked = Math.random() < 0.3; });
+            onTMCQSessionChange();
+
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form();
             updateProgressCounters();
             updateInlineResults();
             if (currentActiveTab === 'results') calculateAndShowResults();
         }
 
         function resetForm() {
-            userState.gad7 = {}; 
-            userState.pcl5CritA = null; 
             document.querySelectorAll('input[name="patient-sex"]').forEach(s => {
                 s.checked = false;
                 s.disabled = false;
@@ -1705,10 +2055,8 @@
             }
             document.getElementById('patient-gender-custom').value = '';
 
-            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form(); renderTMCQForm();
-            updateProgressCounters();
-            updateInlineResults();
-            if (currentActiveTab === 'results') calculateAndShowResults();
+            // Clear every questionnaire (clearTest also re-renders the forms and refreshes counters/results)
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => clearTest(id));
         }
 
         function toggleSelectAllExports() {
@@ -1837,7 +2185,8 @@
             const isPhq9Complete = Object.keys(userState.phq9).length === 9;
             const isDes2Complete = Object.keys(userState.des2).length === 28;
             const isLec5Complete = Object.keys(userState.lec5).length === 11;
-            const isTmcqComplete = Object.keys(userState.tmcq).length === 21;
+            const tmcqScores = getTMCQScores();
+            const isTmcqComplete = tmcqScores.answered === TMCQ_ITEM_COUNT;
 
             const elGad7 = document.getElementById('chk-export-gad7');
             const elPcl5 = document.getElementById('chk-export-pcl5');
@@ -1861,7 +2210,7 @@
             if (Object.keys(userState.phq9).length > 0 && !isPhq9Complete) incompleteTests.push("PHQ-9");
             if (Object.keys(userState.des2).length > 0 && !isDes2Complete) incompleteTests.push("DES-II");
             if (Object.keys(userState.lec5).length > 0 && !isLec5Complete) incompleteTests.push("LEC-5");
-            if (Object.keys(userState.tmcq).length > 0 && !isTmcqComplete) incompleteTests.push("TMCQ");
+            if (tmcqScores.answered > 0 && !isTmcqComplete) incompleteTests.push("TMCQ");
 
             const warnContainer = document.getElementById('export-warning-container');
             const warnText = document.getElementById('export-warning-text');
@@ -2118,51 +2467,16 @@
                     lec5Tbody.appendChild(tr);
                 });
             }
-            // TMCQ SCORING
-            let tmcqSum = 0; Object.values(userState.tmcq).forEach(v => tmcqSum += v);
-            let tmcqBadge = { text: "⚪ Мінімальний", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
-            let tmcqDesc = "Симптоми відсутні або мінімальні."; let tmcqInterpIdx = 1;
 
-            if (tmcqSum >= 48) { tmcqBadge = { text: "🔴 Високий", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" }; tmcqDesc = "Виражений рівень проблем. Рекомендовано детальну оцінку."; tmcqInterpIdx = 4; }
-            else if (tmcqSum >= 32) { tmcqBadge = { text: "🟡 Помірний", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800", glow: "glow-amber" }; tmcqDesc = "Помірний рівень загального навантаження."; tmcqInterpIdx = 3; }
-            else if (tmcqSum >= 16) { tmcqBadge = { text: "🟢 Легкий", class: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800", glow: "glow-emerald" }; tmcqDesc = "Легкий прояв симптомів."; tmcqInterpIdx = 2; }
-
-            safeSetText('tmcq-res-score', `${tmcqSum} / 63`);
-            safeSetText('tmcq-res-badge', tmcqBadge.text);
-            safeSetClass('tmcq-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${tmcqBadge.class}`);
-            safeSetText('tmcq-res-desc', tmcqDesc);
-            
-            const tmcqRevealPercent = Math.min(100, Math.round((tmcqSum / 63) * 100));
-            safeSetStyleWidth('tmcq-res-mask', `${100 - tmcqRevealPercent}%`);
-            safeSetClass('tmcq-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${tmcqBadge.glow}`);
-            safeSetText('tmcq-detailed-score-text', `Сума: ${tmcqSum} / 63 балів`);
-
-            [1, 2, 3, 4].forEach(i => {
-                const el = document.getElementById(`tmcq-interp-${i}`);
-                if(el) {
-                    if (i === tmcqInterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
-                    else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
-                }
-            });
-
-            const tmcqTbody = document.getElementById('tmcq-answers-tbody');
-            if(tmcqTbody) {
-                tmcqTbody.innerHTML = '';
-                TMCQ_QUESTIONS.forEach((q, idx) => {
-                    const val = userState.tmcq[idx] !== undefined ? userState.tmcq[idx] : null;
-                    const optObj = val !== null ? TMCQ_OPTIONS.find(o => o.value === val) : null;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">P${idx + 1}</td><td class="py-2.5 px-3 dark:text-slate-200">${q}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td>`;
-                    tmcqTbody.appendChild(tr);
-                });
-            }
+            // TMCQ (scores only: the CETA form has no severity cut-offs)
+            renderTMCQResults(tmcqScores, nameVal, dateVal);
 
             const hasSelfHarmThoughts = userState.phq9[8] && userState.phq9[8] > 0;
-            const isHighOverall = gad7Sum >= 15 || pcl5Sum >= 33 || phq9Sum >= 20 || des2Avg >= 30 || tmcqSum >= 48;
+            const isHighOverall = gad7Sum >= 15 || pcl5Sum >= 33 || phq9Sum >= 20 || des2Avg >= 30;
             const safetyBox = document.getElementById('safety-alert-box');
 
             if(safetyBox) {
-                if (hasSelfHarmThoughts || isHighOverall) safetyBox.classList.remove('hidden');
+                if (hasSelfHarmThoughts || isHighOverall || tmcqScores.safetyFlag) safetyBox.classList.remove('hidden');
                 else safetyBox.classList.add('hidden');
             }
         }
