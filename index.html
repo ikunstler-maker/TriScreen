@@ -170,19 +170,19 @@
                             <label class="cursor-pointer">
                                 <input type="radio" name="patient-sex" value="Чоловік" class="peer sr-only" onchange="syncSexAndGender('sex')">
                                 <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
-                                    <span class="text-sky-600 dark:text-sky-400 font-bold text-sm sm:text-base leading-none">♂️</span> <span class="truncate">Чоловік</span>
+                                    <span class="text-sky-600 dark:text-sky-400 font-bold text-sm sm:text-base leading-none">♂️</span> <span class="truncate min-w-0">Чоловік</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="patient-sex" value="Жінка" class="peer sr-only" onchange="syncSexAndGender('sex')">
                                 <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
-                                    <span class="text-pink-600 dark:text-pink-400 font-bold text-sm sm:text-base leading-none">♀️</span> <span class="truncate">Жінка</span>
+                                    <span class="text-pink-600 dark:text-pink-400 font-bold text-sm sm:text-base leading-none">♀️</span> <span class="truncate min-w-0">Жінка</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="patient-sex" value="Інтерсекс" class="peer sr-only" onchange="syncSexAndGender('sex')">
                                 <div class="text-center py-2 px-1 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] sm:text-[13px] font-medium transition peer-checked:bg-sky-100 dark:peer-checked:bg-sky-900/40 peer-checked:border-sky-500 dark:peer-checked:border-sky-400 peer-checked:text-sky-900 dark:peer-checked:text-sky-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1 sm:gap-1.5 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
-                                    <span class="text-purple-600 dark:text-purple-400 font-bold text-sm sm:text-base leading-none">⚧️</span> <span class="truncate">Інтерсекс</span>
+                                    <span class="text-purple-600 dark:text-purple-400 font-bold text-sm sm:text-base leading-none">⚧️</span> <span class="truncate min-w-0">Інтерсекс</span>
                                 </div>
                             </label>
                         </div>
@@ -226,19 +226,19 @@
                         </div>
                     </div>
                     <div class="space-y-2.5">
-                        <div class="grid grid-cols-2 gap-2 h-[38px]">
-                            <button type="button" onclick="autoFillDemoData()" class="text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center border border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="autoFillDemoData()" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
                                 🎲 Демо
                             </button>
-                            <button type="button" onclick="resetForm()" class="text-[13px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center border border-rose-200 dark:border-rose-800 whitespace-nowrap">
+                            <button type="button" onclick="resetForm()" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-rose-200 dark:border-rose-800">
                                 Очистити
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 h-[38px]">
-                            <button type="button" onclick="switchTab('welcome')" class="text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center border border-slate-300 dark:border-slate-600 whitespace-nowrap">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
                                 Головна
                             </button>
-                            <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="text-[13px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center whitespace-nowrap">
+                            <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">
                                 Результати
                             </button>
                         </div>
@@ -343,7 +343,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -418,7 +418,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -478,7 +478,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -528,7 +528,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -578,7 +578,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -686,7 +686,7 @@
                 <!-- Nav Buttons (Bottom) -->
                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition whitespace-nowrap">
+                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
 <span class="save-hint-note">💡Результати зберігаються до оновлення сторінки. <br>А поки що ви можете обрати інші тести або перейти до результатів.</span>
@@ -2039,7 +2039,7 @@
                 document.getElementById(`tmcq-comp-${i}`).checked = true;
                 document.getElementById(`tmcq-comp-min-${i}`).value = 5 * (2 + Math.floor(Math.random() * 3));
             });
-            TMCQ_SERVICES.slice(0, -1).forEach((_, i) => { document.getElementById(`tmcq-svc-${i}`).checked = Math.random() < 0.3; });
+            TMCQ_SERVICES.slice(0, -1).forEach((_, i) => setTMCQServiceCheck(i, Math.random() < 0.3));
             onTMCQSessionChange();
 
             renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form();
@@ -2121,17 +2121,36 @@
             const wasDark = html.classList.contains('dark');
             if (wasDark) html.classList.remove('dark');
 
-            setTimeout(() => {
-                window.print();
-                
-                // Restore settings
+            // Restoring right after calling window.print() assumes print() blocks until the
+            // dialog closes. That holds on desktop, but mobile browsers (iOS/Android) return
+            // from print() immediately and render the share/print sheet asynchronously — so
+            // restoring here would unhide the other tests before the PDF is actually captured,
+            // which is why exported PDFs on mobile included every test. Wait for the real
+            // "printing is done" signal instead, with a fallback in case a browser fires neither.
+            let restored = false;
+            const restore = () => {
+                if (restored) return;
+                restored = true;
                 document.title = oldTitle;
                 if (wasDark) html.classList.add('dark');
-                
                 checks.forEach(id => {
-                    document.getElementById(`section-${id}`).classList.remove('print-only-hide');
-                    document.getElementById(`summary-card-${id}`).classList.remove('print-only-hide');
+                    const section = document.getElementById(`section-${id}`);
+                    const card = document.getElementById(`summary-card-${id}`);
+                    if (section) section.classList.remove('print-only-hide');
+                    if (card) card.classList.remove('print-only-hide');
                 });
+                window.removeEventListener('afterprint', restore);
+                if (mql) { if (mql.removeEventListener) mql.removeEventListener('change', onMqlChange); else if (mql.removeListener) mql.removeListener(onMqlChange); }
+            };
+
+            const mql = window.matchMedia ? window.matchMedia('print') : null;
+            const onMqlChange = (e) => { if (!e.matches) restore(); };
+            window.addEventListener('afterprint', restore);
+            if (mql) { if (mql.addEventListener) mql.addEventListener('change', onMqlChange); else if (mql.addListener) mql.addListener(onMqlChange); }
+            setTimeout(restore, 5000); // safety net if a browser fires neither signal
+
+            setTimeout(() => {
+                window.print();
             }, 150);
         }
 
