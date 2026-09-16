@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="uk" id="html-root" class="dark overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Політика конфіденційності - TriScreen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Force Dark Theme by Default
+        if (!localStorage.getItem('theme')) {
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
+        } else if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+</head>
+<body class="overflow-x-hidden w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm transition-colors duration-300">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Back to Home -->
+                <a href="index.html" class="flex items-center space-x-2 sm:space-x-3 group min-w-0 pr-2 cursor-pointer transition-opacity hover:opacity-80">
+                    <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight transition-colors truncate">На головну сторінку</h1>
+                        <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">Психодіагностичний Комплекс</p>
+                    </div>
+                </a>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700" title="Змінити тему">
+                    <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-grow w-full">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-10 shadow-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+            
+            <div class="mb-8 border-b border-slate-200 dark:border-slate-800 pb-6">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Політика конфіденційності</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Психодіагностичний Комплекс TriScreen • Останнє оновлення: 16.09.2026</p>
+            </div>
+
+            <div class="space-y-8 text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+                <p>Ця Політика конфіденційності пояснює, як ми обробляємо інформацію під час вашого користування веб-застосунком «Психодіагностичний Комплекс TriScreen» (далі — «Застосунок»), розміщеним за адресою <a href="https://ikunstler-maker.github.io/TriScreen/" class="text-sky-600 dark:text-sky-400 hover:underline">https://ikunstler-maker.github.io/TriScreen/</a>.</p>
+
+                <section>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">1. Збір та обробка персональних даних</h2>
+                    <p>Наш Застосунок розроблений за принципом повної автономності та максимального захисту приватності. <strong>Ми не збираємо, не зберігаємо та не передаємо жодних персональних чи медичних даних користувачів.</strong></p>
+                    <p class="mt-2">Усі дані, які ви вводите у Застосунку (включаючи ваше ім'я, дату народження, гендер та відповіді на психологічні тести), обробляються <strong>виключно локально у вашому браузері</strong> на вашому пристрої. Після закриття вкладки або оновлення сторінки всі введені дані назавжди видаляються з оперативної пам'яті вашого браузера.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">2. Файли Cookie та локальне сховище (Local Storage)</h2>
+                    <p>Застосунок не використовує файли cookie для відстеження користувачів або збору аналітики. Ми використовуємо механізм локального сховища браузера (Local Storage) виключно для збереження ваших технічних налаштувань інтерфейсу (наприклад, вибір між Світлою та Темною темою екрана). Ці налаштування не містять жодної ідентифікаційної інформації.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">3. Збереження результатів (Експорт PDF)</h2>
+                    <p>Функція формування та завантаження результатів у форматі PDF або їх друку виконується локально засобами вашого пристрою та браузера. Ви несете повну особисту відповідальність за безпечне зберігання завантажених файлів зі своїми результатами та за надання доступу до них третім особам (наприклад, вашому лікарю чи психотерапевту).</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">4. Сторонні сервіси (Хостинг)</h2>
+                    <p>Оскільки Застосунок розміщено на платформі GitHub Pages, компанія GitHub може збирати стандартні технічні логи доступу (наприклад, IP-адреси, тип браузера, час запиту) з метою забезпечення безпеки та стабільності роботи своїх серверів. Це стандартна практика для будь-якого веб-сайту. Рекомендуємо ознайомитися з Політикою конфіденційності GitHub для отримання додаткової інформації.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-3">5. Контакти</h2>
+                    <p>Якщо у вас виникли запитання щодо приватності чи роботи Застосунку, ви можете зв'язатися з розробником:</p>
+                    <ul class="mt-3 space-y-2">
+                        <li><strong>Розробник:</strong> Елайджа Кюнстлер (Elijah Künstler)</li>
+                        <li><strong>Email:</strong> <a href="mailto:elijah.kunstler@gmail.com" class="text-sky-600 dark:text-sky-400 hover:underline">elijah.kunstler@gmail.com</a></li>
+                    </ul>
+                </section>
+            </div>
+            
+            <div class="mt-10 text-center">
+                <a href="index.html" class="inline-flex justify-center px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md">
+                    Повернутися до Застосунку
+                </a>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
