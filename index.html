@@ -2645,10 +2645,20 @@
 
         let shouldSaveToHistory = false;
         function calculateAndSave() {
+            // Перевіряємо, чи користувач увійшов у Google
+            if (!accessToken) {
+                alert('⚠️ Для збереження історії необхідно увійти через Google (кнопка "Увійти" в шапці сайту).');
+                calculateAndShowResults();
+                switchTab('results'); // Якщо не авторизований, просто показуємо звичайні результати
+                return;
+            }
+            
             shouldSaveToHistory = true;
             calculateAndShowResults();
             shouldSaveToHistory = false;
-            switchTab('results');
+            
+            // Якщо все успішно, перекидаємо користувача саме на вкладку ІСТОРІЇ, щоб він побачив графіки!
+            switchTab('history'); 
         }
 
         // ==========================================
