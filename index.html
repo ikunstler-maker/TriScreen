@@ -240,22 +240,29 @@
                             <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                     </div>
-                    <div class="space-y-2.5">
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="autoFillDemoData()" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
-                                🎲 Демо
-                            </button>
-                            <button type="button" onclick="resetForm()" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-rose-200 dark:border-rose-800">
-                                Очистити
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
-                                Головна
-                            </button>
-                            <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[38px] px-1 text-[13px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">
-                                Результати
-                            </button>
+                    <div>
+                        <!-- Невидимий текст для ідеального вирівнювання по висоті з лівою частиною -->
+                        <label class="block text-xs font-semibold opacity-0 mb-1 pointer-events-none" aria-hidden="true">Дії</label>
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" onclick="autoFillDemoData()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
+                                    🎲 Демо
+                                </button>
+                                <button type="button" onclick="resetForm()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-rose-200 dark:border-rose-800">
+                                    Очистити
+                                </button>
+                                <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">
+                                    Головна
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">
+                                    Результати
+                                </button>
+                                <button type="button" onclick="switchTab('history')" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">
+                                    📊 Історія
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -308,11 +315,7 @@
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Щотижневий моніторинг стану клієнта</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">26 запитань про самопочуття за <span class="font-semibold text-slate-800 dark:text-slate-200">останній тиждень</span> та звіт по сесії.</p>
                         </div>
-                        <div onclick="switchTab('history')" role="button" tabindex="0" class="bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-emerald-700 dark:text-emerald-400 font-bold text-lg mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">📊 Моя динаміка</div>
-                            <div class="text-xs text-emerald-900 dark:text-emerald-200 font-medium mb-2">Історія та графіки</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">Зберігається у <span class="font-semibold text-slate-800 dark:text-slate-200">Google Drive</span>. Графіки та відстеження прогресу.</p>
-                        </div>
+                        
                     </div>
 
                     <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm mb-4">
@@ -366,10 +369,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -441,10 +444,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -501,10 +504,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -551,10 +554,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -601,10 +604,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -709,10 +712,10 @@
                         <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
                             ← На головну до списку тестів
                         </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Результати зберігаються до оновлення сторінки. А поки що ви можете обрати інші тести або перейти до результатів.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Сформувати результат</span>
+<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
+                    </div>
+                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
+                        <span>Занести в історію</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
@@ -2614,15 +2617,38 @@
                 else safetyBox.classList.add('hidden');
             }
 
-            // AUTO-SAVE TO HISTORY IF LOGGED IN
-            if (accessToken) {
-                if(isGad7Complete) saveCurrentTestToHistory('GAD-7', userState.gad7, gad7Sum, dateVal);
-                if(isPcl5Complete && userState.pcl5CritA === 'yes') saveCurrentTestToHistory('PCL-5', userState.pcl5, pcl5Sum, dateVal);
-                if(isPhq9Complete) saveCurrentTestToHistory('PHQ-9', userState.phq9, phq9Sum, dateVal);
-                if(isDes2Complete) saveCurrentTestToHistory('DES-II', userState.des2, des2Avg, dateVal);
-                if(isLec5Complete) saveCurrentTestToHistory('LEC-5', userState.lec5, lec5Sum, dateVal);
-                if(isTmcqComplete) saveCurrentTestToHistory('TMCQ', userState.tmcqP, tmcqScores.p, dateVal);
+            // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
+            if (accessToken && shouldSaveToHistory) {
+                let savedAny = false;
+                const saveTest = (testName, scoresObj, totalScore) => {
+                    const entryDate = dateVal !== "Не вказано" ? dateVal : new Date().toISOString().split('T')[0];
+                    testHistory = testHistory.filter(item => !(item.test === testName && item.date === entryDate));
+                    testHistory.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 5), date: entryDate, test: testName, total: totalScore, answers: scoresObj });
+                    savedAny = true;
+                };
+
+                if(isGad7Complete) saveTest('GAD-7', userState.gad7, gad7Sum);
+                if(isPcl5Complete && userState.pcl5CritA === 'yes') saveTest('PCL-5', userState.pcl5, pcl5Sum);
+                if(isPhq9Complete) saveTest('PHQ-9', userState.phq9, phq9Sum);
+                if(isDes2Complete) saveTest('DES-II', userState.des2, des2Avg);
+                if(isLec5Complete) saveTest('LEC-5', userState.lec5, lec5Sum);
+                if(isTmcqComplete) saveTest('TMCQ', userState.tmcqP, tmcqScores.p);
+                
+                if (savedAny) {
+                    saveHistoryToDrive();
+                    alert('✅ Ваші результати успішно занесено в історію на Google Drive!');
+                } else {
+                    alert('⚠️ Немає повністю завершених тестів для збереження в історію. Будь ласка, дайте відповіді на всі запитання обраного тесту.');
+                }
             }
+        }
+
+        let shouldSaveToHistory = false;
+        function calculateAndSave() {
+            shouldSaveToHistory = true;
+            calculateAndShowResults();
+            shouldSaveToHistory = false;
+            switchTab('results');
         }
 
         // ==========================================
@@ -2693,14 +2719,6 @@
                 await fetch(url, { method: file ? 'PATCH' : 'POST', headers: { Authorization: 'Bearer ' + accessToken }, body: form });
                 updateHistoryUI();
             } catch (err) { console.error('Error saving history', err); }
-        }
-
-        function saveCurrentTestToHistory(testName, scoresObj, totalScore, dateStr) {
-            const entryDate = dateStr !== "Не вказано" ? dateStr : new Date().toISOString().split('T')[0];
-            const newEntry = { id: Date.now().toString(), date: entryDate, test: testName, total: totalScore, answers: scoresObj };
-            testHistory = testHistory.filter(item => !(item.test === testName && item.date === entryDate));
-            testHistory.push(newEntry);
-            saveHistoryToDrive();
         }
 
         function deleteHistoryItem(id) { testHistory = testHistory.filter(i => i.id !== id); saveHistoryToDrive(); }
