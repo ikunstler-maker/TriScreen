@@ -10,6 +10,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Identity & APIs -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- Chart.js для графіків -->
+
     <script>
         // Force Dark Theme by Default
         if (!localStorage.getItem('theme')) {
@@ -132,6 +138,11 @@
                 </div>
 
                 <div class="flex items-center gap-4 sm:gap-6">
+                    <!-- Google Auth Button -->
+                    <button id="btn-google-login" onclick="handleAuthClick()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        <span id="auth-btn-text" class="hidden sm:inline">Увійти</span>
+                    </button>
                     <!-- Theme Toggle Button -->
                     <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700" title="Змінити тему">
                         <!-- Sun Icon -->
@@ -295,6 +306,11 @@
                             <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">by CETA</span></div>
                             <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Щотижневий моніторинг стану клієнта</div>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400">26 запитань про самопочуття за <span class="font-semibold text-slate-800 dark:text-slate-200">останній тиждень</span> та звіт по сесії.</p>
+                        </div>
+                        <div onclick="switchTab('history')" role="button" tabindex="0" class="bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
+                            <div class="text-emerald-700 dark:text-emerald-400 font-bold text-lg mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">📊 Моя динаміка</div>
+                            <div class="text-xs text-emerald-900 dark:text-emerald-200 font-medium mb-2">Історія та графіки</div>
+                            <p class="text-[11px] text-slate-600 dark:text-slate-400">Зберігається у <span class="font-semibold text-slate-800 dark:text-slate-200">Google Drive</span>. Графіки та відстеження прогресу.</p>
                         </div>
                     </div>
 
@@ -1240,6 +1256,85 @@
             </div>
         </section>
 
+    <!-- TAB 8: HISTORY & DYNAMICS -->
+        <section id="content-history" class="tab-content hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div class="flex items-center justify-between flex-wrap gap-4 border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Моя динаміка (Історія)</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Дані зберігаються безпечно у прихованій папці вашого Google Drive.</p>
+                    </div>
+                    <button type="button" onclick="switchTab('welcome')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold text-sm transition border border-slate-200 dark:border-slate-700">На головну</button>
+                </div>
+
+                <div id="history-unauth-msg" class="text-center py-12">
+                    <p class="text-slate-500 dark:text-slate-400 mb-4">Будь ласка, увійдіть через Google (кнопка вгорі), щоб переглядати та зберігати свою історію.</p>
+                </div>
+
+                <div id="history-content" class="hidden space-y-8">
+                    <!-- Filters -->
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <select id="history-test-filter" onchange="updateHistoryUI()" class="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium focus:ring-2 focus:ring-sky-500 outline-none">
+                            <option value="GAD-7">GAD-7 (Тривога)</option>
+                            <option value="PCL-5">PCL-5 (ПТСР)</option>
+                            <option value="PHQ-9">PHQ-9 (Депресія)</option>
+                            <option value="DES-II">DES-II (Дисоціація)</option>
+                            <option value="LEC-5">LEC-5 (Життєві події)</option>
+                            <option value="TMCQ">TMCQ (Моніторинг)</option>
+                        </select>
+                        <div class="flex bg-white dark:bg-slate-900 rounded-lg border border-slate-300 dark:border-slate-700 overflow-hidden text-xs font-medium">
+                            <button onclick="setTimeFilter('month')" id="btn-time-month" class="flex-1 sm:flex-none px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 border-r border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-700 transition">Місяць</button>
+                            <button onclick="setTimeFilter('year')" id="btn-time-year" class="flex-1 sm:flex-none px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 border-r border-slate-300 dark:border-slate-700 transition">Рік</button>
+                            <button onclick="setTimeFilter('all')" id="btn-time-all" class="flex-1 sm:flex-none px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Все</button>
+                        </div>
+                    </div>
+
+                    <!-- Charts Area (Swipeable on Mobile) -->
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200 mb-2">Загальний бал</h3>
+                            <div class="overflow-x-auto w-full border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950 p-2 sm:p-4">
+                                <div class="min-w-[600px] h-[250px] relative">
+                                    <canvas id="chart-total"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">Динаміка по окремих запитаннях</h3>
+                                <select id="history-question-filter" onchange="updateChartsOnly()" class="px-2 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md text-xs w-full sm:w-64 truncate focus:ring-2 focus:ring-sky-500 outline-none"></select>
+                            </div>
+                            <div class="overflow-x-auto w-full border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950 p-2 sm:p-4">
+                                <div class="min-w-[600px] h-[250px] relative">
+                                    <canvas id="chart-question"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Table -->
+                    <div>
+                        <div class="flex justify-between items-end mb-3">
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">Збережені записи</h3>
+                            <button onclick="clearHistoryData()" class="text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-semibold hover:underline">Видалити всю історію</button>
+                        </div>
+                        <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
+                            <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                                <thead class="bg-slate-50 dark:bg-slate-800 text-xs uppercase border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th class="px-4 py-3">Дата</th>
+                                        <th class="px-4 py-3">Тест</th>
+                                        <th class="px-4 py-3 text-right">Бал</th>
+                                        <th class="px-4 py-3 text-center">Дія</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900/50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- FOOTER -->
@@ -1495,7 +1590,7 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'results'];
+            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'results', 'history'];
             
             contentTabs.forEach(t => {
                 const contentEl = document.getElementById(`content-${t}`);
@@ -2517,6 +2612,162 @@
                 if (hasSelfHarmThoughts || isHighOverall || tmcqScores.safetyFlag) safetyBox.classList.remove('hidden');
                 else safetyBox.classList.add('hidden');
             }
+
+            // AUTO-SAVE TO HISTORY IF LOGGED IN
+            if (accessToken) {
+                if(isGad7Complete) saveCurrentTestToHistory('GAD-7', userState.gad7, gad7Sum, dateVal);
+                if(isPcl5Complete && userState.pcl5CritA === 'yes') saveCurrentTestToHistory('PCL-5', userState.pcl5, pcl5Sum, dateVal);
+                if(isPhq9Complete) saveCurrentTestToHistory('PHQ-9', userState.phq9, phq9Sum, dateVal);
+                if(isDes2Complete) saveCurrentTestToHistory('DES-II', userState.des2, des2Avg, dateVal);
+                if(isLec5Complete) saveCurrentTestToHistory('LEC-5', userState.lec5, lec5Sum, dateVal);
+                if(isTmcqComplete) saveCurrentTestToHistory('TMCQ', userState.tmcqP, tmcqScores.p, dateVal);
+            }
+        }
+
+        // ==========================================
+        // GOOGLE DRIVE & CHART.JS HISTORY SYSTEM
+        // ==========================================
+        const GOOGLE_CLIENT_ID = '256325110164-s7204n21hgtevme2744a5e83pgj58spq.apps.googleusercontent.com'; // <-- ЗАМІНІТЬ ЦЕ!
+        const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
+        
+        let tokenClient, accessToken = null, testHistory = [];
+        let chartTotalInstance = null, chartQuestionInstance = null;
+        let currentTimeFilter = 'month';
+
+        function initGoogleAuth() {
+            if(typeof google === 'undefined' || typeof gapi === 'undefined') return setTimeout(initGoogleAuth, 500);
+            gapi.load('client', async () => {
+                await gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] });
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GOOGLE_CLIENT_ID, scope: SCOPES,
+                    callback: (resp) => {
+                        if (resp.error) return console.error(resp);
+                        accessToken = resp.access_token;
+                        document.getElementById('auth-btn-text').textContent = 'Вийти';
+                        document.getElementById('history-unauth-msg').classList.add('hidden');
+                        document.getElementById('history-content').classList.remove('hidden');
+                        localStorage.setItem('google_logged_in', 'true');
+                        loadHistoryFromDrive();
+                    }
+                });
+                if (localStorage.getItem('google_logged_in') === 'true') tokenClient.requestAccessToken({prompt: ''});
+            });
+        }
+        
+        // Inject this into window.onload
+        const oldOnload = window.onload;
+        window.onload = function() { if(oldOnload) oldOnload(); initGoogleAuth(); };
+
+        function handleAuthClick() {
+            if (accessToken) { // Logout
+                google.accounts.oauth2.revoke(accessToken, () => {});
+                accessToken = null; localStorage.removeItem('google_logged_in');
+                document.getElementById('auth-btn-text').textContent = 'Увійти';
+                document.getElementById('history-unauth-msg').classList.remove('hidden');
+                document.getElementById('history-content').classList.add('hidden');
+                testHistory = [];
+            } else { tokenClient.requestAccessToken({prompt: 'consent'}); }
+        }
+
+        async function loadHistoryFromDrive() {
+            try {
+                let res = await gapi.client.drive.files.list({ spaces: 'appDataFolder', fields: 'files(id, name)' });
+                let file = res.result.files.find(f => f.name === 'triscreen_history.json');
+                if (file) {
+                    let fileData = await gapi.client.drive.files.get({ fileId: file.id, alt: 'media' });
+                    testHistory = typeof fileData.result === 'string' ? JSON.parse(fileData.result) : fileData.result;
+                } else { testHistory = []; }
+                updateHistoryUI();
+            } catch (err) { console.error('Error loading history', err); }
+        }
+
+        async function saveHistoryToDrive() {
+            try {
+                let res = await gapi.client.drive.files.list({ spaces: 'appDataFolder', fields: 'files(id, name)' });
+                let file = res.result.files.find(f => f.name === 'triscreen_history.json');
+                const form = new FormData();
+                form.append('metadata', new Blob([JSON.stringify({ name: 'triscreen_history.json', parents: ['appDataFolder'] })], { type: 'application/json' }));
+                form.append('file', new Blob([JSON.stringify(testHistory)], { type: 'application/json' }));
+                const url = file ? `https://www.googleapis.com/upload/drive/v3/files/${file.id}?uploadType=multipart` : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+                await fetch(url, { method: file ? 'PATCH' : 'POST', headers: { Authorization: 'Bearer ' + accessToken }, body: form });
+                updateHistoryUI();
+            } catch (err) { console.error('Error saving history', err); }
+        }
+
+        function saveCurrentTestToHistory(testName, scoresObj, totalScore, dateStr) {
+            const entryDate = dateStr !== "Не вказано" ? dateStr : new Date().toISOString().split('T')[0];
+            const newEntry = { id: Date.now().toString(), date: entryDate, test: testName, total: totalScore, answers: scoresObj };
+            testHistory = testHistory.filter(item => !(item.test === testName && item.date === entryDate));
+            testHistory.push(newEntry);
+            saveHistoryToDrive();
+        }
+
+        function deleteHistoryItem(id) { testHistory = testHistory.filter(i => i.id !== id); saveHistoryToDrive(); }
+        function clearHistoryData() { if(confirm("Видалити ВСЮ історію? Цю дію неможливо скасувати.")) { testHistory = []; saveHistoryToDrive(); } }
+
+        function setTimeFilter(filter) {
+            currentTimeFilter = filter;
+            ['month', 'year', 'all'].forEach(f => {
+                const btn = document.getElementById(`btn-time-${f}`);
+                if(f === filter) btn.classList.add('bg-slate-200', 'dark:bg-slate-700');
+                else btn.classList.remove('bg-slate-200', 'dark:bg-slate-700');
+            });
+            updateChartsOnly();
+        }
+
+        function updateHistoryUI() { populateQuestionDropdown(); updateChartsOnly(); updateHistoryTable(); }
+
+        function populateQuestionDropdown() {
+            const test = document.getElementById('history-test-filter').value;
+            const qSelect = document.getElementById('history-question-filter');
+            qSelect.innerHTML = '<option value="all">Середній бал за всіма питаннями</option>';
+            let qArr = [];
+            if(test === 'GAD-7') qArr = GAD7_QUESTIONS; else if(test === 'PCL-5') qArr = PCL5_QUESTIONS; else if(test === 'PHQ-9') qArr = PHQ9_QUESTIONS; else if(test === 'DES-II') qArr = DES2_QUESTIONS; else if(test === 'LEC-5') qArr = LEC5_QUESTIONS; else if(test === 'TMCQ') qArr = TMCQ_P_QUESTIONS;
+            qArr.forEach((q, i) => qSelect.innerHTML += `<option value="${i}">П${i+1}: ${q.substring(0, 40)}...</option>`);
+        }
+
+        function updateChartsOnly() {
+            if (typeof Chart === 'undefined') return;
+            const test = document.getElementById('history-test-filter').value;
+            let data = testHistory.filter(i => i.test === test).sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (currentTimeFilter !== 'all') {
+                const limit = new Date();
+                if(currentTimeFilter === 'month') limit.setMonth(limit.getMonth() - 1);
+                if(currentTimeFilter === 'year') limit.setFullYear(limit.getFullYear() - 1);
+                data = data.filter(i => new Date(i.date) >= limit);
+            }
+            const labels = data.map(d => d.date);
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94a3b8' : '#64748b', gridColor = isDark ? '#334155' : '#e2e8f0';
+
+            // Total Chart
+            const ctxTotal = document.getElementById('chart-total').getContext('2d');
+            if (chartTotalInstance) chartTotalInstance.destroy();
+            chartTotalInstance = new Chart(ctxTotal, {
+                type: 'line',
+                data: { labels, datasets: [{ data: data.map(d => d.total), borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.2)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#0ea5e9', pointRadius: 5 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true } } }
+            });
+
+            // Question Chart
+            const qVal = document.getElementById('history-question-filter').value;
+            const qScores = qVal === 'all' ? data.map(d => { const k = Object.keys(d.answers); return k.length ? k.reduce((acc, x) => acc + (d.answers[x]||0), 0)/k.length : 0; }) : data.map(d => d.answers[qVal] || 0);
+            const ctxQ = document.getElementById('chart-question').getContext('2d');
+            if (chartQuestionInstance) chartQuestionInstance.destroy();
+            chartQuestionInstance = new Chart(ctxQ, {
+                type: 'bar',
+                data: { labels, datasets: [{ data: qScores, backgroundColor: '#f59e0b', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor }, grid: { display: false } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true } } }
+            });
+            updateHistoryTable(); // Sync table filtering
+        }
+
+        function updateHistoryTable() {
+            const test = document.getElementById('history-test-filter').value;
+            const tbody = document.getElementById('history-table-body');
+            const data = testHistory.filter(i => i.test === test).sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (data.length === 0) { return tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500 italic">Немає збережених записів</td></tr>`; }
+            tbody.innerHTML = data.map(i => `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"><td class="px-4 py-2 font-medium">${i.date}</td><td class="px-4 py-2"><span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800 font-bold">${i.test}</span></td><td class="px-4 py-2 text-right font-bold text-slate-900 dark:text-white">${i.total}</td><td class="px-4 py-2 text-center"><button onclick="deleteHistoryItem('${i.id}')" class="p-1 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 bg-rose-50 dark:bg-rose-900/20 rounded transition" title="Видалити запис"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`).join('');
         }
     </script>
 </body>
