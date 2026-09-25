@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk" id="html-root" class="dark overflow-x-hidden w-full max-w-[100vw]">
+<html lang="uk" id="html-root" class="dark w-full max-w-[100vw]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -122,10 +122,10 @@
         .glow-sky { --glow-color: rgba(14, 165, 233, 0.7); }
     </style>
 </head>
-<body class="overflow-x-hidden w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300">
+<body class="w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300">
 
     <!-- Header / Navbar -->
-    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm no-print transition-colors duration-300">
+    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 shadow-sm no-print transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Clickable Logo leading to home -->
@@ -161,11 +161,24 @@
     </header>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+    <main class="overflow-x-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
 
         <!-- Respondent Details Banner -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-800 mb-6 no-print transition-colors duration-300">
-            <div class="flex flex-col md:grid md:grid-cols-12 gap-y-4 gap-x-4 lg:gap-x-6 items-start">
+            
+            <!-- Toggle Header -->
+            <button type="button" onclick="toggleRespondentData()" class="w-full flex items-center justify-between focus:outline-none group pb-1 sm:pb-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl leading-none" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;">👤</span>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Дані респондента</h3>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-800 p-1.5 rounded-lg text-slate-500 dark:text-slate-400 group-hover:bg-sky-50 dark:group-hover:bg-sky-900/30 transition-colors">
+                    <svg id="respondent-toggle-icon" class="w-4 h-4 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 15l-7-7-7 7"></path></svg>
+                </div>
+            </button>
+
+            <!-- Collapsible Body (Default Visible) -->
+            <div id="respondent-data-body" class="mt-4 flex flex-col md:grid md:grid-cols-12 gap-y-4 gap-x-4 lg:gap-x-6 items-start transition-all duration-300">
                 
                 <!-- COLUMN 1: Name & Sex -->
                 <div class="w-full md:col-span-5 flex flex-col gap-4 order-1">
@@ -199,7 +212,7 @@
                 </div>
 
                 <!-- COLUMN 2: Gender & DOB -->
-                <div class="w-full md:col-span-3 flex flex-col gap-4 order-2">
+                <div class="w-full md:col-span-4 flex flex-col gap-4 order-2">
                     <div class="relative">
                         <span class="absolute left-3 top-2.5 text-lg z-10 pointer-events-none" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;">🫀</span>
                         <select id="patient-gender" onchange="toggleCustomGender()" class="w-full pl-10 pr-8 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition appearance-none">
@@ -223,27 +236,23 @@
                 </div>
 
                 <!-- COLUMN 3: Date & Actions -->
-                <div class="w-full md:col-span-4 lg:col-span-3 md:col-start-9 lg:col-start-10 flex flex-col gap-4 order-3">
+                <div class="w-full md:col-span-3 flex flex-col gap-4 order-3">
                     <div class="relative flex items-center">
                         <span class="absolute left-3 text-lg z-10 pointer-events-none" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;">📅</span>
                         <input type="date" id="assessment-date" class="w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition [color-scheme:light] dark:[color-scheme:dark]" title="Дата опитування">
                     </div>
-                    <div>
-                        <!-- Невидимий текст для ідеального вирівнювання по висоті з лівою частиною -->
-                        <div class="block text-xs font-semibold opacity-0 mb-1 pointer-events-none" aria-hidden="true">Дії</div>
-                        <div class="space-y-2 mt-[-20px] sm:mt-0">
-                            <div class="grid grid-cols-3 gap-2">
-                                <button type="button" onclick="autoFillDemoData()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">🎲 Демо</button>
-                                <button type="button" onclick="resetForm()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-rose-200 dark:border-rose-800">Очистити</button>
-                                <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">Головна</button>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">Результати</button>
-                                <button type="button" onclick="switchTab('history')" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-bold transition shadow-md flex items-center justify-center text-center leading-tight">📊 Історія</button>
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <button type="button" onclick="autoFillDemoData()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-slate-300 dark:border-slate-600">🎲 Демо</button>
+                        <button type="button" onclick="resetForm()" class="min-w-0 min-h-[38px] px-1 text-[12px] bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 rounded-lg font-medium transition flex items-center justify-center text-center leading-tight border border-rose-200 dark:border-rose-800">Очистити</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Always Visible Navigation Buttons (Lower Section) -->
+            <div class="mt-5 pt-5 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 sm:gap-4">
+                <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition flex items-center justify-center text-center leading-tight border border-slate-200 dark:border-slate-700">🏠 Головна</button>
+                <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold transition shadow-sm flex items-center justify-center text-center leading-tight">📊 Результати</button>
+                <button type="button" onclick="switchTab('history')" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold transition shadow-sm flex items-center justify-center text-center leading-tight">📈 Історія</button>
             </div>
         </div>
 
@@ -342,16 +351,16 @@
                 </div>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -417,16 +426,16 @@
                 </div>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -477,16 +486,16 @@
                 </div>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -527,16 +536,16 @@
                 </div>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -577,16 +586,16 @@
                 </div>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -685,16 +694,16 @@
                 <p class="mt-4 text-[11px] text-slate-500 dark:text-slate-400">Більше інформації про програму CETA в Україні: <a href="http://www.ceta.org.ua/" target="_blank" rel="noopener noreferrer" class="text-sky-700 dark:text-sky-400 hover:underline">ceta.org.ua</a> • про CETA Global: <a href="https://www.cetaglobal.org/" target="_blank" rel="noopener noreferrer" class="text-sky-700 dark:text-sky-400 hover:underline">cetaglobal.org</a></p>
 
                 <!-- Nav Buttons (Bottom) -->
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <button type="button" onclick="switchTab('welcome')" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition">
-                            ← На головну до списку тестів
-                        </button>
-<span class="text-[11px] text-slate-500 dark:text-slate-400 w-full leading-snug pl-1 pt-1 opacity-80">💡 Натисніть кнопку поруч, щоб сформувати підсумок та безпечно зберегти його у вашу історію на Google Drive.</span>
-                    </div>
-                    <button type="button" onclick="calculateAndSave()" class="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md flex items-center gap-2">
-                        <span>Занести в історію</span>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
                     </button>
                 </div>
             </div>
@@ -703,21 +712,15 @@
         <!-- TAB 5: RESULTS & DETAILED ANALYSIS -->
         <section id="content-results" class="tab-content hidden">
             
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-6 no-print">
-                <button type="button" onclick="switchTab('welcome')" class="flex-1 sm:flex-none justify-center px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold text-sm transition flex items-center gap-2 border border-slate-200 dark:border-slate-700">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    <span>На головну</span>
+            <div class="flex flex-wrap items-center justify-end gap-3 mb-6 no-print">
+                <button type="button" onclick="calculateAndShowResults()" class="flex-1 sm:flex-none justify-center px-4 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Оновити результат</span>
                 </button>
-                <div class="flex flex-wrap flex-1 sm:flex-none justify-end gap-3">
-                    <button type="button" onclick="calculateAndShowResults()" class="flex-1 sm:flex-none justify-center px-4 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        <span>Оновити результат</span>
-                    </button>
-                    <button type="button" onclick="calculateAndSave()" class="flex-1 sm:flex-none justify-center px-5 py-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        <span>Занести в історію</span>
-                    </button>
-                </div>
+                <button type="button" onclick="calculateAndSave(this)" class="flex-1 sm:flex-none justify-center px-5 py-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <span>Занести в історію</span>
+                </button>
             </div>
 
             <!-- EXPORT ACTION BAR (CHECKBOXES) -->
@@ -1391,6 +1394,24 @@
         }
 
         let currentActiveTab = 'welcome';
+
+        function toggleRespondentData() {
+            const body = document.getElementById('respondent-data-body');
+            const icon = document.getElementById('respondent-toggle-icon');
+            
+            // Якщо блок зараз видимий (має flex або grid)
+            if (body.classList.contains('flex') || body.classList.contains('md:grid')) {
+                // Ховаємо блок
+                body.classList.remove('flex', 'flex-col', 'md:grid', 'md:grid-cols-12');
+                body.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            } else {
+                // Показуємо блок (повертаємо всі необхідні класи сітки)
+                body.classList.remove('hidden');
+                body.classList.add('flex', 'flex-col', 'md:grid', 'md:grid-cols-12');
+                icon.classList.add('rotate-180');
+            }
+        }
 
         const GAD7_QUESTIONS = ["Підвищена нервова збудливість, неспокій чи дратівливість", "Нездатність впоратися із хвилюванням", "Надмірне занепокоєння з різного приводу", "Нездатність розслабитися", "Крайній рівень неспокою: Місця собі не знаходжу", "Легко піддаюся відчуттю неспокою чи дратівливості", "Страх через відчуття, ніби станеться щось жахливе"];
         const GAD7_OPTIONS = [{ text: "⚪ Ніколи", value: 0 }, { text: "🟢 Кілька днів", value: 1 }, { text: "🟡 Понад половину часу", value: 2 }, { text: "🔴 Майже щодня", value: 3 }];
@@ -2667,7 +2688,7 @@
         }
 
         let shouldSaveToHistory = false;
-        function calculateAndSave() {
+        function calculateAndSave(btnElement) {
             // Перевіряємо, чи користувач увійшов у Google
             if (!accessToken) {
                 alert('⚠️ Для збереження історії необхідно увійти через Google (кнопка "Увійти" в шапці сайту).');
@@ -2680,8 +2701,21 @@
             calculateAndShowResults();
             shouldSaveToHistory = false;
             
-            // Якщо все успішно, перекидаємо користувача саме на вкладку ІСТОРІЇ, щоб він побачив графіки!
-            switchTab('history'); 
+            // "Тихе" збереження: візуально змінюємо кнопку без перемикання вкладок
+            if (btnElement) {
+                const originalHTML = btnElement.innerHTML;
+                const originalClasses = btnElement.className;
+                
+                // Додаємо зелений колір успіху та новий текст
+                btnElement.className = "flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-500 text-white rounded-xl font-bold text-sm transition shadow-md flex-1 sm:flex-none";
+                btnElement.innerHTML = '<span>✅ Занесено!</span>';
+                
+                // Повертаємо початковий вигляд через 3 секунди
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.className = originalClasses;
+                }, 3000);
+            }
         }
 
         // ==========================================
