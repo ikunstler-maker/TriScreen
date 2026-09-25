@@ -16,6 +16,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <!-- Chart.js для графіків -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         // Force Dark Theme by Default
@@ -707,10 +708,16 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     <span>На головну</span>
                 </button>
-                <button type="button" onclick="calculateAndShowResults()" class="flex-1 sm:flex-none justify-center px-5 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    <span>Оновити результат</span>
-                </button>
+                <div class="flex flex-wrap flex-1 sm:flex-none justify-end gap-3">
+                    <button type="button" onclick="calculateAndShowResults()" class="flex-1 sm:flex-none justify-center px-4 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>Оновити результат</span>
+                    </button>
+                    <button type="button" onclick="calculateAndSave()" class="flex-1 sm:flex-none justify-center px-5 py-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
+                    </button>
+                </div>
             </div>
 
             <!-- EXPORT ACTION BAR (CHECKBOXES) -->
@@ -724,6 +731,21 @@
                 <div id="export-warning-container" class="hidden p-3 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-medium flex items-start gap-2">
                     <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     <span id="export-warning-text"></span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mb-5 pb-5 border-b border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-semibold text-slate-300">Масштаб PDF:</label>
+                        <input type="range" id="print-scale-slider" min="40" max="100" value="100" class="w-24 sm:w-32 accent-sky-500" oninput="document.getElementById('print-scale-val').textContent = this.value + '%'">
+                        <span id="print-scale-val" class="text-sm font-bold text-white w-10">100%</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="text-sm font-semibold text-slate-300">Тема PDF:</label>
+                        <select id="print-theme-select" class="bg-slate-700 text-white rounded-lg px-2 py-1 text-sm border border-slate-600 focus:ring-sky-500 outline-none">
+                            <option value="light">Світла (Білий фон)</option>
+                            <option value="dark">Темна (Чорний фон)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
@@ -1585,6 +1607,9 @@
             });
             
             if (tabId === 'results') calculateAndShowResults();
+            if (tabId === 'history') {
+                setTimeout(updateHistoryUI, 50); // Фікс: малюємо графік ТІЛЬКИ після відкриття вкладки, щоб Chart.js міг розрахувати розмір
+            }
             updateProgressCounters(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -2199,10 +2224,26 @@
             selected.forEach(s => titleParts.push(s.toUpperCase().replace('PCL5', 'PCL-5').replace('DES2', 'DES-II').replace('LEC5', 'LEC-5')));
             document.title = `Психодіагностичний_Комплекс_${titleParts.join('_')}_${dateStr}`;
 
-            // Momentarily remove dark mode for pure white print
             const html = document.documentElement;
             const wasDark = html.classList.contains('dark');
-            if (wasDark) html.classList.remove('dark');
+            const printTheme = document.getElementById('print-theme-select') ? document.getElementById('print-theme-select').value : 'light';
+            const scale = document.getElementById('print-scale-slider') ? (document.getElementById('print-scale-slider').value / 100) : 1;
+
+            if (printTheme === 'light') html.classList.remove('dark');
+            else html.classList.add('dark');
+
+            // Застосовуємо масштаб та жорсткі правила заборони розривів таблиць для мобільних пристроїв
+            let styleEl = document.getElementById('print-custom-style');
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = 'print-custom-style';
+                document.head.appendChild(styleEl);
+            }
+            styleEl.innerHTML = `@media print { 
+                body { zoom: ${scale}; } 
+                tr, td, th, .test-section, .summary-card, .bg-white { page-break-inside: avoid !important; break-inside: avoid !important; }
+                h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
+            }`;
 
             // Restoring right after calling window.print() assumes print() blocks until the
             // dialog closes. That holds on desktop, but mobile browsers (iOS/Android) return
@@ -2595,12 +2636,17 @@
             }
 
             // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
+            // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
             if (accessToken && shouldSaveToHistory) {
                 let savedAny = false;
                 const saveTest = (testName, scoresObj, totalScore) => {
+                    // ЗБЕРІГАЄМО З ТОЧНИМ ЧАСОМ, ЩОБ МОЖНА БУЛО ЗАНОСИТИ КІЛЬКА РАЗІВ НА ДЕНЬ
                     const entryDate = dateVal !== "Не вказано" ? dateVal : new Date().toISOString().split('T')[0];
-                    testHistory = testHistory.filter(item => !(item.test === testName && item.date === entryDate));
-                    testHistory.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 5), date: entryDate, test: testName, total: totalScore, answers: scoresObj });
+                    const entryTime = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+                    const fullDateStr = `${entryDate} ${entryTime}`;
+                    
+                    // ВИДАЛЕНО ФІЛЬТР, ЯКИЙ ПЕРЕЗАПИСУВАВ ДАНІ ЗА ОДИН ДЕНЬ
+                    testHistory.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 5), date: fullDateStr, test: testName, total: totalScore, answers: scoresObj });
                     savedAny = true;
                 };
 
@@ -2737,36 +2783,75 @@
         function updateChartsOnly() {
             if (typeof Chart === 'undefined') return;
             const test = document.getElementById('history-test-filter').value;
-            let data = testHistory.filter(i => i.test === test).sort((a, b) => new Date(a.date) - new Date(b.date));
+            let data = testHistory.filter(i => i.test === test).sort((a, b) => {
+                // Парсимо дату з часом для правильного сортування
+                const parseDate = (dStr) => {
+                    const parts = dStr.split(' ');
+                    if (parts.length > 1) return new Date(`${parts[0]}T${parts[1]}`);
+                    return new Date(parts[0]);
+                };
+                return parseDate(a.date) - parseDate(b.date);
+            });
+            
             if (currentTimeFilter !== 'all') {
                 const limit = new Date();
                 if(currentTimeFilter === 'month') limit.setMonth(limit.getMonth() - 1);
                 if(currentTimeFilter === 'year') limit.setFullYear(limit.getFullYear() - 1);
-                data = data.filter(i => new Date(i.date) >= limit);
+                data = data.filter(i => {
+                    const parts = i.date.split(' ');
+                    return new Date(parts[0]) >= limit;
+                });
             }
             const labels = data.map(d => d.date);
             const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#94a3b8' : '#64748b', gridColor = isDark ? '#334155' : '#e2e8f0';
 
-            // Total Chart
+            // Custom Y-axis labels function
+            const yAxisCallback = function(value) {
+                if (test === 'GAD-7') { if (value >= 15) return value + ' (Високий)'; if (value >= 10) return value + ' (Помірний)'; if (value >= 5) return value + ' (Легкий)'; return value + ' (Мінімальний)'; }
+                if (test === 'PCL-5') { if (value >= 50) return value + ' (Високий)'; if (value >= 33) return value + ' (Підвищений)'; if (value >= 21) return value + ' (Помірний)'; if (value >= 11) return value + ' (Легкий)'; return value + ' (Мінімальний)'; }
+                if (test === 'PHQ-9') { if (value >= 20) return value + ' (Важкий)'; if (value >= 15) return value + ' (Виражений)'; if (value >= 10) return value + ' (Помірний)'; if (value >= 5) return value + ' (Низький)'; return value + ' (Мінімальний)'; }
+                if (test === 'DES-II') { if (value >= 30) return value + ' (Високий)'; return value + ' (Мінімальний)'; }
+                if (test === 'LEC-5') { if (value >= 11) return value + ' (Високий)'; if (value >= 1) return value + ' (Помірний)'; return value + ' (Мінімальний)'; }
+                return value;
+            };
+
+            // Total Chart (Scatter style)
             const ctxTotal = document.getElementById('chart-total').getContext('2d');
             if (chartTotalInstance) chartTotalInstance.destroy();
             chartTotalInstance = new Chart(ctxTotal, {
                 type: 'line',
-                data: { labels, datasets: [{ data: data.map(d => d.total), borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.2)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#0ea5e9', pointRadius: 5 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true } } }
+                data: { labels, datasets: [{ data: data.map(d => d.total), borderColor: '#0ea5e9', backgroundColor: '#0ea5e9', borderWidth: 0, fill: false, showLine: false, pointBackgroundColor: '#0ea5e9', pointRadius: 6, pointHoverRadius: 8 }] },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } }, 
+                        y: { ticks: { color: textColor, callback: yAxisCallback }, grid: { color: gridColor }, beginAtZero: true } 
+                    } 
+                }
             });
 
-            // Question Chart
+            // Question Chart (Scatter style for consistency)
             const qVal = document.getElementById('history-question-filter').value;
             const qScores = qVal === 'all' ? data.map(d => { const k = Object.keys(d.answers); return k.length ? k.reduce((acc, x) => acc + (d.answers[x]||0), 0)/k.length : 0; }) : data.map(d => d.answers[qVal] || 0);
             const ctxQ = document.getElementById('chart-question').getContext('2d');
             if (chartQuestionInstance) chartQuestionInstance.destroy();
             chartQuestionInstance = new Chart(ctxQ, {
-                type: 'bar',
-                data: { labels, datasets: [{ data: qScores, backgroundColor: '#f59e0b', borderRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor }, grid: { display: false } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true } } }
+                type: 'line', // Changed to line with showLine: false to be scatter
+                data: { labels, datasets: [{ data: qScores, borderColor: '#f59e0b', backgroundColor: '#f59e0b', borderWidth: 0, fill: false, showLine: false, pointBackgroundColor: '#f59e0b', pointRadius: 6, pointHoverRadius: 8 }] },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } }, 
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true } 
+                    } 
+                }
             });
+
             updateHistoryTable(); // Sync table filtering
         }
 
@@ -2775,7 +2860,95 @@
             const tbody = document.getElementById('history-table-body');
             const data = testHistory.filter(i => i.test === test).sort((a, b) => new Date(b.date) - new Date(a.date));
             if (data.length === 0) { return tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500 italic">Немає збережених записів</td></tr>`; }
-            tbody.innerHTML = data.map(i => `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"><td class="px-4 py-2 font-medium">${i.date}</td><td class="px-4 py-2"><span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800 font-bold">${i.test}</span></td><td class="px-4 py-2 text-right font-bold text-slate-900 dark:text-white">${i.total}</td><td class="px-4 py-2 text-center"><button onclick="deleteHistoryItem('${i.id}')" class="p-1 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 bg-rose-50 dark:bg-rose-900/20 rounded transition" title="Видалити запис"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`).join('');
+            tbody.innerHTML = data.map(i => `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800/50"><td class="px-4 py-3 font-medium">${i.date}</td><td class="px-4 py-3"><span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800 font-bold">${i.test}</span></td><td class="px-4 py-3 text-right font-bold text-slate-900 dark:text-white">${i.total}</td><td class="px-4 py-3 text-center flex justify-center gap-2"><button onclick="exportHistoryDay('${i.date}')" class="p-1.5 text-sky-600 hover:text-sky-800 bg-sky-50 dark:bg-sky-900/30 dark:text-sky-400 rounded-lg border border-sky-200 dark:border-sky-800 transition shadow-sm" title="Відкрити всі тести за цей день у Результатах"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg></button><button onclick="deleteHistoryItem('${i.id}')" class="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 dark:bg-rose-900/30 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800 transition shadow-sm" title="Видалити запис"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`).join('');
+        }
+
+        function exportHistoryDay(dateStr) {
+            const dayTests = testHistory.filter(t => t.date === dateStr);
+            if (dayTests.length === 0) return;
+            resetForm(); // Очищаємо поточні дані
+            document.getElementById('assessment-date').value = dateStr;
+            
+            // Завантажуємо відповіді з історії назад у пам'ять
+            dayTests.forEach(test => {
+                if (test.test === 'GAD-7') userState.gad7 = test.answers || {};
+                if (test.test === 'PCL-5') { userState.pcl5CritA = 'yes'; userState.pcl5 = test.answers || {}; }
+                if (test.test === 'PHQ-9') userState.phq9 = test.answers || {};
+                if (test.test === 'DES-II') userState.des2 = test.answers || {};
+                if (test.test === 'LEC-5') userState.lec5 = test.answers || {};
+                if (test.test === 'TMCQ') userState.tmcqP = test.answers || {};
+            });
+            
+            // Оновлюємо інтерфейс
+            renderGAD7Form(); renderPCL5Form(); renderPHQ9Form(); renderDES2Form(); renderLEC5Form(); renderTMCQForm();
+            calculateAndShowResults();
+            
+            // Ставимо галочки лише на ті тести, які були пройдені в цей день
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => {
+                const el = document.getElementById(`chk-export-${id}`);
+                if (el) {
+                    el.checked = dayTests.some(t => {
+                        let name = t.test.toLowerCase().replace('-', '');
+                        return name === id || (t.test === 'DES-II' && id === 'des2');
+                    });
+                }
+            });
+            updateSelectAllCheckbox();
+            
+            switchTab('results');
+            setTimeout(() => { document.getElementById('dashboard-summary').scrollIntoView({ behavior: 'smooth' }); }, 100);
+        }
+    </script>
+<!-- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ (КНОПКА ТА МОДАЛЬНЕ ВІКНО) -->
+    <!-- Плаваюча кнопка -->
+    <button onclick="toggleFeedbackModal()" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-sky-600 hover:bg-sky-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-2xl focus:outline-none print-only-hide" title="Залишити відгук">
+        💬
+    </button>
+
+    <!-- Модальне вікно -->
+    <div id="feedback-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95" id="feedback-modal-content">
+            
+            <!-- Шапка модалки -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>💬</span> Зворотний зв'язок
+                </h3>
+                <button onclick="toggleFeedbackModal()" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Контейнер для Google Form -->
+            <div class="w-full h-[60vh] sm:h-[500px] bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf9XsWw-BQ4PAkg6kD6YGbuslriCFWmcwCl2u6he-lIABUTSQ/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" class="absolute inset-0">Завантаження…</iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функція для плавного відкриття/закриття модального вікна
+        function toggleFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            const content = document.getElementById('feedback-modal-content');
+            
+            if (modal.classList.contains('hidden')) {
+                // Відкриваємо
+                modal.classList.remove('hidden');
+                // Мікрозатримка для активації CSS-анімації
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                }, 10);
+            } else {
+                // Закриваємо
+                modal.classList.add('opacity-0');
+                content.classList.add('scale-95');
+                // Чекаємо завершення анімації (300мс) перед приховуванням
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
         }
     </script>
 </body>
