@@ -1,4 +1,18 @@
-# [![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_260917-S1&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260925-S5-P2&duration=1&repeat=false)](https://git.io/typing-svg)
+
+### 🆕 Оновлення: Точкові графіки, оптимізація збереження та зворотний зв'язок (Вересень 2026)
+
+У цьому оновленні було покращено візуалізацію історичних даних, оптимізовано логіку взаємодії з результатами тестувань та інтегровано безпечну систему зворотного зв'язку.
+
+**Що було реалізовано:**
+
+*   📈 **Точкові графіки (Scatter Charts):** Рефакторинг відображення динаміки результатів у вкладці «Історія». Тепер результати відображаються у вигляді точкових графіків, де кожна точка відповідає окремому проходженню тесту. На вісь Y додано текстові рівні важкості (наприклад, "Мінімальний", "Помірний", "Високий") для миттєвої інтерпретації.
+*   ⏱️ **Мульти-збереження з таймстемпами:** Додано запис точного часу (години та хвилини) до історії тестувань. Це дозволяє зберігати кілька результатів протягом одного дня без перезапису попередніх даних, формуючи повноцінну денну динаміку.
+*   💾 **Експліцитне (ручне) збереження:** Змінено логіку збереження на Google Drive. Дані більше не зберігаються у фоновому режимі автоматично; натомість на вкладці «Результати» додано явну кнопку «Занести в історію», що дає користувачеві повний контроль над тим, які саме результати записувати.
+*   💬 **Модуль зворотного зв'язку (Google Forms):** Впроваджено легку та безпечну систему збору фідбеку без використання сторонніх бекенд-серверів. Додано плаваючу кнопку, яка відкриває модальне вікно з інтегрованою Google Формою для надсилання побажань щодо функціоналу та звітів про помилки.
+
+
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260917-S1&duration=1&repeat=false)](https://git.io/typing-svg)
 
 ### 🆕 Оновлення: Захищена історія тестувань та динаміка (Вересень 2026)
 
@@ -15,7 +29,7 @@
 *   ⚙️ **Гнучке керування даними:** У вкладці історії додано фільтри за періодом (місяць, рік, весь час) та можливість видаляти окремі записи або очистити всю історію в один клік.
 
 
-# [![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_260916-10&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260916-10&duration=1&repeat=false)](https://git.io/typing-svg)
 
 ### Оновлення: Юридична інформація та документація (Вересень 2026)
 
@@ -33,7 +47,7 @@
   Нові сторінки створені в єдиному стилі з основним застосунком. Вони підтримують безшовне перемикання між Світлою та Темною темами, повністю адаптовані під екрани мобільних пристроїв та містять зручну кнопку повернення на головну сторінку.
 
 
-# [![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_260916-8&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260916-8&duration=1&repeat=false)](https://git.io/typing-svg)
 
 ### 🚀 Огляд змін
 Цей апдейт виправляє критичні проблеми відображення на мобільних пристроях та вирішує проблему генерації PDF, коли замість вибраних тестів експортувалися всі дані.
@@ -67,7 +81,7 @@
 ✅ **Виправлено:** Логіку оновлення форм приведено до ладу.
 
 
-# [![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_260914-5&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260914-5&duration=1&repeat=false)](https://git.io/typing-svg)
 
 * **Додано новий інструмент (TMCQ):** Інтегровано Щотижневу форму моніторингу стану клієнта (TMCQ by CETA).
   *  **Впроваджено звіт по сесії** для консультанта.
@@ -80,7 +94,7 @@
 * **Захист від втрати даних:** Додано інформаційні підказки до навігаційних кнопок на кожній вкладці тесту, які попереджають користувача, що проміжні результати зберігаються в пам'яті до повного оновлення сторінки.
 * **Комплексний експорт:** Модуль TMCQ повністю синхронізовано із загальною системою (Inline-підрахунок балів від 0 до 63, кольорова індикація важкості стану, виведення детальної таблиці відповідей та підтримка вибіркового експорту у PDF/Друк).
 
-# [![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_260914-1&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_260914-1&duration=1&repeat=false)](https://git.io/typing-svg)
 
 Додано новий опитувальник.
 Life Events Checklist for DSM-5 (LEC-5) by CETA — це важливий інструмент самодіагностики, який використовується для оцінки впливу різних стресових та травматичних життєвих подій. Згідно з наданим вами зображенням, опитувальник складається з 11 пунктів, де респондент відповідає "Ні" (0 балів), "Так, 1 раз" (1 бал) або "Так, більше одного разу" (2 бали).
