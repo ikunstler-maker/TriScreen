@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Комплексне психологічне опитування: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ</title>
+    <link rel="icon" type="image/png" href="Icon-TriScreen-260926V1-website.png">
     <meta name="google-site-verification" content="cVb2gf3hD8z9zOx8ZQgfa4L5DUpnQPRbuqAoMyAyiQ8" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -130,9 +131,7 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Clickable Logo leading to home -->
                 <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer group min-w-0 pr-2" onclick="switchTab('welcome')" title="На головну">
-                    <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">
-                        Ψ
-                    </div>
+                    <img src="Icon-TriScreen-260926V1-website.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain transition-transform group-hover:scale-105 drop-shadow-md">
                     <div class="flex-1 min-w-0 pr-2">
                         <h1 class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors whitespace-normal">Психодіагностичний Комплекс</h1>
                     </div>
@@ -793,9 +792,7 @@
             <div class="hidden print-only mb-6 border-b border-slate-300 pb-4">
                 <div class="flex justify-between items-end">
                     <div class="flex flex-col items-start gap-2">
-                        <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl print-color-exact" style="background-color: #0ea5e9 !important; color: white !important; width: 40px; height: 40px; border-radius: 0.75rem;">
-                            Ψ
-                        </div>
+                        <img src="Icon-TriScreen-260926V1-website.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain print-color-exact" style="width: 40px; height: 40px;">
                         <div>
                             <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
                             <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ</p>
@@ -2745,7 +2742,7 @@
                         loadHistoryFromDrive();
                     }
                 });
-                if (localStorage.getItem('google_logged_in') === 'true') tokenClient.requestAccessToken({prompt: ''});
+                // Автоматичний виклик вікна скасовано. Вхід лише по кліку на кнопку.
             });
         }
         
