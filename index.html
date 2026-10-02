@@ -74,6 +74,8 @@
             
             .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
             .print-only-hide { display: none !important; }
+            .test-section { display: block !important; }
+            .test-section.print-only-hide { display: none !important; }
             
             .test-section, .summary-card, .bg-white {
                 page-break-inside: avoid;
@@ -257,7 +259,7 @@
 
             <!-- Always Visible Navigation Buttons (Lower Section) -->
             <div class="mt-5 pt-5 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 sm:gap-4">
-                <button type="button" onclick="switchTab('welcome')" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition flex items-center justify-center text-center leading-tight border border-slate-200 dark:border-slate-700">🏠 Головна</button>
+                <button type="button" onclick="toggleTestsModal()" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition flex items-center justify-center text-center leading-tight border border-slate-200 dark:border-slate-700">📋 Опитування</button>
                 <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold transition shadow-sm flex items-center justify-center text-center leading-tight">📊 Результати</button>
                 <button type="button" onclick="switchTab('history')" class="min-w-0 min-h-[44px] px-2 text-xs sm:text-sm bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold transition shadow-sm flex items-center justify-center text-center leading-tight">📈 Історія</button>
             </div>
@@ -274,42 +276,101 @@
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала тривожності</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">7 запитань про стан за останні <span class="font-semibold text-slate-800 dark:text-slate-200">2 тижні</span>.</p>
+                        <!-- GAD-7 -->
+                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала тривожності</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг симптомів генералізованої тривоги та психоемоційного напруження.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 7 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5</span>
+                            </div>
                         </div>
 
-                        <div onclick="switchTab('pcl5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PCL-5</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала ПТСР (DSM-5)</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">20 запитань про реакції на стрес за <span class="font-semibold text-slate-800 dark:text-slate-200">минулий місяць</span>.</p>
+                        <!-- PCL-5 -->
+                        <div onclick="switchTab('pcl5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PCL-5</span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала ПТСР</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка вираженості симптомів посттравматичного стресового розладу.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 20 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 місяць</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 (B-E)</span>
+                            </div>
                         </div>
 
-                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PHQ-9</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Опитувальник депресії</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">9 запитань про проблеми за останні <span class="font-semibold text-slate-800 dark:text-slate-200">2 тижні</span>.</p>
+                        <!-- PHQ-9 -->
+                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PHQ-9</span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала депресії</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Діагностика наявності та глибини депресивного стану респондента.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 9 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 / ВООЗ</span>
+                            </div>
                         </div>
 
-                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Шкала дисоціації</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">28 запитань про повсякденні дисоціативні переживання.</p>
+                        <!-- DES-II -->
+                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала дисоціації</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка частоти дисоціативних переживань у повсякденному житті.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 28 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ Життя</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 Протокол DES</span>
+                            </div>
                         </div>
                         
-                        <div onclick="switchTab('lec5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">LEC-5</div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Список життєвих подій</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">11 запитань про вплив стресових або травматичних подій.</p>
+                        <!-- LEC-5 -->
+                        <div onclick="switchTab('lec5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">LEC-5</span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Життєві події</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг пережитих стресових чи травматичних подій протягом життя.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 11 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ Досвід</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 / CETA</span>
+                            </div>
                         </div>
 
-                        <div onclick="switchTab('tmcq')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group">
-                            <div class="text-sky-700 dark:text-sky-400 font-bold text-lg mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">by CETA</span></div>
-                            <div class="text-xs text-sky-900 dark:text-sky-200 font-medium mb-2">Щотижневий моніторинг стану клієнта</div>
-                            <p class="text-[11px] text-slate-600 dark:text-slate-400">26 запитань про самопочуття за <span class="font-semibold text-slate-800 dark:text-slate-200">останній тиждень</span> та звіт по сесії.</p>
+                        <!-- TMCQ -->
+                        <div onclick="switchTab('tmcq')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">CETA</span></span>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Моніторинг</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Щотижневе спостереження симптоматики, вживання ПАР та факторів безпеки.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 26 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 тиждень</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 CETA Global</span>
+                            </div>
                         </div>
-                        
                     </div>
 
                     <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm mb-4">
@@ -324,7 +385,7 @@
         </section>
 
         <!-- TAB 1: GAD-7 QUESTIONNAIRE -->
-        <section id="content-gad7" class="tab-content hidden">
+        <section id="content-gad7" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -374,7 +435,7 @@
         </section>
 
         <!-- TAB 2: PCL-5 QUESTIONNAIRE -->
-        <section id="content-pcl5" class="tab-content hidden">
+        <section id="content-pcl5" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -449,7 +510,7 @@
         </section>
 
         <!-- TAB 3: PHQ-9 QUESTIONNAIRE -->
-        <section id="content-phq9" class="tab-content hidden">
+        <section id="content-phq9" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -509,7 +570,7 @@
         </section>
 
         <!-- TAB 4: DES-II QUESTIONNAIRE -->
-        <section id="content-des2" class="tab-content hidden">
+        <section id="content-des2" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -559,7 +620,7 @@
         </section>
 
         <!-- TAB 6: LEC-5 QUESTIONNAIRE -->
-        <section id="content-lec5" class="tab-content hidden">
+        <section id="content-lec5" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -609,7 +670,7 @@
         </section>
 
         <!-- TAB 7: TMCQ by CETA QUESTIONNAIRE -->
-        <section id="content-tmcq" class="tab-content hidden">
+        <section id="content-tmcq" class="tab-content hidden scroll-mt-20">
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                 <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -730,69 +791,80 @@
                 </button>
             </div>
 
-            <!-- EXPORT ACTION BAR (CHECKBOXES) -->
-            <div class="bg-slate-800 dark:bg-slate-900 rounded-2xl p-5 shadow-lg mb-6 flex flex-col gap-4 no-print text-white border border-slate-700 transition-colors">
-                <div>
-                    <h3 class="font-bold text-sm text-slate-100">Експорт результатів (PDF / Друк)</h3>
-                    <p class="text-xs text-slate-400 mt-1">Відмітьте галочками тести, які бажаєте включити до звіту. Ви можете обрати один, декілька або всі варіанти.</p>
-                </div>
-                
-                <!-- Export Warning (Incomplete Tests) -->
-                <div id="export-warning-container" class="hidden p-3 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-medium flex items-start gap-2">
-                    <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <span id="export-warning-text"></span>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-4 mb-5 pb-5 border-b border-slate-700">
-                    <div class="flex items-center gap-3">
-                        <label class="text-sm font-semibold text-slate-300">Масштаб PDF:</label>
-                        <input type="range" id="print-scale-slider" min="40" max="100" value="100" class="w-24 sm:w-32 accent-sky-500" oninput="document.getElementById('print-scale-val').textContent = this.value + '%'">
-                        <span id="print-scale-val" class="text-sm font-bold text-white w-10">100%</span>
+            <!-- EXPORT ACTION BAR (COMPACT ACCORDION) -->
+            <div class="bg-slate-800 dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-lg mb-6 no-print text-white border border-slate-700 transition-colors">
+                <button type="button" onclick="toggleExportPanel()" class="w-full flex items-center justify-between text-left focus:outline-none group">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-lg">📥</span>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-100 group-hover:text-sky-400 transition-colors">Експорт результатів (PDF / Друк)</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Налаштування масштабу, теми та вибір опитувань для звіту</p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <label class="text-sm font-semibold text-slate-300">Тема PDF:</label>
-                        <select id="print-theme-select" class="bg-slate-700 text-white rounded-lg px-2 py-1 text-sm border border-slate-600 focus:ring-sky-500 outline-none">
-                            <option value="light">Світла (Білий фон)</option>
-                            <option value="dark">Темна (Чорний фон)</option>
-                        </select>
+                    <div class="p-1.5 rounded-lg bg-slate-700/60 group-hover:bg-sky-600/40 transition-colors">
+                        <svg id="export-panel-icon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
-                </div>
+                </button>
 
-                <div class="flex flex-wrap items-center gap-3">
-                    <label class="flex items-center gap-2 cursor-pointer bg-sky-900/30 hover:bg-sky-800/50 px-3 py-2 rounded-lg border border-sky-700 transition">
-                        <input type="checkbox" id="chk-export-all" onchange="toggleSelectAllExports()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-bold text-white">Обрати всі</span>
-                    </label>
-                    <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-gad7" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">GAD-7</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-pcl5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">PCL-5</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-phq9" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">PHQ-9</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-des2" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">DES-II</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-lec5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">LEC-5</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
-                        <input type="checkbox" id="chk-export-tmcq" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
-                        <span class="text-sm font-semibold text-slate-200">TMCQ</span>
-                    </label>
-                    <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
-                    <button onclick="handlePrintCustom()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        <span>Експортувати обране</span>
-                    </button>
+                <!-- Hidden Settings Panel by Default -->
+                <div id="export-settings-panel" class="hidden flex-col gap-4 mt-4 pt-4 border-t border-slate-700">
+                    <!-- Export Warning (Incomplete Tests) -->
+                    <div id="export-warning-container" class="hidden p-3 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-medium flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span id="export-warning-text"></span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-2 pb-4 border-b border-slate-700/80">
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-semibold text-slate-300">Масштаб PDF:</label>
+                            <input type="range" id="print-scale-slider" min="40" max="100" value="80" class="w-24 sm:w-32 accent-sky-500" oninput="document.getElementById('print-scale-val').textContent = this.value + '%'">
+                            <span id="print-scale-val" class="text-sm font-bold text-white w-10">80%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="text-sm font-semibold text-slate-300">Тема PDF:</label>
+                            <select id="print-theme-select" class="bg-slate-700 text-white rounded-lg px-2 py-1 text-sm border border-slate-600 focus:ring-sky-500 outline-none">
+                                <option value="light">Світла (Білий фон)</option>
+                                <option value="dark">Темна (Чорний фон)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer bg-sky-900/30 hover:bg-sky-800/50 px-3 py-2 rounded-lg border border-sky-700 transition">
+                            <input type="checkbox" id="chk-export-all" onchange="toggleSelectAllExports()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-bold text-white">Обрати всі</span>
+                        </label>
+                        <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-gad7" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">GAD-7</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-pcl5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">PCL-5</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-phq9" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">PHQ-9</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-des2" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">DES-II</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-lec5" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">LEC-5</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-tmcq" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">TMCQ</span>
+                        </label>
+                        <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
+                        <button type="button" onclick="handlePrintCustom()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <span>Експортувати обране</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -860,8 +932,14 @@
                                 <div class="absolute inset-0 grad-gad7 print-color-exact"></div>
                                 <div id="gad7-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('gad7')" id="btn-toggle-gad7" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-gad7" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot GAD-7 -->
+                    <div id="mobile-slot-gad7" class="hidden md:hidden"></div>
 
                     <!-- PCL-5 Summary Box -->
                     <div id="summary-card-pcl5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -879,8 +957,14 @@
                                 <div class="absolute inset-0 grad-pcl5 print-color-exact"></div>
                                 <div id="pcl5-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('pcl5')" id="btn-toggle-pcl5" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-pcl5" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot PCL-5 -->
+                    <div id="mobile-slot-pcl5" class="hidden md:hidden"></div>
 
                     <!-- PHQ-9 Summary Box -->
                     <div id="summary-card-phq9" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -898,8 +982,14 @@
                                 <div class="absolute inset-0 grad-phq9 print-color-exact"></div>
                                 <div id="phq9-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('phq9')" id="btn-toggle-phq9" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-phq9" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot PHQ-9 -->
+                    <div id="mobile-slot-phq9" class="hidden md:hidden"></div>
                     
                     <!-- DES-II Summary Box -->
                     <div id="summary-card-des2" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -917,8 +1007,14 @@
                                 <div class="absolute inset-0 grad-des2 print-color-exact"></div>
                                 <div id="des2-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('des2')" id="btn-toggle-des2" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-des2" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot DES-II -->
+                    <div id="mobile-slot-des2" class="hidden md:hidden"></div>
                     
                     <!-- LEC-5 Summary Box -->
                     <div id="summary-card-lec5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -936,8 +1032,14 @@
                                 <div class="absolute inset-0 grad-lec5 print-color-exact"></div>
                                 <div id="lec5-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('lec5')" id="btn-toggle-lec5" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-lec5" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot LEC-5 -->
+                    <div id="mobile-slot-lec5" class="hidden md:hidden"></div>
 
                     <!-- TMCQ Summary Box (scores only: the CETA form has no severity cut-offs) -->
                     <div id="summary-card-tmcq" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
@@ -959,8 +1061,14 @@
                                 <div class="absolute inset-0 grad-tmcq print-color-exact"></div>
                                 <div id="tmcq-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
                             </div>
+                            <button type="button" onclick="toggleTestDetails('tmcq')" id="btn-toggle-tmcq" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-tmcq" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
                         </div>
                     </div>
+                    <!-- Mobile Slot TMCQ -->
+                    <div id="mobile-slot-tmcq" class="hidden md:hidden"></div>
                 </div>
 
                 <div id="safety-alert-box" class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-900 dark:text-red-200 hidden transition-colors">
@@ -981,10 +1089,10 @@
             </div>
 
             <!-- DETAILED EVALUATION SECTIONS -->
-            <div class="space-y-8">
+            <div id="desktop-details-container" class="space-y-8 mt-6">
 
                 <!-- 1. GAD-7 DETAILED BLOCK -->
-                <div id="section-gad7" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-gad7" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1015,10 +1123,15 @@
                             <tbody id="gad7-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('gad7')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 2. PCL-5 DETAILED BLOCK -->
-                <div id="section-pcl5" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-pcl5" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1064,10 +1177,15 @@
                             <tbody id="pcl5-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('pcl5')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 3. PHQ-9 DETAILED BLOCK -->
-                <div id="section-phq9" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-phq9" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1112,10 +1230,15 @@
                             <tbody id="phq9-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('phq9')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 4. DES-II DETAILED BLOCK -->
-                <div id="section-des2" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-des2" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1144,10 +1267,15 @@
                             <tbody id="des2-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('des2')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 5. LEC-5 DETAILED BLOCK -->
-                <div id="section-lec5" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-lec5" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1177,10 +1305,15 @@
                             <tbody id="lec5-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
                     </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('lec5')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 6. TMCQ by CETA DETAILED BLOCK -->
-                <div id="section-tmcq" class="test-section bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div id="section-tmcq" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
@@ -1261,6 +1394,11 @@
                             </thead>
                             <tbody id="tmcq-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                         </table>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('tmcq')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
                     </div>
                 </div>
 
@@ -1370,7 +1508,7 @@
                     <h5 class="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">Авторство та розробка</h5>
                     <p class="font-medium text-slate-700 dark:text-slate-300">Розробник: <span class="font-semibold text-slate-900 dark:text-white">Елайджа Кюнстлер (Elijah Künstler)</span></p>
                     <p class="text-slate-500 italic">Створено: 28.08.2026 за допомогою Gemini.</p>
-                    <p class="text-slate-500 italic">Останнє оновлення: 25.09.2026</p>
+                    <p class="text-slate-500 italic">Останнє оновлення: 02.10.2026</p>
                 </div>
 
                 <div class="space-y-2 md:text-right">
@@ -1416,6 +1554,126 @@
                 body.classList.add('flex', 'flex-col', 'md:grid', 'md:grid-cols-12');
                 icon.classList.add('rotate-180');
             }
+        }
+
+        function toggleTestDetails(testId) {
+            const isMobile = window.innerWidth < 768;
+            const section = document.getElementById(`section-${testId}`);
+            const btn = document.getElementById(`btn-toggle-${testId}`);
+            const icon = document.getElementById(`icon-toggle-${testId}`);
+            const mobileSlot = document.getElementById(`mobile-slot-${testId}`);
+            const desktopContainer = document.getElementById('desktop-details-container');
+            
+            if (!section) return;
+
+            const isAlreadyOpen = !section.classList.contains('hidden');
+
+            if (isAlreadyOpen) {
+                // Згортаємо лише цей обраний блок (інші залишаються як є)
+                section.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-sky-600', 'text-white', 'dark:bg-sky-500');
+                    btn.classList.add('bg-sky-50', 'text-sky-700', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                    const span = btn.querySelector('span');
+                    if (span) span.textContent = 'Детальні відповіді';
+                }
+                if (icon) icon.classList.remove('rotate-180');
+                if (mobileSlot) {
+                    mobileSlot.classList.add('hidden');
+                    if (desktopContainer && mobileSlot.contains(section)) {
+                        desktopContainer.appendChild(section);
+                    }
+                }
+                // М'яко повертаємо фокус на картку
+                setTimeout(() => {
+                    document.getElementById(`summary-card-${testId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 40);
+            } else {
+                // Розгортаємо цей блок без закриття інших
+                section.classList.remove('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-sky-50', 'text-sky-700', 'dark:bg-sky-900/30', 'dark:text-sky-300');
+                    btn.classList.add('bg-sky-600', 'text-white', 'dark:bg-sky-500');
+                    const span = btn.querySelector('span');
+                    if (span) span.textContent = 'Згорнути відповіді';
+                }
+                if (icon) icon.classList.add('rotate-180');
+
+                if (isMobile && mobileSlot) {
+                    mobileSlot.appendChild(section);
+                    mobileSlot.classList.remove('hidden');
+                } else if (desktopContainer) {
+                    if (!desktopContainer.contains(section)) {
+                        desktopContainer.appendChild(section);
+                    }
+                }
+
+                // Плавне фокусування на початку розгорнутого блоку
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
+        }
+
+        // Автоматичне підлаштування відкритих блоків при ресайзі
+        window.addEventListener('resize', () => {
+            const isMobile = window.innerWidth < 768;
+            const desktopContainer = document.getElementById('desktop-details-container');
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => {
+                const s = document.getElementById(`section-${id}`);
+                const ms = document.getElementById(`mobile-slot-${id}`);
+                if (s && !s.classList.contains('hidden')) {
+                    if (isMobile && ms && !ms.contains(s)) {
+                        ms.appendChild(s);
+                        ms.classList.remove('hidden');
+                    } else if (!isMobile && desktopContainer && !desktopContainer.contains(s)) {
+                        desktopContainer.appendChild(s);
+                        if (ms) ms.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Керування компактною панеллю експорту
+        function toggleExportPanel() {
+            const panel = document.getElementById('export-settings-panel');
+            const icon = document.getElementById('export-panel-icon');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            if (isHidden) {
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                if (icon) icon.classList.add('rotate-180');
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+                if (icon) icon.classList.remove('rotate-180');
+            }
+        }
+
+        // Керування модальним поп-апом швидкого вибору опитувань
+        function toggleTestsModal() {
+            const modal = document.getElementById('tests-modal');
+            const content = document.getElementById('tests-modal-content');
+            if (!modal || !content) return;
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function selectTestFromModal(tabId) {
+            toggleTestsModal();
+            switchTab(tabId);
         }
 
         const GAD7_QUESTIONS = ["Підвищена нервова збудливість, неспокій чи дратівливість", "Нездатність впоратися із хвилюванням", "Надмірне занепокоєння з різного приводу", "Нездатність розслабитися", "Крайній рівень неспокою: Місця собі не знаходжу", "Легко піддаюся відчуттю неспокою чи дратівливості", "Страх через відчуття, ніби станеться щось жахливе"];
@@ -1525,7 +1783,10 @@
             { name: "2. Загальна депресія / Смуток", items: [['p', 0], ['p', 2]] },
             { name: "3. Відновлення активності", items: [['p', 1], ['p', 4], ['p', 3], ['p', 18]] },
             { name: "4. Експозиція в реальному житті", items: [['p', 12]] },
-            { name: "5. Вживання алкоголю/психоактивних речовин", items: [['su', 0], ['su', 1]] }
+            { name: "5. Вживання алкоголю/психоактивних речовин", items: [['su', 0], ['su', 1]] },
+            { name: "6. Обговорення важких спогадів", items: [['p', 8], ['p', 11], ['p', 14], ['p', 9]] },
+            { name: "7. Думати по-іншому в цілому", items: [['p', 6], ['p', 13], ['p', 10]] },
+            { name: "8. Розв'язання проблем", items: [['p', 19]] }
         ];
 
         const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, tmcqP: {}, tmcqSU: {}, tmcqSafety: {}, tmcqServices: {}, phq9Impact: "Зовсім не важко" };
@@ -1634,10 +1895,19 @@
             
             if (tabId === 'results') calculateAndShowResults();
             if (tabId === 'history') {
-                setTimeout(updateHistoryUI, 50); // Фікс: малюємо графік ТІЛЬКИ після відкриття вкладки, щоб Chart.js міг розрахувати розмір
+                setTimeout(updateHistoryUI, 50);
             }
             updateProgressCounters(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Якщо обрано опитування — скролимо екран точно до його початку під шапку
+            if (['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].includes(tabId)) {
+                setTimeout(() => {
+                    const el = document.getElementById(`content-${tabId}`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function clearTest(testId) {
@@ -2228,6 +2498,13 @@
                 alert("Оберіть хоча б один тест для експорту.");
                 return;
             }
+
+            // Переносимо всі секції в основний контейнер для ідеального друку по порядку
+            const desktopCont = document.getElementById('desktop-details-container');
+            checks.forEach(id => {
+                const s = document.getElementById(`section-${id}`);
+                if (s && desktopCont && !desktopCont.contains(s)) desktopCont.appendChild(s);
+            });
 
             // Hide unselected sections for print
             checks.forEach(id => {
@@ -2944,8 +3221,109 @@
         💬
     </button>
 
-    <!-- Модальне вікно -->
-    <div id="feedback-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+    <!-- МОДАЛЬНЕ ВІКНО ШВИДКОГО ВИБОРУ ОПИТУВАННЯ -->
+    <div id="tests-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95" id="tests-modal-content">
+            
+            <!-- Шапка модалки -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>📋</span> Швидкий вибір опитування
+                </h3>
+                <button type="button" onclick="toggleTestsModal()" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Список тестів -->
+            <div class="p-4 overflow-y-auto space-y-2.5 max-h-[72vh]">
+                <!-- GAD-7 -->
+                <div onclick="selectTestFromModal('gad7')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">GAD-7</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Шкала тривожності</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 7 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 2 тижні</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 DSM-5</span>
+                    </div>
+                </div>
+
+                <!-- PCL-5 -->
+                <div onclick="selectTestFromModal('pcl5')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">PCL-5</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Шкала ПТСР</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 20 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 1 місяць</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 DSM-5 (B-E)</span>
+                    </div>
+                </div>
+
+                <!-- PHQ-9 -->
+                <div onclick="selectTestFromModal('phq9')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">PHQ-9</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Опитувальник депресії</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 9 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 2 тижні</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 DSM-5 / ВООЗ</span>
+                    </div>
+                </div>
+
+                <!-- DES-II -->
+                <div onclick="selectTestFromModal('des2')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">DES-II</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Шкала дисоціації</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 28 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ Життя</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 Протокол DES</span>
+                    </div>
+                </div>
+
+                <!-- LEC-5 -->
+                <div onclick="selectTestFromModal('lec5')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">LEC-5</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Список життєвих подій</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 11 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ Досвід</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 DSM-5 / CETA</span>
+                    </div>
+                </div>
+
+                <!-- TMCQ -->
+                <div onclick="selectTestFromModal('tmcq')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">TMCQ by CETA</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Моніторинг клієнта</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 26 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 1 тиждень</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 CETA Global</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Нижня навігація модалки -->
+            <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
+                <button type="button" onclick="selectTestFromModal('welcome')" class="w-full py-2 px-3 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition flex items-center justify-center gap-1.5">
+                    🏠 Повернутися на стартову сторінку
+                </button>
+            </div>
+        </div>
+    </div> class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95" id="feedback-modal-content">
             
             <!-- Шапка модалки -->
