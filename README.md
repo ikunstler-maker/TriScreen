@@ -1,4 +1,4 @@
-[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_app_261002-o1-p3&duration=1&repeat=false)](https://git.io/typing-svg)
+[![UPD](https://readme-typing-svg.demolab.com/?font=Inter&weight=700&color=00BFFF&size=24&vCenter=true&lines=UPD:+TriScreen_261002-o1-p3&duration=1&repeat=false)](https://git.io/typing-svg)
 
 ### 🆕 Оновлення: Модернізація UI/UX, наскрізна навігація та оптимізація аналітики (Жовтень 2026)
 
