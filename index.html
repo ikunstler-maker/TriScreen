@@ -107,6 +107,7 @@
         .grad-des2 { background: linear-gradient(90deg, #94a3b8 15%, #10b981 40%, #f59e0b 60%, #f97316 80%, #e11d48 95%); }
         .grad-lec5 { background: linear-gradient(90deg, #94a3b8 10%, #f59e0b 50%, #e11d48 90%); } /* Added LEC-5 gradient */
         .grad-tmcq { background: linear-gradient(90deg, #bae6fd 0%, #38bdf8 50%, #0369a1 100%); } /* Neutral single-hue scale: TMCQ shows scores only, no severity levels */
+        .grad-audit { background: linear-gradient(90deg, #94a3b8 10%, #10b981 25%, #f59e0b 55%, #e11d48 85%); }
 
         /* Dynamic Glow Effect */
         @keyframes shadowPulse {
@@ -265,122 +266,160 @@
             </div>
         </div>
 
-        <!-- TAB 0: WELCOME & OVERVIEW -->
+<!-- TAB 0: WELCOME & OVERVIEW -->
         <section id="content-welcome" class="tab-content block">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
-                <div class="max-w-4xl">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-4 border border-sky-200 dark:border-sky-800">Комплексна самодіагностика</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Психологічне опитування стан здоров'я</h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-                        Цей інструмент призначений для скринінгу та оцінки важливих компонентів ментального здоров'я. Ви можете обрати будь-який тест, натиснувши на його картку нижче:
-                    </p>
+            <!-- Заголовок сторінки без важкої прямокутної підкладки -->
+            <div class="mb-5">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-3 border border-sky-200 dark:border-sky-800">Комплексна самодіагностика</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">Психологічне опитування стан здоров'я</h2>
+                <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm max-w-3xl">
+                    Цей інструмент призначений для скринінгу та оцінки важливих компонентів ментального здоров'я. Проведіть свайп вбік та оберіть будь-яке опитування нижче:
+                </p>
+            </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <!-- Горизонтальний свайп-трек для 7 опитувань: по 2 картки в стовпчик -->
+            <div class="relative w-full mb-6">
+                <div id="welcome-tests-track" class="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 px-1 pb-4 cursor-grab select-none [scrollbar-width:thin] scrollbar-thin">
+                    
+                    <!-- СТОВПЧИК 1: GAD-7 + PCL-5 -->
+                    <div class="flex flex-col gap-3 sm:gap-4 flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start">
                         <!-- GAD-7 -->
-                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('gad7')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала тривожності</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">GAD-7</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала тривожності</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг симптомів генералізованої тривоги та психоемоційного напруження.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг симптомів генералізованої тривоги та напруження.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 7 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 7 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5</span>
                             </div>
                         </div>
 
                         <!-- PCL-5 -->
-                        <div onclick="switchTab('pcl5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('pcl5')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PCL-5</span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала ПТСР</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PCL-5</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала ПТСР</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка вираженості симптомів посттравматичного стресового розладу.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка вираженості симптомів посттравматичного стресу.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 20 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 місяць</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 (B-E)</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 20 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 місяць</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5</span>
                             </div>
                         </div>
+                    </div>
 
+                    <!-- СТОВПЧИК 2: PHQ-9 + DES-II -->
+                    <div class="flex flex-col gap-3 sm:gap-4 flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start">
                         <!-- PHQ-9 -->
-                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('phq9')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PHQ-9</span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала депресії</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">PHQ-9</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала депресії</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Діагностика наявності та глибини депресивного стану респондента.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Діагностика наявності та глибини депресивного стану.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 9 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 / ВООЗ</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 9 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ 2 тижні</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 ВООЗ</span>
                             </div>
                         </div>
 
                         <!-- DES-II -->
-                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('des2')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала дисоціації</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">DES-II</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Шкала дисоціації</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка частоти дисоціативних переживань у повсякденному житті.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Оцінка частоти дисоціативних переживань у житті.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 28 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ Життя</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 Протокол DES</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 28 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ Життя</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 DES</span>
                             </div>
                         </div>
-                        
+                    </div>
+
+                    <!-- СТОВПЧИК 3: LEC-5 + TMCQ -->
+                    <div class="flex flex-col gap-3 sm:gap-4 flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start">
                         <!-- LEC-5 -->
-                        <div onclick="switchTab('lec5')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('lec5')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">LEC-5</span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Життєві події</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">LEC-5</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Життєві події</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг пережитих стресових чи травматичних подій протягом життя.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг пережитих стресових чи травматичних подій.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 11 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ Досвід</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 DSM-5 / CETA</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 11 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ Досвід</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 CETA</span>
                             </div>
                         </div>
 
                         <!-- TMCQ -->
-                        <div onclick="switchTab('tmcq')" role="button" tabindex="0" class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div onclick="switchTab('tmcq')" role="button" tabindex="0" class="h-full bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">CETA</span></span>
-                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Моніторинг</span>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">TMCQ <span class="text-xs font-semibold">CETA</span></span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Моніторинг</span>
                                 </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Щотижневе спостереження симптоматики, вживання ПАР та факторів безпеки.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Щотижневе спостереження симптомів та факторів безпеки.</p>
                             </div>
-                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📝 26 питань</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 тиждень</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📋 CETA Global</span>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 26 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ 1 тиждень</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 CETA</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm mb-4">
-                        <div class="font-bold mb-1 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Важливе застереження:
+                    <!-- СТОВПЧИК 4: АУДИТ -->
+                    <div class="flex flex-col gap-3 sm:gap-4 flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start">
+                        <!-- AUDIT -->
+                        <div onclick="switchTab('audit')" role="button" tabindex="0" class="h-fit bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer transition-all duration-200 hover:bg-sky-50/60 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-md text-left group flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sky-700 dark:text-sky-400 font-bold text-base sm:text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">АУДИТ</span>
+                                    <span class="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Ризики алкоголю</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">Скринінг рівня та ризиків, пов'язаних із вживанням алкоголю.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] sm:text-[11px]">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📝 10 питань</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⏱️ 12 місяців</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📋 ВООЗ</span>
+                            </div>
                         </div>
-                        Дане опитування є інструментом самодіагностики та попередньої оцінки. Воно не замінює повноцінний клінічний огляд та консультацію кваліфікованого спеціаліста.
                     </div>
+
                 </div>
+
+                <!-- Градієнтне затемнення на правому краї -->
+                <div id="welcome-track-fade" class="pointer-events-none absolute right-0 top-0 bottom-4 w-16 sm:w-28 bg-gradient-to-l from-slate-50 dark:from-slate-950 via-slate-50/80 dark:via-slate-950/80 to-transparent transition-opacity duration-300 flex items-center justify-end pr-2">
+                    <span class="text-slate-400 dark:text-slate-600 text-sm hidden sm:inline">❯</span>
+                </div>
+            </div>
+
+            <!-- Застереження -->
+            <div class="p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 rounded-r-xl text-amber-900 dark:text-amber-200 text-sm">
+                <div class="font-bold mb-1 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Важливе застереження:
+                </div>
+                Дане опитування є інструментом самодіагностики та попередньої оцінки. Воно не замінює повноцінний клінічний огляд та консультацію кваліфікованого спеціаліста.
             </div>
         </section>
 
@@ -777,6 +816,67 @@
             </div>
         </section>
 
+        <!-- TAB: AUDIT QUESTIONNAIRE -->
+        <section id="content-audit" class="tab-content hidden scroll-mt-20">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-5 mb-6">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Тест визначення ризиків вживання алкоголю (АУДИТ / AUDIT)</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearTest('audit')" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 transition">🧹 Очистити тест</button>
+                            <span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-3 py-1 rounded-full font-semibold border border-sky-200 dark:border-sky-800">Період: останні 12 місяців</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-4">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Скринінговий інструмент ВООЗ для оцінки рівня споживання алкоголю та пов'язаних з ним ризиків.</p>
+                        <div class="flex items-center gap-2 min-w-max">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Прогрес:</span>
+                            <span id="badge-audit" class="text-xs font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">0/10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INTRO & HELPER (Версія для самопізнання) -->
+                <div class="mb-6 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 text-xs sm:text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                    <p class="leading-relaxed">
+                        Наступні запитання стосуються вживання Вами алкогольних напоїв протягом останніх 12 місяців. Під алкогольними напоями маються на увазі будь-які напої з вмістом алкоголю (алкогольні коктейлі, слабоалкогольні напої, пиво, сидр, вино, шампанське, міцні напої). Відповідаючи на питання, будь ласка, пригадуйте лише останні 12 місяців.
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 flex items-start gap-2 text-xs text-sky-800 dark:text-sky-300">
+                        <span class="text-base leading-none">ℹ️</span>
+                        <span><strong>Орієнтир 1 стандартної порції (СП):</strong> ~250 мл пива (5%), ~100 мл вина/шампанського (12%) або ~30 мл міцного алкоголю (40%).</span>
+                    </div>
+                </div>
+
+                <div id="audit-questions-container" class="space-y-6"></div>
+
+                <!-- Inline Result Block -->
+                <div class="mt-8 p-5 bg-sky-50/50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+                    <div>
+                        <h4 class="text-sm font-bold text-sky-800 dark:text-sky-400">Поточний результат (АУДИТ)</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Оберіть відповіді, щоб побачити попередній бал та рівень ризику.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-slate-900 dark:text-white" id="inline-score-audit">0 / 40</div>
+                        <div class="inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700" id="inline-badge-audit">⚪ Мінімальний ризик</div>
+                    </div>
+                </div>
+
+                <!-- Nav Buttons (Bottom) -->
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button type="button" onclick="switchTab('welcome')" class="flex justify-center items-center px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium text-sm transition border border-slate-200 dark:border-slate-700">
+                        ← Головна
+                    </button>
+                    <button type="button" onclick="calculateAndShowResults(); switchTab('results');" class="flex justify-center items-center px-4 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                        📊 Результати
+                    </button>
+                    <button type="button" onclick="calculateAndSave(this)" class="flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <span>Занести в історію</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- TAB 5: RESULTS & DETAILED ANALYSIS -->
         <section id="content-results" class="tab-content hidden">
             
@@ -858,6 +958,10 @@
                         <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
                             <input type="checkbox" id="chk-export-tmcq" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
                             <span class="text-sm font-semibold text-slate-200">TMCQ</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-600 transition">
+                            <input type="checkbox" id="chk-export-audit" onchange="updateSelectAllCheckbox()" class="w-4 h-4 text-sky-500 rounded border-slate-500 focus:ring-sky-500 focus:ring-2 accent-sky-500 cursor-pointer">
+                            <span class="text-sm font-semibold text-slate-200">АУДИТ</span>
                         </label>
                         <div class="h-6 w-px bg-slate-600 hidden sm:block mx-1"></div>
                         <button type="button" onclick="handlePrintCustom()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
@@ -1069,6 +1173,31 @@
                     </div>
                     <!-- Mobile Slot TMCQ -->
                     <div id="mobile-slot-tmcq" class="hidden md:hidden"></div>
+
+                    <!-- AUDIT Summary Box -->
+                    <div id="summary-card-audit" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">АУДИТ (Алкоголь)</span>
+                                <span id="audit-res-score" class="text-2xl font-extrabold text-slate-900 dark:text-white">0 / 40</span>
+                            </div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">Останні 12 місяців · Самооцінка</div>
+                            <div id="audit-res-badge" class="inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 print-color-exact">⚪ Мінімальний ризик</div>
+                            <p id="audit-res-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Ознак проблемного вживання не виявлено.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <div id="audit-glow-wrapper" class="w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact">
+                                <div class="absolute inset-0 grad-audit print-color-exact"></div>
+                                <div id="audit-res-mask" class="absolute top-0 right-0 h-full bg-slate-200 dark:bg-slate-700 transition-all duration-500" style="width: 100%;"></div>
+                            </div>
+                            <button type="button" onclick="toggleTestDetails('audit')" id="btn-toggle-audit" class="mt-3 w-full py-2 px-3 text-xs font-semibold rounded-lg bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800 transition-all flex items-center justify-center gap-1.5 no-print">
+                                <span>Детальні відповіді</span>
+                                <svg id="icon-toggle-audit" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Mobile Slot AUDIT -->
+                    <div id="mobile-slot-audit" class="hidden md:hidden"></div>
                 </div>
 
                 <div id="safety-alert-box" class="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-900 dark:text-red-200 hidden transition-colors">
@@ -1402,6 +1531,51 @@
                     </div>
                 </div>
 
+                <!-- 7. AUDIT DETAILED BLOCK -->
+                <div id="section-audit" class="test-section hidden scroll-mt-20 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-8 bg-sky-500 rounded-full print-color-exact"></div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Детальний аналіз: АУДИТ (Скринінг ризиків алкоголю)</h3>
+                        </div>
+                        <span id="audit-detailed-score-text" class="text-sm font-bold bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-lg border border-sky-200 dark:border-sky-800 print-color-exact">Сума: 0 / 40 балів</span>
+                    </div>
+
+                    <!-- Інтерпретація рівнів ризику -->
+                    <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl text-xs space-y-2 mb-6 border border-slate-200 dark:border-slate-800 transition-colors">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Клінічна інтерпретація за шкалою AUDIT (ВООЗ):</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-600 dark:text-slate-400">
+                            <div id="audit-interp-1" class="p-2 rounded border border-transparent transition-colors">⚪ 0–7 балів: Низький ризик</div>
+                            <div id="audit-interp-2" class="p-2 rounded border border-transparent transition-colors">🟡 8–19 балів: Небезпечне вживання (Підвищений ризик)</div>
+                            <div id="audit-interp-3" class="p-2 rounded border border-transparent transition-colors">🔴 20–40 балів: Високий ризик (Ймовірна залежність)</div>
+                        </div>
+                    </div>
+
+                    <!-- Рекомендації з огляду на режим (фахівець чи самопізнання) -->
+                    <div id="audit-recommendation-box" class="p-4 rounded-xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/70 dark:bg-sky-900/20 text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-6 transition-colors">
+                        <!-- Наповнюється динамічно JS залежно від режиму та балу -->
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase print-color-exact">
+                                <tr>
+                                    <th class="py-2.5 px-3 rounded-l-lg">№</th>
+                                    <th class="py-2.5 px-3">Запитання (Скринінг AUDIT)</th>
+                                    <th class="py-2.5 px-3 rounded-r-lg">Обрана відповідь</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-answers-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end no-print">
+                        <button type="button" onclick="toggleTestDetails('audit')" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5">
+                            <span>▲ Згорнути детальні відповіді</span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -1430,6 +1604,7 @@
                             <option value="DES-II">DES-II (Дисоціація)</option>
                             <option value="LEC-5">LEC-5 (Життєві події)</option>
                             <option value="TMCQ">TMCQ (Моніторинг)</option>
+                            <option value="AUDIT">АУДИТ (Алкоголь)</option>
                         </select>
                         <div class="flex bg-white dark:bg-slate-900 rounded-lg border border-slate-300 dark:border-slate-700 overflow-hidden text-xs font-medium">
                             <button onclick="setTimeFilter('month')" id="btn-time-month" class="flex-1 sm:flex-none px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 border-r border-slate-300 dark:border-slate-700 bg-slate-200 dark:bg-slate-700 transition">Місяць</button>
@@ -1508,7 +1683,7 @@
                     <h5 class="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">Авторство та розробка</h5>
                     <p class="font-medium text-slate-700 dark:text-slate-300">Розробник: <span class="font-semibold text-slate-900 dark:text-white">Елайджа Кюнстлер (Elijah Künstler)</span></p>
                     <p class="text-slate-500 italic">Створено: 28.08.2026 за допомогою Gemini.</p>
-                    <p class="text-slate-500 italic">Останнє оновлення: 02.10.2026</p>
+                    <p class="text-slate-500 italic">Останнє оновлення: 04.10.2026</p>
                 </div>
 
                 <div class="space-y-2 md:text-right">
@@ -1619,7 +1794,7 @@
         window.addEventListener('resize', () => {
             const isMobile = window.innerWidth < 768;
             const desktopContainer = document.getElementById('desktop-details-container');
-            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => {
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => {
                 const s = document.getElementById(`section-${id}`);
                 const ms = document.getElementById(`mobile-slot-${id}`);
                 if (s && !s.classList.contains('hidden')) {
@@ -1789,7 +1964,43 @@
             { name: "8. Розв'язання проблем", items: [['p', 19]] }
         ];
 
-        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, tmcqP: {}, tmcqSU: {}, tmcqSafety: {}, tmcqServices: {}, phq9Impact: "Зовсім не важко" };
+        // ===== AUDIT (АУДИТ - ВООЗ) =====
+        const AUDIT_QUESTIONS = [
+            "Як часто Ви вживаєте алкогольні напої?",
+            "Скільки алкоголю (стандартних порцій) Ви зазвичай вживаєте в той день, коли випиваєте?",
+            "Як часто Ви вживаєте принаймні півтора літра пива, або принаймні 180 мл міцного алкоголю, або принаймні пляшку вина чи шампанського (750 мл) впродовж 24 годин?",
+            "Як часто за останні 12 місяців Ви помічали, що не могли зупинитись після того, як почали випивати?",
+            "Як часто за останні 12 місяців через вживання алкоголю Ви не зробили те, що зазвичай від Вас очікувалось?",
+            "Як часто за останні 12 місяців Ви мали потребу випити вранці, щоб прийти в себе після надмірного вживання алкоголю напередодні (похмелитися)?",
+            "Як часто за останні 12 місяців після вживання алкоголю Ви відчували провину або дорікали собі?",
+            "Як часто за останні 12 місяців Ви не могли пригадати, що було напередодні, через вживання алкоголю?",
+            "Чи траплялося, що внаслідок вживання Вами алкоголю Ви чи хтось інший зазнавали травм?",
+            "Чи висловлював хтось з родичів, знайомих або медичних працівників стурбованість щодо вживання Вами алкоголю або радив менше випивати?"
+        ];
+
+        const AUDIT_FREQ_OPTIONS = [
+            { text: "⚪ Ніколи", value: 0 },
+            { text: "🟢 Один раз на місяць або рідше", value: 1 },
+            { text: "🟡 2-4 рази на місяць", value: 2 },
+            { text: "🟠 2-3 рази на тиждень", value: 3 },
+            { text: "🔴 4 рази на тиждень або частіше", value: 4 }
+        ];
+
+        const AUDIT_Q2_OPTIONS = [
+            { text: "⚪ 1-2 стандартних порцій", value: 0 },
+            { text: "🟢 3-4 стандартних порцій", value: 1 },
+            { text: "🟡 5-6 стандартних порцій", value: 2 },
+            { text: "🟠 7-9 стандартних порцій", value: 3 },
+            { text: "🔴 10 стандартних порцій і більше", value: 4 }
+        ];
+
+        const AUDIT_Q9_10_OPTIONS = [
+            { text: "⚪ Ні", value: 0 },
+            { text: "🟡 Так, більше 12 місяців тому", value: 2 },
+            { text: "🔴 Так, впродовж останніх 12 місяців", value: 4 }
+        ];
+
+        const userState = { gad7: {}, pcl5: {}, pcl5CritA: null, phq9: {}, des2: {}, lec5: {}, tmcqP: {}, tmcqSU: {}, tmcqSafety: {}, tmcqServices: {}, audit: {}, auditMode: 'self', phq9Impact: "Зовсім не важко" };
 
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
@@ -1803,6 +2014,7 @@
             renderLEC5Form();
             renderTMCQForm();
             renderTMCQStaticForm(); renderTMCQServices();
+            renderAUDITForm();
             updateProgressCounters();
             updateInlineResults();
         });
@@ -1880,7 +2092,7 @@
 
         function switchTab(tabId) {
             currentActiveTab = tabId;
-            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'results', 'history'];
+            const contentTabs = ['welcome', 'gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit', 'results', 'history'];
             
             contentTabs.forEach(t => {
                 const contentEl = document.getElementById(`content-${t}`);
@@ -1900,7 +2112,7 @@
             updateProgressCounters(); 
 
             // Якщо обрано опитування — скролимо екран точно до його початку під шапку
-            if (['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].includes(tabId)) {
+            if (['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].includes(tabId)) {
                 setTimeout(() => {
                     const el = document.getElementById(`content-${tabId}`);
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1910,7 +2122,112 @@
             }
         }
 
+        // Ініціалізація Drag-to-Scroll (затискання миші) та коліщатка для треку карток
+        window.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('welcome-tests-track');
+            const fade = document.getElementById('welcome-track-fade');
+            if (!track) return;
+
+            // 1. Горизонтальний скрол коліщатком миші
+            track.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    track.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+
+            // 2. Drag-to-Scroll мишею із затисканням кнопки
+            let isDown = false;
+            let startX = 0;
+            let scrollStartLeft = 0;
+            let hasDragged = false;
+
+            track.addEventListener('mousedown', (e) => {
+                // Реагуємо лише на ліву кнопку миші
+                if (e.button !== 0) return;
+                isDown = true;
+                hasDragged = false;
+                startX = e.pageX - track.offsetLeft;
+                scrollStartLeft = track.scrollLeft;
+
+                track.classList.add('cursor-grabbing');
+                track.classList.remove('cursor-grab', 'scroll-smooth', 'snap-x');
+            });
+
+            const stopDrag = () => {
+                if (!isDown) return;
+                isDown = false;
+                track.classList.remove('cursor-grabbing');
+                track.classList.add('cursor-grab', 'scroll-smooth', 'snap-x');
+            };
+
+            window.addEventListener('mouseup', stopDrag);
+            track.addEventListener('mouseleave', stopDrag);
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const currentX = e.pageX - track.offsetLeft;
+                const distance = currentX - startX;
+                if (Math.abs(distance) > 6) {
+                    hasDragged = true;
+                }
+                track.scrollLeft = scrollStartLeft - distance;
+            });
+
+            // Запобігаємо переходу до тесту, якщо користувач просто перетягував трек мишею
+            track.addEventListener('click', (e) => {
+                if (hasDragged) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    hasDragged = false;
+                }
+            }, true);
+
+            // 3. Динамічне затемнення на правому краю
+            if (fade) {
+                track.addEventListener('scroll', () => {
+                    const isAtEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 14;
+                    fade.style.opacity = isAtEnd ? '0' : '1';
+                });
+            }
+        });
+
+        function renderAUDITForm() {
+            const container = document.getElementById('audit-questions-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            AUDIT_QUESTIONS.forEach((qText, index) => {
+                const qCard = document.createElement('div');
+                qCard.className = 'p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors duration-300';
+                
+                let options = AUDIT_FREQ_OPTIONS;
+                if (index === 1) options = AUDIT_Q2_OPTIONS;
+                else if (index >= 8) options = AUDIT_Q9_10_OPTIONS;
+
+                let optionsHTML = '';
+                options.forEach((opt) => {
+                    const isChecked = userState.audit[index] === opt.value;
+                    const baseClass = isChecked ? 'bg-sky-50 dark:bg-sky-900/30 border-sky-500 text-sky-900 dark:text-sky-300 ring-1 ring-sky-500' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800';
+                    optionsHTML += `<label class="flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors text-xs sm:text-sm font-medium ${baseClass}"><input type="radio" name="audit-q-${index}" value="${opt.value}" ${isChecked ? 'checked' : ''} onchange="setAUDITAnswer(${index}, ${opt.value})" class="w-4 h-4 text-sky-600 focus:ring-sky-500"><span>${opt.text}</span></label>`;
+                });
+
+                const colsClass = index >= 8 ? 'grid grid-cols-1 sm:grid-cols-3 gap-2.5' : (index === 1 ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5');
+                qCard.innerHTML = `<div class="flex items-start gap-3 mb-3"><span class="w-6 h-6 rounded-full bg-sky-100 text-sky-800 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${index + 1}</span><div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-base">${qText}</div></div><div class="${colsClass} pl-0 sm:pl-9">${optionsHTML}</div>`;
+                container.appendChild(qCard);
+            });
+        }
+
+        function setAUDITAnswer(idx, val) {
+            userState.audit[idx] = val;
+            updateProgressCounters();
+            renderAUDITForm();
+            updateInlineResults();
+            if (currentActiveTab === 'results') calculateAndShowResults();
+        }
+
         function clearTest(testId) {
+            if (testId === 'audit') { userState.audit = {}; renderAUDITForm(); }
             if (testId === 'gad7') { userState.gad7 = {}; renderGAD7Form(); }
             if (testId === 'pcl5') {
                 userState.pcl5 = {};
@@ -2280,7 +2597,9 @@
             const des2Count = Object.keys(userState.des2).length;
             const lec5Count = Object.keys(userState.lec5).length;
             const tmcqCount = getTMCQScores().answered;
+            const auditCount = Object.keys(userState.audit).length;
 
+            if (document.getElementById('badge-audit')) document.getElementById('badge-audit').textContent = `${auditCount}/10`;
             document.getElementById('badge-gad7').textContent = `${gad7Count}/7`;
             
             if (userState.pcl5CritA === 'no') {
@@ -2310,6 +2629,7 @@
                 else if (currentActiveTab === 'des2') percent = (des2Count / 28) * 100;
                 else if (currentActiveTab === 'lec5') percent = (lec5Count / 11) * 100;
                 else if (currentActiveTab === 'tmcq') percent = (tmcqCount / TMCQ_ITEM_COUNT) * 100;
+                else if (currentActiveTab === 'audit') percent = (auditCount / 10) * 100;
                 
                 topBar.style.width = `${percent}%`;
             } else {
@@ -2373,6 +2693,15 @@
             safeSetText('inline-badge-lec5', lec5Badge);
             safeSetClass('inline-badge-lec5', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${lec5Class}`);
 
+            // AUDIT Inline
+            let auditSum = 0; Object.values(userState.audit).forEach(v => auditSum += v);
+            let auditBadge = "⚪ Мінімальний ризик"; let auditClass = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+            if (auditSum >= 20) { auditBadge = "🔴 Високий ризик"; auditClass = "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800"; }
+            else if (auditSum >= 8) { auditBadge = "🟡 Небезпечний ризик"; auditClass = "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-800"; }
+            safeSetText('inline-score-audit', `${auditSum} / 40`);
+            safeSetText('inline-badge-audit', auditBadge);
+            safeSetClass('inline-badge-audit', `inline-block mt-1 px-3 py-1 rounded-lg text-xs font-bold border transition-colors ${auditClass}`);
+
             // TMCQ Inline (scores only: the CETA form has no severity cut-offs)
             const tmcq = getTMCQScores();
             safeSetText('inline-score-tmcq', `${tmcq.total} / 77`);
@@ -2416,6 +2745,13 @@
                 genderSelect.value = randomGender; 
                 toggleCustomGender(); 
             }
+
+            userState.audit = {};
+            for(let i=0; i<8; i++) userState.audit[i] = Math.floor(Math.random() * 5);
+            const opt9_10 = [0, 2, 4];
+            userState.audit[8] = opt9_10[Math.floor(Math.random() * 3)];
+            userState.audit[9] = opt9_10[Math.floor(Math.random() * 3)];
+            renderAUDITForm();
 
             userState.gad7 = {}; for(let i=0; i<7; i++) userState.gad7[i] = Math.floor(Math.random() * 4);
             
@@ -2472,12 +2808,12 @@
             document.getElementById('patient-gender-custom').value = '';
 
             // Clear every questionnaire (clearTest also re-renders the forms and refreshes counters/results)
-            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => clearTest(id));
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => clearTest(id));
         }
 
         function toggleSelectAllExports() {
             const isAll = document.getElementById('chk-export-all').checked;
-            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => {
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => {
                 const el = document.getElementById(`chk-export-${id}`);
                 if (el) el.checked = isAll;
             });
@@ -2645,6 +2981,10 @@
             const isLec5Complete = Object.keys(userState.lec5).length === 11;
             const tmcqScores = getTMCQScores();
             const isTmcqComplete = tmcqScores.answered === TMCQ_ITEM_COUNT;
+            const isAuditComplete = Object.keys(userState.audit).length === 10;
+
+            const elAudit = document.getElementById('chk-export-audit');
+            if(elAudit) elAudit.checked = isAuditComplete;
 
             const elGad7 = document.getElementById('chk-export-gad7');
             const elPcl5 = document.getElementById('chk-export-pcl5');
@@ -2669,6 +3009,7 @@
             if (Object.keys(userState.des2).length > 0 && !isDes2Complete) incompleteTests.push("DES-II");
             if (Object.keys(userState.lec5).length > 0 && !isLec5Complete) incompleteTests.push("LEC-5");
             if (tmcqScores.answered > 0 && !isTmcqComplete) incompleteTests.push("TMCQ");
+            if (Object.keys(userState.audit).length > 0 && !isAuditComplete) incompleteTests.push("АУДИТ");
 
             const warnContainer = document.getElementById('export-warning-container');
             const warnText = document.getElementById('export-warning-text');
@@ -2926,6 +3267,66 @@
                 });
             }
 
+            // AUDIT SCORING & INTERPRETATION (Версія для самопізнання)
+            let auditSum = 0; Object.values(userState.audit).forEach(v => auditSum += v);
+            let auditBadge = { text: "⚪ Мінімальний ризик", class: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700", glow: "glow-slate" };
+            let auditDesc = "Ознак проблемного вживання не виявлено (0–7 балів).";
+            let auditInterpIdx = 1;
+            let recHTML = "";
+
+            if (auditSum >= 20) {
+                auditBadge = { text: "🔴 Високий ризик", class: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-400 border-rose-200 dark:border-rose-800", glow: "glow-rose" };
+                auditDesc = "Високий ризик алкогольної залежності (20–40 балів).";
+                auditInterpIdx = 3;
+                recHTML = `<div class="font-bold text-rose-700 dark:text-rose-400 mb-1">Рекомендація респонденту:</div>
+                <p class="leading-relaxed">Ваші відповіді свідчать про високий ризик алкогольної залежності або вже наявні проблеми, пов'язані з алкоголем. Це важливий сигнал про необхідність звернутися по допомогу. Почніть із консультації сімейного лікаря або зверніться безпосередньо у спеціалізовані заклади охорони здоров'я. Пам'ятайте: залежність є виліковним станом, і своєчасні дії допоможуть відновити контроль над власним здоров'ям.</p>`;
+            } else if (auditSum >= 8) {
+                auditBadge = { text: "🟡 Небезпечний ризик", class: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800", glow: "glow-amber" };
+                auditDesc = "Підвищений ризик шкоди для здоров'я (8–19 балів).";
+                auditInterpIdx = 2;
+                recHTML = `<div class="font-bold text-amber-800 dark:text-amber-300 mb-1">Рекомендація респонденту:</div>
+                <p class="leading-relaxed">Результат свідчить про підвищений ризик шкоди для здоров'я. Рекомендовано обмежити кількість та частоту вживання алкоголю (робити безалкогольні дні, чергувати алкогольні напої з безалкогольними, встановити власні ліміти). Ви можете самостійно долучитися до безкоштовної онлайн-програми <strong>CHANGE</strong> Києво-Могилянської Академії: <a href="https://kmarehab.com/change-programme/" target="_blank" rel="noopener noreferrer" class="text-sky-600 dark:text-sky-400 underline font-semibold">kmarehab.com/change-programme/</a></p>`;
+            } else {
+                recHTML = `<div class="font-bold text-emerald-800 dark:text-emerald-300 mb-1">Рекомендація респонденту:</div>
+                <p class="leading-relaxed">Ознак проблемного вживання алкоголю не виявлено. Це чудовий показник! Дотримуйтесь поміркованості або утримуйтесь від вживання алкоголю задля збереження здоров'я та благополуччя.</p>`;
+            }
+
+            safeSetText('audit-res-score', `${auditSum} / 40`);
+            safeSetText('audit-res-badge', auditBadge.text);
+            safeSetClass('audit-res-badge', `inline-block px-3 py-1 rounded-lg text-xs font-bold mb-3 border print-color-exact ${auditBadge.class}`);
+            safeSetText('audit-res-desc', auditDesc);
+            
+            const auditRevealPercent = Math.min(100, Math.round((auditSum / 40) * 100));
+            safeSetStyleWidth('audit-res-mask', `${100 - auditRevealPercent}%`);
+            safeSetClass('audit-glow-wrapper', `w-full h-2 rounded-full relative overflow-hidden glow-effect print-color-exact ${auditBadge.glow}`);
+            safeSetText('audit-detailed-score-text', `Сума: ${auditSum} / 40 балів`);
+
+            const recBox = document.getElementById('audit-recommendation-box');
+            if (recBox) recBox.innerHTML = recHTML;
+
+            [1, 2, 3].forEach(i => {
+                const el = document.getElementById(`audit-interp-${i}`);
+                if(el) {
+                    if (i === auditInterpIdx) el.className = "p-2 rounded border bg-sky-100 border-sky-300 font-semibold text-sky-900 dark:bg-sky-900/40 dark:border-sky-700 dark:text-sky-300 transition-colors print-color-exact";
+                    else el.className = "p-2 rounded border border-transparent opacity-60 dark:text-slate-300 transition-colors";
+                }
+            });
+
+            const auditTbody = document.getElementById('audit-answers-tbody');
+            if(auditTbody) {
+                auditTbody.innerHTML = '';
+                AUDIT_QUESTIONS.forEach((q, idx) => {
+                    const val = userState.audit[idx] !== undefined ? userState.audit[idx] : null;
+                    let opts = AUDIT_FREQ_OPTIONS;
+                    if (idx === 1) opts = AUDIT_Q2_OPTIONS;
+                    else if (idx >= 8) opts = AUDIT_Q9_10_OPTIONS;
+                    const optObj = val !== null ? opts.find(o => o.value === val) : null;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="py-2.5 px-3 font-bold text-slate-500 dark:text-slate-400">${idx + 1}</td><td class="py-2.5 px-3 dark:text-slate-200">${q}</td><td class="py-2.5 px-3 font-medium ${val === null ? 'text-slate-400 dark:text-slate-500 italic' : 'text-slate-800 dark:text-slate-300'}">${optObj ? optObj.text : 'Не відповідав(ла)'}</td>`;
+                    auditTbody.appendChild(tr);
+                });
+            }
+
             // TMCQ (scores only: the CETA form has no severity cut-offs)
             renderTMCQResults(tmcqScores, nameVal, dateVal);
 
@@ -2959,6 +3360,7 @@
                 if(isDes2Complete) saveTest('DES-II', userState.des2, des2Avg);
                 if(isLec5Complete) saveTest('LEC-5', userState.lec5, lec5Sum);
                 if(isTmcqComplete) saveTest('TMCQ', userState.tmcqP, tmcqScores.p);
+                if(isAuditComplete) saveTest('AUDIT', userState.audit, auditSum);
                 
                 if (savedAny) {
                     saveHistoryToDrive();
@@ -3092,7 +3494,7 @@
             const qSelect = document.getElementById('history-question-filter');
             qSelect.innerHTML = '<option value="all">Середній бал за всіма питаннями</option>';
             let qArr = [];
-            if(test === 'GAD-7') qArr = GAD7_QUESTIONS; else if(test === 'PCL-5') qArr = PCL5_QUESTIONS; else if(test === 'PHQ-9') qArr = PHQ9_QUESTIONS; else if(test === 'DES-II') qArr = DES2_QUESTIONS; else if(test === 'LEC-5') qArr = LEC5_QUESTIONS; else if(test === 'TMCQ') qArr = TMCQ_P_QUESTIONS;
+            if(test === 'GAD-7') qArr = GAD7_QUESTIONS; else if(test === 'PCL-5') qArr = PCL5_QUESTIONS; else if(test === 'PHQ-9') qArr = PHQ9_QUESTIONS; else if(test === 'DES-II') qArr = DES2_QUESTIONS; else if(test === 'LEC-5') qArr = LEC5_QUESTIONS; else if(test === 'TMCQ') qArr = TMCQ_P_QUESTIONS; else if(test === 'AUDIT') qArr = AUDIT_QUESTIONS;
             qArr.forEach((q, i) => qSelect.innerHTML += `<option value="${i}">П${i+1}: ${q.substring(0, 40)}...</option>`);
         }
 
@@ -3129,6 +3531,7 @@
                 if (test === 'PHQ-9') { if (value >= 20) return value + ' (Важкий)'; if (value >= 15) return value + ' (Виражений)'; if (value >= 10) return value + ' (Помірний)'; if (value >= 5) return value + ' (Низький)'; return value + ' (Мінімальний)'; }
                 if (test === 'DES-II') { if (value >= 30) return value + ' (Високий)'; return value + ' (Мінімальний)'; }
                 if (test === 'LEC-5') { if (value >= 11) return value + ' (Високий)'; if (value >= 1) return value + ' (Помірний)'; return value + ' (Мінімальний)'; }
+                if (test === 'AUDIT') { if (value >= 20) return value + ' (Високий)'; if (value >= 8) return value + ' (Небезпечний)'; return value + ' (Мінімальний)'; }
                 return value;
             };
 
@@ -3200,7 +3603,7 @@
             calculateAndShowResults();
             
             // Ставимо галочки лише на ті тести, які були пройдені в цей день
-            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'].forEach(id => {
+            ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => {
                 const el = document.getElementById(`chk-export-${id}`);
                 if (el) {
                     el.checked = dayTests.some(t => {
@@ -3312,6 +3715,19 @@
                         <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 26 питань</span>
                         <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 1 тиждень</span>
                         <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 CETA Global</span>
+                    </div>
+                </div>
+
+                <!-- AUDIT -->
+                <div onclick="selectTestFromModal('audit')" role="button" tabindex="0" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-300 dark:hover:border-sky-700 transition cursor-pointer flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-sky-700 dark:text-sky-400 text-sm">АУДИТ (AUDIT)</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Ризики алкоголю</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📝 10 питань</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">⏱️ 12 місяців</span>
+                        <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">📋 ВООЗ / mhGAP</span>
                     </div>
                 </div>
             </div>
