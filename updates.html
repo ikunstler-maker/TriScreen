@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="uk" id="html-root" class="dark overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал оновлень — TriScreen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Theme init
+        if (!localStorage.getItem('theme')) {
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
+        } else if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+    </script>
+</head>
+<body class="overflow-x-hidden w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm transition-colors duration-300">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Back to Home -->
+                <a href="index.html" class="flex items-center space-x-2 sm:space-x-3 group min-w-0 pr-2 cursor-pointer transition-opacity hover:opacity-80">
+                    <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-md transition-transform group-hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight transition-colors truncate">На головну сторінку</h1>
+                        <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">Психодіагностичний Комплекс TriScreen</p>
+                    </div>
+                </a>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700" title="Змінити тему">
+                    <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-grow w-full">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+            
+            <div class="mb-8 border-b border-slate-200 dark:border-slate-800 pb-6">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-3 border border-sky-200 dark:border-sky-800">Історія релізів & Changelog</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">Журнал оновлень</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Хронологія впровадження діагностичних шкал, покращень інтерфейсу та інженерних рішень TriScreen.</p>
+            </div>
+
+            <div class="space-y-10 text-slate-700 dark:text-slate-300">
+
+                <!-- Реліз 1: Жовтень 2026 (AUDIT + Карусель) -->
+                <article class="relative pl-6 border-l-2 border-sky-500 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-sky-500 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300">Жовтень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v261005-o2-p5</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Інтеграція AUDIT, свайп-карусель з drag-to-scroll, розумна аналітика та краудсорсинг</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li><strong>Нова клінічна шкала — АУДИТ (AUDIT):</strong> інтегровано стандартизований опитувальник ВООЗ / mhGAP для скринінгу рівня та ризиків вживання алкоголю (10 питань за 12 місяців) із розрахунком стандартних порцій (СП), шкалою 0–40 та рекомендаціями програми CHANGE.</li>
+                        <li><strong>Завершення методології CETA:</strong> до таблиці прийняття рішень додано блоки 6, 7 та 8 (Обговорення важких спогадів, Думати по-іншому, Розв'язання проблем).</li>
+                        <li><strong>Горизонтальна карусель карток:</strong> тестування згруповано по 2 в стовпчик; додано підтримку Drag-to-Scroll мишею із затисканням кнопки, магнітне вирівнювання та градієнтну тінь краю.</li>
+                        <li><strong>Розумна фільтрація результатів:</strong> автоматичне приховування порожніх тестів при заповненні одного опитування, сортування пройдених тестів нагору сітки та перемикач «✅ Пройдені / Всі тести».</li>
+                        <li><strong>Підтримка проєкту (Donatello):</strong> інтегровано плаваючий QR-код із пастельним світінням та друкований блок на першій сторінці PDF-звіту.</li>
+                        <li><strong>Краудсорсинг методик:</strong> додано форму збору запитів на нові шкали від психологів і лікарів.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 2: Жовтень 2026 (UI/UX навігація) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Жовтень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v261002-o1-p3</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Модернізація UI/UX, наскрізна навігація та оптимізація аналітики</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li><strong>Глобальний поп-ап швидкого вибору опитувань:</strong> у верхній панелі кнопку «Головна» замінено на «📋 Опитування» з компактним списком усіх шкал.</li>
+                        <li><strong>Структуровані картки:</strong> на головній сторінці додано бейджі кількості запитань, періоду оцінювання та використовуваного протоколу (DSM-5, ВООЗ, CETA).</li>
+                        <li><strong>Автофокусування зі скролом:</strong> перехід до будь-якого тесту автоматично скролить екран акуратно під закріплену шапку.</li>
+                        <li><strong>Мульти-перегляд результатів:</strong> можливість одночасно тримати відкритими кілька детальних звітів і кнопка згортання внизу кожної секції.</li>
+                        <li><strong>Оптимізація PDF:</strong> компактний акордеон експорту та масштаб 80% за замовчуванням під формат А4.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 3: Вересень 2026 (Тихе збереження) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260925-S5-P5</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Реорганізація інтерфейсу та «тихе» збереження</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li><strong>Уніфікована навігація:</strong> під кожним опитувальником реалізовано симетричну сітку з трьох кнопок: «Головна», «Результати» та «Занести в історію».</li>
+                        <li><strong>«Тихе» збереження:</strong> усунено примусовий перехід на іншу вкладку; кнопка на 3 секунди показує зелений статус «✅ Занесено!».</li>
+                        <li><strong>Автоматичне згортання панелі респондента:</strong> виправлено конфлікт CSS-класів банера даних пацієнта для комфортної роботи на мобільних пристроях.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 4: Вересень 2026 (Точкові графіки) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260925-S5-P2</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Точкові графіки динаміки та фідбек-модуль</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li><strong>Scatter Charts (Chart.js):</strong> візуалізація динаміки у вигляді точкових діаграм із текстовими рівнями важкості на осі Y.</li>
+                        <li><strong>Таймстемпи записів:</strong> фіксація точного часу проходження тестів, що дозволяє зберігати кілька записів протягом одного дня без перезапису.</li>
+                        <li><strong>Модуль зворотного зв'язку:</strong> інтегровано плаваючу кнопку 💬 та модальне вікно для побажань і повідомлень про помилки.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 5: Вересень 2026 (Google Drive Zero-Knowledge) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260917-S1</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Захищена хмарна історія (Zero-Knowledge) на Google Drive</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li><strong>Авторизація через Google Identity Services:</strong> безпечний вхід без сторонніх проміжних серверів.</li>
+                        <li><strong>Приватне сховище (appDataFolder):</strong> історія зберігається виключно в ізольованій папці особистого Google Диска користувача — розробник не має доступу до персональних відповідей.</li>
+                        <li><strong>Вкладка «Моя динаміка»:</strong> графіки зміни загального бала та аналіз динаміки кожного окремого запитання у часі.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 6: Вересень 2026 (Правова база) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260916-10</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Юридична прозорість та автономні документи</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li>Створено окрему сторінку <strong>«Політика конфіденційності»</strong> (<code>privacy-policy.html</code>) із закріпленням принципу локальної обробки в пам'яті пристрою.</li>
+                        <li>Створено окрему сторінку <strong>«Правила користування»</strong> (<code>terms-of-use.html</code>) із клінічним застереженням та телефонами гарячих ліній психологічної допомоги.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 7: Вересень 2026 (Мобільні виправлення та експорт) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260916-8</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Мобільна адаптація та захист генерації PDF</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li>Виправлено переповнення кнопок вибору статі та навігації на вузьких екранах смартфонів (320–390px).</li>
+                        <li>Перенесено відновлення видимості секцій на подію <code>afterprint</code>, що вирішило проблему неповного друку в браузерах iOS Safari та Android Chrome.</li>
+                    </ul>
+                </article>
+
+                <!-- Реліз 8: Вересень 2026 (TMCQ & LEC-5) -->
+                <article class="relative pl-6 border-l-2 border-slate-300 dark:border-slate-700 space-y-4">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-white dark:ring-slate-900"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Вересень 2026</span>
+                        <span class="text-xs text-slate-400 font-mono">v260914-5</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Інтеграція клінічних шкал TMCQ (CETA) та LEC-5</h2>
+                    <ul class="space-y-2 text-sm leading-relaxed list-disc pl-4 text-slate-600 dark:text-slate-400">
+                        <li>Інтегровано <strong>TMCQ by CETA</strong> (Огляд проблем P1–P21, шкала вживання ПАР, протокол безпеки та звіт по сесії).</li>
+                        <li>Інтегровано <strong>LEC-5</strong> (Список життєвих подій для DSM-5) з оцінкою травматичного досвіду протягом життя.</li>
+                        <li>Оновлено головну сітку та дашборд результатів під синхронне відображення всіх методик.</li>
+                    </ul>
+                </article>
+
+            </div>
+            
+            <div class="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-center">
+                <a href="index.html" class="inline-flex justify-center px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md">
+                    ← Повернутися до Застосунку
+                </a>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
