@@ -132,6 +132,18 @@
         .glow-orange { --glow-color: rgba(249, 115, 22, 0.7); }
         .glow-rose { --glow-color: rgba(225, 29, 72, 0.7); }
         .glow-sky { --glow-color: rgba(14, 165, 233, 0.7); }
+
+        /* Повільне пастельне градієнтне світіння навколо QR-коду Donatello */
+        @keyframes donateGlow {
+            0% { background-position: 0% 50%; filter: blur(14px); opacity: 0.7; }
+            50% { background-position: 100% 50%; filter: blur(22px); opacity: 0.95; }
+            100% { background-position: 0% 50%; filter: blur(14px); opacity: 0.7; }
+        }
+        .donate-aura-glow {
+            background: linear-gradient(135deg, #fbcfe8, #38bdf8, #fed7aa, #e9d5ff, #fbcfe8);
+            background-size: 300% 300%;
+            animation: donateGlow 7s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white transition-colors duration-300">
@@ -881,6 +893,10 @@
         <section id="content-results" class="tab-content hidden">
             
             <div class="flex flex-wrap items-center justify-end gap-3 mb-6 no-print">
+                <!-- Десктопна кнопка підтримки (поруч з оновленням та збереженням) -->
+                <button type="button" onclick="toggleDonateModal()" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 rounded-lg font-bold text-sm transition shadow-sm">
+                    <span>Підтримати проєкт ☕</span>
+                </button>
                 <button type="button" onclick="calculateAndShowResults()" class="flex-1 sm:flex-none justify-center px-4 py-2 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-lg font-bold text-sm transition shadow-sm flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     <span>Оновити результат</span>
@@ -972,22 +988,38 @@
                 </div>
             </div>
 
+            <!-- Мобільна кнопка підтримки (після блоку експорту до блоку підсумків) -->
+            <div class="block sm:hidden mb-6 no-print">
+                <button type="button" onclick="toggleDonateModal()" class="w-full py-2.5 px-4 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/80 rounded-xl font-bold text-sm transition shadow-sm flex items-center justify-center gap-2">
+                    <span>Підтримати проєкт ☕</span>
+                </button>
+            </div>
+
             <!-- Print Only Header -->
             <div class="hidden print-only mb-6 border-b border-slate-300 pb-4">
-                <div class="flex justify-between items-end">
+                <div class="flex justify-between items-center gap-4">
                     <div class="flex flex-col items-start gap-2">
                         <img src="Icon-TriScreen-260926V1-website.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain print-color-exact" style="width: 40px; height: 40px;">
                         <div>
                             <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
-                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ</p>
+                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ, АУДИТ</p>
+                        </div>
+                    </div>
+
+                    <!-- Прямокутний блок підтримки проєкту у PDF -->
+                    <div class="border border-slate-300 rounded-2xl p-2.5 flex items-center gap-3 bg-slate-50/90 max-w-[280px] print-color-exact" style="border: 1px solid #cbd5e1 !important; border-radius: 0.85rem !important;">
+                        <img src="https://ikunstler-maker.github.io/TriScreen/QR-code_Donatello-to_ikunstler.png" alt="Donatello QR" class="w-14 h-14 object-contain flex-shrink-0 rounded-lg print-color-exact" style="width: 56px; height: 56px;">
+                        <div class="text-[9.5px] leading-snug text-slate-700">
+                            <p class="font-medium text-slate-600 mb-1">Сервіс працює безкоштовно. Підтримати розвиток проєкту можна через платформу Donatello.</p>
+                            <a href="https://donatello.to/ikunstler" class="font-bold text-sky-700 underline text-[10px]">https://donatello.to/ikunstler</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Summary Header -->
-            <div id="dashboard-summary" class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-6 transition-colors duration-300">
-                <div class="flex flex-col sm:flex-row justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+            <!-- Dashboard Summary Header (без громіздкої підкладки для максимальної ширини) -->
+            <div id="dashboard-summary" class="mb-6 transition-colors duration-300">
+                <div class="flex flex-col sm:flex-row justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
                     <div class="w-full relative">
                         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider print-only-hide">Підсумковий висновок</span>
                         <div class="absolute right-0 top-0 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -996,31 +1028,48 @@
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1 print-only-hide">Звіт психологічного опитування</h2>
                         
                         <div class="flex flex-wrap items-center gap-3 mt-5">
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
-                                <span class="text-base leading-none">👤</span>
-                                <span><strong id="res-header-name" class="text-slate-900 dark:text-white font-semibold">Не вказано</strong></span>
+                            <div onclick="expandRespondentData(true)" role="button" tabindex="0" title="Натисніть, щоб розгорнути та заповнити дані респондента" class="cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 transition-all duration-200 group print-color-exact">
+                                <span class="text-base leading-none group-hover:scale-110 transition-transform">👤</span>
+                                <span><strong id="res-header-name" class="text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 font-semibold transition-colors">Не вказано</strong></span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
-                                <span id="res-header-sex-icon" class="text-base leading-none">❓</span>
-                                <span id="res-header-sex" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
+                            <div onclick="expandRespondentData(true)" role="button" tabindex="0" title="Натисніть, щоб розгорнути та заповнити дані респондента" class="cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 transition-all duration-200 group print-color-exact">
+                                <span id="res-header-sex-icon" class="text-base leading-none group-hover:scale-110 transition-transform">❓</span>
+                                <span id="res-header-sex" class="font-semibold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Не вказано</span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
-                                <span class="text-base leading-none">🫀</span>
-                                <span id="res-header-gender" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
+                            <div onclick="expandRespondentData(true)" role="button" tabindex="0" title="Натисніть, щоб розгорнути та заповнити дані респондента" class="cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 transition-all duration-200 group print-color-exact">
+                                <span class="text-base leading-none group-hover:scale-110 transition-transform">🫀</span>
+                                <span id="res-header-gender" class="font-semibold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Не вказано</span>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 print-color-exact">
-                                <span class="text-base leading-none">⏳</span>
-                                <span id="res-header-age" class="font-semibold text-slate-900 dark:text-white">Не вказано</span>
+                            <div onclick="expandRespondentData(true)" role="button" tabindex="0" title="Натисніть, щоб розгорнути та заповнити дані респондента" class="cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600 px-3 py-1.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 shadow-sm flex items-center gap-1.5 transition-all duration-200 group print-color-exact">
+                                <span class="text-base leading-none group-hover:scale-110 transition-transform">⏳</span>
+                                <span id="res-header-age" class="font-semibold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Не вказано</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 5 Module Cards Row -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
+                <!-- Панель фільтрації та сортування пройдених опитувань -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-5 mb-1 no-print">
+                    <div class="flex items-center gap-1.5 p-1 bg-slate-200/70 dark:bg-slate-800/80 rounded-xl border border-slate-300/70 dark:border-slate-700 text-xs font-semibold w-fit">
+                        <button type="button" id="btn-res-filter-active" onclick="setUserResultsFilter('active')" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-sky-600 text-white shadow-sm font-bold">
+                            <span>✅ Пройдені</span>
+                            <span id="badge-res-active-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20">0</span>
+                        </button>
+                        <button type="button" id="btn-res-filter-all" onclick="setUserResultsFilter('all')" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium">
+                            <span>Всі тести</span>
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-300/80 dark:bg-slate-700">7</span>
+                        </button>
+                    </div>
+                    <div id="res-filter-hint" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        Показано тільки заповнені опитування
+                    </div>
+                </div>
+
+                <!-- 7 Module Cards Row -->
+                <div id="summary-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4">
                     
                     <!-- GAD-7 Summary Box -->
-                    <div id="summary-card-gad7" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-gad7" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">GAD-7 (Тривога)</span>
@@ -1046,7 +1095,7 @@
                     <div id="mobile-slot-gad7" class="hidden md:hidden"></div>
 
                     <!-- PCL-5 Summary Box -->
-                    <div id="summary-card-pcl5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-pcl5" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">PCL-5 (ПТСР)</span>
@@ -1071,7 +1120,7 @@
                     <div id="mobile-slot-pcl5" class="hidden md:hidden"></div>
 
                     <!-- PHQ-9 Summary Box -->
-                    <div id="summary-card-phq9" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-phq9" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">PHQ-9 (Депресія)</span>
@@ -1096,7 +1145,7 @@
                     <div id="mobile-slot-phq9" class="hidden md:hidden"></div>
                     
                     <!-- DES-II Summary Box -->
-                    <div id="summary-card-des2" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-des2" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">DES-II (Дисоціація)</span>
@@ -1121,7 +1170,7 @@
                     <div id="mobile-slot-des2" class="hidden md:hidden"></div>
                     
                     <!-- LEC-5 Summary Box -->
-                    <div id="summary-card-lec5" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-lec5" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">LEC-5 (Життєві події)</span>
@@ -1146,7 +1195,7 @@
                     <div id="mobile-slot-lec5" class="hidden md:hidden"></div>
 
                     <!-- TMCQ Summary Box (scores only: the CETA form has no severity cut-offs) -->
-                    <div id="summary-card-tmcq" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-tmcq" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">TMCQ (Моніторинг CETA)</span>
@@ -1175,7 +1224,7 @@
                     <div id="mobile-slot-tmcq" class="hidden md:hidden"></div>
 
                     <!-- AUDIT Summary Box -->
-                    <div id="summary-card-audit" class="summary-card rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5 flex flex-col justify-between transition-colors duration-300">
+                    <div id="summary-card-audit" class="summary-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex flex-col justify-between shadow-sm transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full border border-sky-200 dark:border-sky-800 print-color-exact">АУДИТ (Алкоголь)</span>
@@ -1659,6 +1708,14 @@
                 </div>
             </div>
         </section>
+
+        <!-- КНОПКА ЗАПИТУ НА ІНТЕГРАЦІЮ МЕТОДИКИ (ВИДИМА НА ВСІХ ВКЛАДКАХ НАД ФУТЕРОМ) -->
+        <div class="mt-8 mb-2 flex justify-center no-print">
+            <button type="button" onclick="toggleMethodRequestModal()" class="w-full sm:w-auto px-6 py-3 bg-white dark:bg-slate-900 hover:bg-sky-50 dark:hover:bg-sky-950/40 text-slate-800 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 border border-slate-200 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-600 rounded-2xl font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2.5 group">
+                <span class="text-base group-hover:scale-110 transition-transform">📋</span>
+                <span>Запит на інтеграцію методики</span>
+            </button>
+        </div>
     </main>
 
     <!-- FOOTER -->
@@ -1679,11 +1736,14 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
-                <div class="space-y-2">
+                <div class="space-y-2.5">
+                    <button type="button" onclick="toggleDonateModal()" class="w-full sm:w-auto py-2.5 sm:py-1.5 px-4 sm:px-3 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/80 rounded-xl sm:rounded-lg text-sm sm:text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 mb-2.5">
+                        <span>Підтримати проєкт ☕</span>
+                    </button>
                     <h5 class="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[11px]">Авторство та розробка</h5>
                     <p class="font-medium text-slate-700 dark:text-slate-300">Розробник: <span class="font-semibold text-slate-900 dark:text-white">Елайджа Кюнстлер (Elijah Künstler)</span></p>
                     <p class="text-slate-500 italic">Створено: 28.08.2026 за допомогою Gemini.</p>
-                    <p class="text-slate-500 italic">Останнє оновлення: 04.10.2026</p>
+                    <p class="text-slate-500 italic">Останнє оновлення: 05.10.2026</p>
                 </div>
 
                 <div class="space-y-2 md:text-right">
@@ -1713,21 +1773,42 @@
 
         let currentActiveTab = 'welcome';
 
-        function toggleRespondentData() {
+        function collapseRespondentData() {
             const body = document.getElementById('respondent-data-body');
             const icon = document.getElementById('respondent-toggle-icon');
-            
-            // Якщо блок зараз видимий (має flex або grid)
-            if (body.classList.contains('flex') || body.classList.contains('md:grid')) {
-                // Ховаємо блок
+            if (body && (body.classList.contains('flex') || body.classList.contains('md:grid'))) {
                 body.classList.remove('flex', 'flex-col', 'md:grid', 'md:grid-cols-12');
                 body.classList.add('hidden');
-                icon.classList.remove('rotate-180');
-            } else {
-                // Показуємо блок (повертаємо всі необхідні класи сітки)
+                if (icon) icon.classList.remove('rotate-180');
+            }
+        }
+
+        function expandRespondentData(scrollToBanner = false) {
+            const body = document.getElementById('respondent-data-body');
+            const icon = document.getElementById('respondent-toggle-icon');
+            if (body && body.classList.contains('hidden')) {
                 body.classList.remove('hidden');
                 body.classList.add('flex', 'flex-col', 'md:grid', 'md:grid-cols-12');
-                icon.classList.add('rotate-180');
+                if (icon) icon.classList.add('rotate-180');
+            }
+            if (scrollToBanner) {
+                const banner = document.getElementById('respondent-data-body')?.closest('.bg-white') || document.getElementById('patient-name');
+                if (banner) {
+                    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                setTimeout(() => {
+                    const nameInput = document.getElementById('patient-name');
+                    if (nameInput) nameInput.focus();
+                }, 350);
+            }
+        }
+
+        function toggleRespondentData() {
+            const body = document.getElementById('respondent-data-body');
+            if (body && (body.classList.contains('flex') || body.classList.contains('md:grid'))) {
+                collapseRespondentData();
+            } else {
+                expandRespondentData();
             }
         }
 
@@ -1823,6 +1904,26 @@
                 panel.classList.add('hidden');
                 panel.classList.remove('flex');
                 if (icon) icon.classList.remove('rotate-180');
+            }
+        }
+
+        // Керування модальним вікном підтримки Donatello
+        function toggleDonateModal() {
+            const modal = document.getElementById('donate-modal');
+            const content = document.getElementById('donate-modal-content');
+            if (!modal || !content) return;
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
             }
         }
 
@@ -2104,6 +2205,11 @@
                     }
                 }
             });
+
+            // Автоматичне згортання панелі респондента на вкладках Результати та Історія
+            if (tabId === 'results' || tabId === 'history') {
+                collapseRespondentData();
+            }
             
             if (tabId === 'results') calculateAndShowResults();
             if (tabId === 'history') {
@@ -2809,6 +2915,8 @@
 
             // Clear every questionnaire (clearTest also re-renders the forms and refreshes counters/results)
             ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => clearTest(id));
+            currentResultsFilter = 'auto';
+            applyResultsFilterAndOrder();
         }
 
         function toggleSelectAllExports() {
@@ -3339,7 +3447,9 @@
                 else safetyBox.classList.add('hidden');
             }
 
-            // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
+            // Оновлюємо сортування та фільтрацію карток результатів
+            applyResultsFilterAndOrder();
+
             // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
             if (accessToken && shouldSaveToHistory) {
                 let savedAny = false;
@@ -3476,7 +3586,85 @@
 
         function deleteHistoryItem(id) { testHistory = testHistory.filter(i => i.id !== id); saveHistoryToDrive(); }
         function clearHistoryData() { if(confirm("Видалити ВСЮ історію? Цю дію неможливо скасувати.")) { testHistory = []; saveHistoryToDrive(); } }
+        
+        // ==========================================
+        // ФІЛЬТРАЦІЯ ТА СОРТУВАННЯ КАРТОК РЕЗУЛЬТАТІВ
+        // ==========================================
+        let currentResultsFilter = 'auto'; // 'auto', 'active', 'all'
 
+        function isTestActive(id) {
+            if (id === 'gad7') return Object.keys(userState.gad7).length > 0;
+            if (id === 'pcl5') return userState.pcl5CritA === 'no' || (userState.pcl5CritA === 'yes' && Object.keys(userState.pcl5).length > 0);
+            if (id === 'phq9') return Object.keys(userState.phq9).length > 0;
+            if (id === 'des2') return Object.keys(userState.des2).length > 0;
+            if (id === 'lec5') return Object.keys(userState.lec5).length > 0;
+            if (id === 'tmcq') return (typeof getTMCQScores === 'function' ? getTMCQScores().answered : 0) > 0;
+            if (id === 'audit') return Object.keys(userState.audit).length > 0;
+            return false;
+        }
+
+        function setUserResultsFilter(mode) {
+            currentResultsFilter = mode;
+            applyResultsFilterAndOrder();
+        }
+
+        function applyResultsFilterAndOrder() {
+            const testIds = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'];
+            const activeTests = testIds.filter(id => isTestActive(id));
+            const activeCount = activeTests.length;
+            
+            const countBadge = document.getElementById('badge-res-active-count');
+            if (countBadge) countBadge.textContent = activeCount;
+
+            // Автоматичний вибір: якщо заповнено 1 чи кілька (але не всі 7) — за замовчуванням показуємо пройдені
+            let effectiveMode = currentResultsFilter;
+            if (currentResultsFilter === 'auto') {
+                effectiveMode = (activeCount > 0 && activeCount < testIds.length) ? 'active' : 'all';
+            }
+
+            const btnActive = document.getElementById('btn-res-filter-active');
+            const btnAll = document.getElementById('btn-res-filter-all');
+            const hintEl = document.getElementById('res-filter-hint');
+
+            if (btnActive && btnAll) {
+                if (effectiveMode === 'active') {
+                    btnActive.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-sky-600 text-white shadow-sm font-bold";
+                    btnAll.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium";
+                    if (hintEl) hintEl.textContent = `Показано ${activeCount} із 7 (тільки пройдені)`;
+                } else {
+                    btnAll.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-sky-600 text-white shadow-sm font-bold";
+                    btnActive.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium";
+                    if (hintEl) hintEl.textContent = activeCount > 0 ? `Показано всі 7 тестів (заповнено: ${activeCount})` : "Показано всі 7 тестів";
+                }
+            }
+
+            const grid = document.getElementById('summary-cards-grid');
+            if (!grid) return;
+
+            // Сортування в DOM: пройдені тести завжди переміщуються нагору сітки!
+            const sortedIds = [...testIds].sort((a, b) => {
+                const aActive = isTestActive(a) ? 1 : 0;
+                const bActive = isTestActive(b) ? 1 : 0;
+                return bActive - aActive;
+            });
+
+            sortedIds.forEach(id => {
+                const card = document.getElementById(`summary-card-${id}`);
+                const slot = document.getElementById(`mobile-slot-${id}`);
+                if (!card) return;
+
+                grid.appendChild(card);
+                if (slot) grid.appendChild(slot);
+
+                const isActive = isTestActive(id);
+                if (effectiveMode === 'active' && !isActive) {
+                    card.classList.add('hidden');
+                    if (slot) slot.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+        }
         function setTimeFilter(filter) {
             currentTimeFilter = filter;
             ['month', 'year', 'all'].forEach(f => {
@@ -3623,6 +3811,42 @@
     <button onclick="toggleFeedbackModal()" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-2xl focus:outline-none print-only-hide" title="Залишити відгук">
         💬
     </button>
+    
+    <!-- МОДАЛЬНЕ ВІКНО: ПІДТРИМАТИ ПРОЄКТ (DONATELLO) -->
+    <div id="donate-modal" class="fixed inset-0 z-[70] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95 p-6 relative" id="donate-modal-content">
+            
+            <!-- Кнопка закриття -->
+            <button type="button" onclick="toggleDonateModal()" class="absolute right-4 top-4 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="flex flex-col items-center text-center mt-1">
+                <!-- QR Код з анімованим пастельним світінням -->
+                <div class="relative flex items-center justify-center my-3">
+                    <div class="absolute inset-1 rounded-2xl donate-aura-glow -z-10"></div>
+                    <a href="https://donatello.to/ikunstler" target="_blank" rel="noopener noreferrer" class="relative z-10 block p-2 bg-white rounded-2xl shadow-md transition-transform hover:scale-105" title="Натисніть для переходу на Donatello">
+                        <img src="https://ikunstler-maker.github.io/TriScreen/QR-code_Donatello-to_ikunstler.png" alt="Donatello QR Code" class="w-48 h-48 sm:w-52 sm:h-52 object-contain rounded-xl">
+                    </a>
+                </div>
+
+                <!-- Підпис під QR -->
+                <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium leading-relaxed mt-2 mb-4">
+                    Сервіс працює безкоштовно. Підтримати розвиток проєкту можна через платформу Donatello.
+                </p>
+
+                <!-- Кнопка переходу -->
+                <a href="https://donatello.to/ikunstler" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 mb-3">
+                    <span>Підтримати проєкт ☕</span>
+                </a>
+
+                <!-- Сабскріпшн -->
+                <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-snug">
+                    Щоб підтримати відскануйте QR код, або натисніть на нього, або натисніть на кнопку
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- МОДАЛЬНЕ ВІКНО ШВИДКОГО ВИБОРУ ОПИТУВАННЯ -->
     <div id="tests-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 no-print">
@@ -3759,7 +3983,50 @@
         </div>
     </div>
 
+    <!-- МОДАЛЬНЕ ВІКНО: ЗАПИТ НА ІНТЕГРАЦІЮ МЕТОДИКИ -->
+    <div id="method-request-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95" id="method-request-modal-content">
+            
+            <!-- Шапка модалки -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>📋</span> Запит на інтеграцію методики
+                </h3>
+                <button type="button" onclick="toggleMethodRequestModal()" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Контейнер для Google Form -->
+            <div class="w-full h-[65vh] sm:h-[540px] bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSelK8CUUgRbBEgrC4EJHWubmfWhFjxbfTziSgndxNXyoXGfxg/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" class="absolute inset-0">Завантаження…</iframe>
+            </div>
+        </div>
+    </div>
+
     <script>
+        
+        // Функція для плавного відкриття/закриття вікна запиту методики
+        function toggleMethodRequestModal() {
+            const modal = document.getElementById('method-request-modal');
+            const content = document.getElementById('method-request-modal-content');
+            if (!modal || !content) return;
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
         // Функція для плавного відкриття/закриття модального вікна
         function toggleFeedbackModal() {
             const modal = document.getElementById('feedback-modal');
