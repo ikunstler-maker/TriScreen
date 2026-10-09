@@ -998,11 +998,14 @@
             <!-- Print Only Header -->
             <div class="hidden print-only mb-6 border-b border-slate-300 pb-4">
                 <div class="flex justify-between items-center gap-4">
-                    <div class="flex flex-col items-start gap-2">
-                        <img src="Icon-TriScreen-260926V1-website.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain print-color-exact" style="width: 40px; height: 40px;">
+                    <div class="flex flex-col items-start gap-1.5">
+                        <div class="flex items-center gap-2.5">
+                            <img src="Icon-TriScreen-260926V1-website.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain print-color-exact" style="width: 40px; height: 40px;">
+                            <span class="text-xl font-black text-sky-700 tracking-tight print-color-exact">TriScreen</span>
+                        </div>
                         <div>
                             <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
-                            <p class="text-xs text-slate-600 mt-1">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ, АУДИТ</p>
+                            <p id="print-header-scales" class="text-xs text-slate-600 mt-0.5 font-medium">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ, АУДИТ</p>
                         </div>
                     </div>
 
@@ -2940,51 +2943,47 @@
         }
 
         function handlePrintCustom() {
-            const checks = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq'];
-            const selected = checks.filter(id => document.getElementById(`chk-export-${id}`).checked);
-
-            if (selected.length === 0) {
-                alert("Оберіть хоча б один тест для експорту.");
-                return;
-            }
-
-            // Переносимо всі секції в основний контейнер для ідеального друку по порядку
-            const desktopCont = document.getElementById('desktop-details-container');
-            checks.forEach(id => {
-                const s = document.getElementById(`section-${id}`);
-                if (s && desktopCont && !desktopCont.contains(s)) desktopCont.appendChild(s);
-            });
-
-            // Hide unselected sections for print
-            checks.forEach(id => {
-                const section = document.getElementById(`section-${id}`);
-                const card = document.getElementById(`summary-card-${id}`);
-                if (!selected.includes(id)) {
-                    section.classList.add('print-only-hide');
-                    card.classList.add('print-only-hide');
-                } else {
-                    section.classList.remove('print-only-hide');
-                    card.classList.remove('print-only-hide');
-                }
-            });
-
-            // Set Title for Filename
-            const oldTitle = document.title;
-            const now = new Date();
-            const dateStr = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getFullYear()).slice(-2)}`;
-            let titleParts = [];
-            selected.forEach(s => titleParts.push(s.toUpperCase().replace('PCL5', 'PCL-5').replace('DES2', 'DES-II').replace('LEC5', 'LEC-5')));
-            document.title = `Психодіагностичний_Комплекс_${titleParts.join('_')}_${dateStr}`;
-
+            const allExportKeys = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'];
+            
+            // 1. Налаштування теми та масштабу друку
             const html = document.documentElement;
             const wasDark = html.classList.contains('dark');
             const printTheme = document.getElementById('print-theme-select') ? document.getElementById('print-theme-select').value : 'light';
-            const scale = document.getElementById('print-scale-slider') ? (document.getElementById('print-scale-slider').value / 100) : 1;
+            const scale = document.getElementById('print-scale-slider') ? (document.getElementById('print-scale-slider').value / 100) : 0.8;
 
             if (printTheme === 'light') html.classList.remove('dark');
             else html.classList.add('dark');
 
-            // Застосовуємо масштаб та жорсткі правила заборони розривів таблиць для мобільних пристроїв
+            // 2. Визначаємо тільки ті тести, які включено в експорт (відмічені чекбоксами)
+            const checkedKeys = allExportKeys.filter(key => {
+                const chk = document.getElementById(`chk-export-${key}`);
+                return chk && chk.checked;
+            });
+
+            // Формуємо списки жорсткого приховування невідмічених та показу відмічених за ID селекторами
+            const hideSelectors = [];
+            const showSelectors = [];
+
+            allExportKeys.forEach(key => {
+                if (checkedKeys.includes(key)) {
+                    showSelectors.push(`#section-${key}`);
+                } else {
+                    hideSelectors.push(
+                        `#summary-card-${key}`,
+                        `#section-${key}`,
+                        `#mobile-slot-${key}`
+                    );
+                }
+            });
+
+            const hideRules = hideSelectors.length 
+                ? `${hideSelectors.join(',\n')} { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; }` 
+                : '';
+
+            const showRules = showSelectors.length 
+                ? `${showSelectors.join(',\n')} { display: block !important; }` 
+                : '';
+
             let styleEl = document.getElementById('print-custom-style');
             if (!styleEl) {
                 styleEl = document.createElement('style');
@@ -2995,39 +2994,137 @@
                 body { zoom: ${scale}; } 
                 tr, td, th, .test-section, .summary-card, .bg-white { page-break-inside: avoid !important; break-inside: avoid !important; }
                 h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
+                ${hideRules}
+                ${showRules}
             }`;
 
-            // Restoring right after calling window.print() assumes print() blocks until the
-            // dialog closes. That holds on desktop, but mobile browsers (iOS/Android) return
-            // from print() immediately and render the share/print sheet asynchronously — so
-            // restoring here would unhide the other tests before the PDF is actually captured,
-            // which is why exported PDFs on mobile included every test. Wait for the real
-            // "printing is done" signal instead, with a fallback in case a browser fires neither.
-            let restored = false;
-            const restore = () => {
-                if (restored) return;
-                restored = true;
-                document.title = oldTitle;
+            // 3. Оновлення переліку шкал у шапці PDF (лише включені)
+            const scaleHeaderMap = {
+                'gad7': 'GAD-7',
+                'pcl5': 'PCL-5',
+                'phq9': 'PHQ-9',
+                'des2': 'DES-II',
+                'lec5': 'LEC-5',
+                'tmcq': 'TMCQ',
+                'audit': 'АУДИТ'
+            };
+            const headerScalesText = checkedKeys.map(k => scaleHeaderMap[k]).join(', ');
+            const printScalesEl = document.getElementById('print-header-scales');
+            if (printScalesEl) {
+                printScalesEl.textContent = headerScalesText ? `Шкали: ${headerScalesText}` : 'Шкали: не обрано';
+            }
+
+            // 4. Формування назви файлу: TriScreen_[ID-Ім'я]_[Шкали]_[yy-mm-dd]_[hhmm]
+            const rawName = document.getElementById('patient-name')?.value.trim();
+            let namePart = rawName ? rawName.replace(/\s+/g, '-').replace(/[\\/:*?"<>|]/g, '') : 'Респондент';
+            if (!namePart) namePart = 'Респондент';
+
+            const scaleFileMap = {
+                'gad7': 'GAD7',
+                'pcl5': 'PCL5',
+                'phq9': 'PHQ9',
+                'des2': 'DES2',
+                'lec5': 'LEC5',
+                'tmcq': 'TMCQ',
+                'audit': 'АУДИТ'
+            };
+            const scalesFilePart = checkedKeys.length ? checkedKeys.map(k => scaleFileMap[k]).join('-') : 'Без-шкал';
+
+            let datePart = '';
+            const dateVal = document.getElementById('assessment-date')?.value;
+            if (dateVal && dateVal.includes('-')) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) {
+                    const yy = parts[0].slice(-2);
+                    const mm = parts[1].padStart(2, '0');
+                    const dd = parts[2].padStart(2, '0');
+                    datePart = `${yy}-${mm}-${dd}`;
+                }
+            }
+            if (!datePart) {
+                const now = new Date();
+                const yy = String(now.getFullYear()).slice(-2);
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                datePart = `${yy}-${mm}-${dd}`;
+            }
+
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const timePart = `${hh}${min}`;
+
+            const originalTitle = document.title;
+            document.title = `TriScreen_${namePart}_${scalesFilePart}_${datePart}_${timePart}`;
+
+            // 5. Керування видимістю карток та детальних звітів перед друком
+            const elementsToRestore = [];
+
+            allExportKeys.forEach(key => {
+                const isIncluded = checkedKeys.includes(key);
+                const card = document.getElementById(`summary-card-${key}`);
+                const sec = document.getElementById(`section-${key}`);
+                const slot = document.getElementById(`mobile-slot-${key}`);
+
+                if (!isIncluded) {
+                    if (card) {
+                        elementsToRestore.push({ el: card, display: card.style.display, hadHidden: card.classList.contains('hidden') });
+                        card.style.setProperty('display', 'none', 'important');
+                        card.classList.add('hidden', 'no-print');
+                    }
+                    if (sec) {
+                        elementsToRestore.push({ el: sec, display: sec.style.display, hadHidden: sec.classList.contains('hidden') });
+                        sec.style.setProperty('display', 'none', 'important');
+                        sec.classList.add('hidden', 'no-print');
+                    }
+                    if (slot) {
+                        elementsToRestore.push({ el: slot, display: slot.style.display, hadHidden: slot.classList.contains('hidden') });
+                        slot.style.setProperty('display', 'none', 'important');
+                        slot.classList.add('hidden', 'no-print');
+                    }
+                } else {
+                    if (card) {
+                        elementsToRestore.push({ el: card, display: card.style.display, hadHidden: card.classList.contains('hidden') });
+                        card.style.setProperty('display', '', '');
+                        card.classList.remove('hidden', 'no-print');
+                    }
+                    if (sec) {
+                        elementsToRestore.push({ el: sec, display: sec.style.display, hadHidden: sec.classList.contains('hidden') });
+                        sec.style.setProperty('display', 'block', 'important');
+                        sec.classList.remove('hidden', 'no-print');
+                    }
+                }
+            });
+
+            // 6. Відновлення інтерфейсу після завершення друку
+            const cleanup = () => {
+                document.title = originalTitle;
+
                 if (wasDark) html.classList.add('dark');
-                checks.forEach(id => {
-                    const section = document.getElementById(`section-${id}`);
-                    const card = document.getElementById(`summary-card-${id}`);
-                    if (section) section.classList.remove('print-only-hide');
-                    if (card) card.classList.remove('print-only-hide');
+                else html.classList.remove('dark');
+
+                elementsToRestore.forEach(item => {
+                    item.el.style.display = item.display;
+                    if (item.hadHidden) item.el.classList.add('hidden');
+                    else item.el.classList.remove('hidden');
+                    item.el.classList.remove('no-print');
                 });
-                window.removeEventListener('afterprint', restore);
-                if (mql) { if (mql.removeEventListener) mql.removeEventListener('change', onMqlChange); else if (mql.removeListener) mql.removeListener(onMqlChange); }
+
+                if (styleEl) {
+                    styleEl.innerHTML = '';
+                }
+
+                if (typeof applyResultsFilterAndOrder === 'function') {
+                    applyResultsFilterAndOrder();
+                }
+
+                window.removeEventListener('afterprint', cleanup);
             };
 
-            const mql = window.matchMedia ? window.matchMedia('print') : null;
-            const onMqlChange = (e) => { if (!e.matches) restore(); };
-            window.addEventListener('afterprint', restore);
-            if (mql) { if (mql.addEventListener) mql.addEventListener('change', onMqlChange); else if (mql.addListener) mql.addListener(onMqlChange); }
-            setTimeout(restore, 5000); // safety net if a browser fires neither signal
+            window.addEventListener('afterprint', cleanup);
+            setTimeout(cleanup, 5000);
 
-            setTimeout(() => {
-                window.print();
-            }, 150);
+            window.print();
         }
 
         function calculateAgeString(dobStr, assessmentDateStr) {
