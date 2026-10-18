@@ -64,9 +64,14 @@
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             
-            /* Інверсія білого логотипа на чорний при друку на білому папері */
-            .print-only img, header img {
+            /* Інверсія білого логотипа на чорний при друку (виключаючи QR-код) */
+            .print-only img:not([alt*="Donatello"]):not([alt*="QR"]) {
                 filter: invert(1) grayscale(100%) brightness(0%) !important;
+            }
+            .print-only img[alt*="Donatello"],
+            .print-only img[alt*="QR"] {
+                filter: none !important;
+                -webkit-filter: none !important;
             }
             
             /* Print colors exactly as on screen */
