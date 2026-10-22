@@ -1,527 +1,434 @@
 <!DOCTYPE html>
-<html lang="uk" class="light">
+<html lang="uk" id="html-root" class="dark overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Щоденник Емоцій</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Щоденник Емоцій — TriScreen</title>
+    <link rel="icon" type="image/png" href="Logo-TriScreen-260926V1-favicon.png">
+    <meta name="description" content="Щоденник емоцій TriScreen: ситуація, думки, емоції, тілесні відчуття та реакція. Дані зберігаються лише у вашому браузері.">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
-                        }
-                    }
-                }
-            }
+        // Та сама логіка теми, що й у головному застосунку TriScreen (темна за замовчуванням)
+        if (!localStorage.getItem('theme')) {
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
+        } else if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        if (window.tailwind) tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
     </script>
-    
-    <!-- Phosphor Icons for modern minimalist icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
     <style>
-        /* Custom Styles for better mobile experience and printing */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { -webkit-tap-highlight-color: transparent; }
+        .dark input[type="datetime-local"] { color-scheme: dark; }
 
-        /* Pulse animation for active microphone */
+        /* Пульсація активного мікрофона */
         @keyframes pulse-mic {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
         }
-        
         .mic-active {
             animation: pulse-mic 1.5s infinite;
-            background-color: #ef4444 !important; /* Tailwind red-500 */
-            color: white !important;
+            background-color: #f43f5e !important;
+            border-color: #f43f5e !important;
+            color: #fff !important;
         }
 
-        /* Smooth transitions */
-        .theme-transition {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-
-        /* Print styles for PDF Export */
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .print-container { padding: 0 !important; }
-            .entry-card { 
-                break-inside: avoid; 
-                border: 1px solid #ccc !important; 
-                box-shadow: none !important; 
-                margin-bottom: 20px !important;
+            html, body { background: white !important; color: black !important; }
+            .print-container { padding: 0 !important; max-width: none !important; }
+            .entry-card {
+                break-inside: avoid;
+                background: white !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                margin-bottom: 16px !important;
             }
+            .entry-card * { color: black !important; }
         }
-
-        /* Hide scrollbar for cleaner UI but keep functionality */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
     </style>
 </head>
+<body class="overflow-x-hidden w-full max-w-[100vw] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
 
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 theme-transition min-h-screen flex flex-col">
+    <!-- Header (як у TriScreen) -->
+    <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 shadow-sm transition-colors duration-300 no-print">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2 sm:space-x-3 group min-w-0 pr-2 cursor-pointer transition-opacity hover:opacity-80" title="Повернутися до TriScreen">
+                    <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-md transition-transform group-hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight transition-colors truncate">На головну сторінку</p>
+                        <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">Психодіагностичний Комплекс TriScreen</p>
+                    </div>
+                </a>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm no-print">
-        <div class="max-w-3xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i class="ph-fill ph-brain text-2xl text-brand-500"></i>
-                <h1 class="text-xl font-semibold">Щоденник Емоцій</h1>
-            </div>
-            <div class="flex items-center gap-2">
-                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Перемкнути тему">
-                    <i class="ph ph-moon text-xl dark:hidden"></i>
-                    <i class="ph ph-sun text-xl hidden dark:block text-yellow-400"></i>
+                <button type="button" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700" title="Змінити тему">
+                    <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-3xl w-full mx-auto p-4 sm:p-6 print-container">
-        
-        <!-- Action Buttons (Export) -->
-        <div class="flex flex-wrap gap-2 mb-6 no-print">
-            <button onclick="exportToPDF()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition font-medium">
-                <i class="ph ph-file-pdf text-red-500 text-lg"></i>
-                PDF / Друк
-            </button>
-            <button onclick="openMarkdownModal()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition font-medium">
-                <i class="ph ph-markdown-logo text-blue-500 text-lg"></i>
-                Markdown
-            </button>
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-grow w-full print-container">
+
+        <!-- Title -->
+        <div class="mb-6 no-print">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 mb-3 border border-sky-200 dark:border-sky-800">Самоспостереження</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Щоденник Емоцій</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Фіксуйте ситуацію, думки, емоції, тілесні відчуття та реакцію. Записи зберігаються лише у вашому браузері.</p>
         </div>
 
-        <!-- Form Section -->
-        <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-8 no-print theme-transition">
-            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                <i class="ph ph-plus-circle text-brand-500"></i>
-                Новий запис
-            </h2>
-            
+        <!-- Form -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300 mb-8 no-print">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-5">Новий запис</h2>
+
             <form id="diaryForm" class="space-y-5">
-                
-                <!-- Date/Time Field -->
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Дата та час</label>
+                    <label for="entryDate" class="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Дата та час</label>
                     <input type="datetime-local" id="entryDate" required
-                        class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition dark:text-white">
+                        class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition">
                 </div>
 
-                <!-- Situation Field -->
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">1. Ситуація (Що сталося? Де? З ким?)</label>
-                    <div class="relative flex items-start gap-2">
-                        <textarea id="field-situation" rows="2" placeholder="Опишіть ситуацію об'єктивно..."
-                            class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none dark:text-white"></textarea>
-                        <button type="button" onclick="toggleDictation('field-situation', this)" class="shrink-0 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition" aria-label="Диктувати">
-                            <i class="ph ph-microphone text-xl"></i>
-                        </button>
-                    </div>
-                </div>
+                <!-- Поля запису генеруються з FIELDS у скрипті -->
+                <div id="fieldsContainer" class="space-y-5"></div>
 
-                <!-- Thoughts Field -->
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">2. Думки (Про що я подумав/ла?)</label>
-                    <div class="relative flex items-start gap-2">
-                        <textarea id="field-thoughts" rows="2" placeholder="Які автоматичні думки виникли?..."
-                            class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none dark:text-white"></textarea>
-                        <button type="button" onclick="toggleDictation('field-thoughts', this)" class="shrink-0 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition" aria-label="Диктувати">
-                            <i class="ph ph-microphone text-xl"></i>
-                        </button>
-                    </div>
-                </div>
+                <p id="dictationStatus" class="hidden text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span>Слухаю… Натисніть на мікрофон ще раз, щоб зупинити.</span>
+                </p>
 
-                <!-- Emotions Field -->
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">3. Емоції (Що відчув/ла та на скільки %?)</label>
-                    <div class="relative flex items-start gap-2">
-                        <textarea id="field-emotions" rows="2" placeholder="Тривога 80%, Злість 40%..."
-                            class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none dark:text-white"></textarea>
-                        <button type="button" onclick="toggleDictation('field-emotions', this)" class="shrink-0 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition" aria-label="Диктувати">
-                            <i class="ph ph-microphone text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Body Sensations Field -->
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">4. Тілесні відчуття</label>
-                    <div class="relative flex items-start gap-2">
-                        <textarea id="field-body" rows="2" placeholder="Серцебиття, напруга в плечах, клубок у горлі..."
-                            class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none dark:text-white"></textarea>
-                        <button type="button" onclick="toggleDictation('field-body', this)" class="shrink-0 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition" aria-label="Диктувати">
-                            <i class="ph ph-microphone text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Reaction Field -->
-                <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">5. Реакція (Що я зробив/ла?)</label>
-                    <div class="relative flex items-start gap-2">
-                        <textarea id="field-reaction" rows="2" placeholder="Поведінка у відповідь на ситуацію..."
-                            class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none dark:text-white"></textarea>
-                        <button type="button" onclick="toggleDictation('field-reaction', this)" class="shrink-0 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition" aria-label="Диктувати">
-                            <i class="ph ph-microphone text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-medium py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                    <i class="ph ph-check-circle text-xl"></i>
+                <button type="submit" class="w-full py-3 px-4 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm sm:text-base transition shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Зберегти запис
                 </button>
             </form>
         </section>
 
-        <!-- Entries History Section -->
+        <!-- History -->
         <section>
-            <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700 no-print">Історія записів</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800 no-print">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white">Історія записів</h2>
+                <div class="flex gap-2">
+                    <button type="button" onclick="exportToPDF()" class="flex-1 sm:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold text-sm transition border border-slate-200 dark:border-slate-700">
+                        <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        PDF / Друк
+                    </button>
+                    <button type="button" onclick="openMarkdownModal()" class="flex-1 sm:flex-none flex justify-center items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold text-sm transition border border-slate-200 dark:border-slate-700">
+                        <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Markdown
+                    </button>
+                </div>
+            </div>
+
             <div id="entriesContainer" class="space-y-4">
-                <!-- Entries will be injected here via JS -->
-                <p class="text-gray-500 dark:text-gray-400 italic text-center py-8 no-print" id="emptyState">
+                <p id="emptyState" class="text-sm text-slate-500 dark:text-slate-400 text-center py-10 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 no-print">
                     Записів поки немає. Додайте свій перший запис вище.
                 </p>
             </div>
         </section>
 
+        <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 text-center no-print">
+            <a href="index.html" class="inline-flex justify-center px-6 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md">
+                ← Повернутися до Застосунку
+            </a>
+        </div>
     </main>
 
     <!-- Markdown Modal -->
-    <div id="markdownModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 no-print">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-2xl shadow-xl flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold flex items-center gap-2">
-                    <i class="ph ph-markdown-logo text-brand-500"></i>
-                    Markdown Експорт
-                </h3>
-                <button onclick="closeMarkdownModal()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                    <i class="ph ph-x text-lg"></i>
+    <div id="markdownModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300 no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Markdown експорт</h3>
+                <button type="button" onclick="closeMarkdownModal()" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1 bg-slate-100 dark:bg-slate-800 rounded-lg" aria-label="Закрити">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="p-4 flex-1 overflow-y-auto">
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Ви можете скопіювати цей код для вставки у Notion, Obsidian або інші редактори.</p>
-                <textarea id="markdownOutput" readonly class="w-full h-64 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl p-4 font-mono text-sm resize-none focus:outline-none text-gray-800 dark:text-gray-200"></textarea>
+            <div class="p-4 sm:p-5 flex-1 overflow-y-auto">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">Скопіюйте цей текст для вставки у Notion, Obsidian або інші редактори.</p>
+                <textarea id="markdownOutput" readonly class="w-full h-64 p-3 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-800 dark:text-slate-200"></textarea>
             </div>
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
-                <button onclick="copyMarkdown()" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white py-2 rounded-xl font-medium transition flex justify-center items-center gap-2">
-                    <i class="ph ph-copy"></i> Скопіювати
+            <div class="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                <button type="button" onclick="copyMarkdown()" class="flex-1 py-2.5 bg-sky-600 dark:bg-sky-500 hover:bg-sky-700 dark:hover:bg-sky-600 text-white rounded-xl font-bold text-sm transition shadow-md flex justify-center items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Скопіювати
                 </button>
-                <button onclick="closeMarkdownModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 rounded-xl font-medium transition">
+                <button type="button" onclick="closeMarkdownModal()" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold text-sm transition border border-slate-200 dark:border-slate-700">
                     Закрити
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 z-50 pointer-events-none">
-        <i class="ph-fill ph-check-circle text-green-400 dark:text-green-600 text-xl"></i>
-        <span id="toastMessage" class="font-medium">Дію виконано успішно!</span>
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-8 sm:max-w-sm bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-3 rounded-xl shadow-2xl border border-slate-700 dark:border-slate-200 text-sm font-semibold transition-all duration-300 translate-y-20 opacity-0 z-50 pointer-events-none no-print">
+        <span id="toastMessage"></span>
     </div>
 
     <script>
-        // State management
-        let entries = JSON.parse(localStorage.getItem('emotionDiaryEntries')) || [];
-        let isDarkMode = localStorage.getItem('theme') === 'dark' || 
-                        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const STORAGE_KEY = 'emotionDiaryEntries';
 
-        // Speech Recognition Setup
+        const FIELDS = [
+            { key: 'situation', label: '1. Ситуація (Що сталося? Де? З ким?)', short: 'Ситуація', placeholder: "Опишіть ситуацію об'єктивно..." },
+            { key: 'thoughts',  label: '2. Думки (Про що я подумав/ла?)', short: 'Думки', placeholder: 'Які автоматичні думки виникли?...' },
+            { key: 'emotions',  label: '3. Емоції (Що відчув/ла та на скільки %?)', short: 'Емоції', placeholder: 'Тривога 80%, Злість 40%...' },
+            { key: 'body',      label: '4. Тілесні відчуття', short: 'Тілесні відчуття', placeholder: 'Серцебиття, напруга в плечах, клубок у горлі...' },
+            { key: 'reaction',  label: '5. Реакція (Що я зробив/ла?)', short: 'Реакція', placeholder: 'Поведінка у відповідь на ситуацію...' },
+        ];
+
+        let entries = loadEntries();
+
+        function loadEntries() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch (e) { return []; }
+        }
+        function saveEntries() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // ---------- Form fields ----------
+        const MIC_ICON = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>';
+        const STOP_ICON = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>';
+
+        function renderFields() {
+            document.getElementById('fieldsContainer').innerHTML = FIELDS.map(f => `
+                <div>
+                    <label for="field-${f.key}" class="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">${f.label}</label>
+                    <div class="flex items-start gap-2">
+                        <textarea id="field-${f.key}" rows="2" placeholder="${escapeHTML(f.placeholder)}"
+                            class="flex-1 min-w-0 p-3 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium transition resize-y placeholder:text-slate-500 dark:placeholder:text-slate-500"></textarea>
+                        <button type="button" data-mic="field-${f.key}" onclick="toggleDictation('field-${f.key}', this)"
+                            class="shrink-0 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-sky-600 dark:hover:text-sky-400 border border-slate-200 dark:border-slate-700 transition"
+                            aria-label="Диктувати" title="Диктувати голосом">${MIC_ICON}</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ---------- Dictation (Web Speech API) ----------
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition = null;
-        let isDictating = false;
-        let currentDictationField = null;
-        let currentMicButton = null;
+        // На мобільних (Android/iOS) режим continuous дублює фрази, тому там диктуємо по одній фразі
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        let dictation = null; // { rec, field, btn }
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.lang = 'uk-UA'; // Ukrainian
-            recognition.continuous = false; // Stop when pause
-            recognition.interimResults = false; // Only final results for stable UI
+        const DICTATION_ERRORS = {
+            'not-allowed': 'Доступ до мікрофона заборонено. Дозвольте мікрофон для цього сайту (значок 🔒 біля адреси) і спробуйте ще раз.',
+            'service-not-allowed': 'Браузер заблокував сервіс розпізнавання мовлення. Спробуйте Chrome, Edge або Safari.',
+            'audio-capture': 'Мікрофон не знайдено. Перевірте, чи він підключений і не зайнятий іншою програмою.',
+            'network': 'Сервіс розпізнавання мовлення недоступний. Потрібен інтернет; у Brave, Opera та Firefox диктування не працює — відкрийте сторінку в Chrome, Edge або Safari.',
+            'no-speech': 'Мовлення не розпізнано. Натисніть на мікрофон і говоріть трохи голосніше.',
+            'language-not-supported': 'Цей браузер не підтримує розпізнавання української мови.',
+        };
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                if (currentDictationField) {
-                    const field = document.getElementById(currentDictationField);
-                    const currentVal = field.value;
-                    field.value = currentVal ? `${currentVal} ${transcript}` : transcript;
+        function toggleDictation(fieldId, btn) {
+            if (!SpeechRecognition) {
+                showToast('Ваш браузер не підтримує голосове введення. Відкрийте сторінку в Chrome, Edge або Safari.');
+                return;
+            }
+            if (!window.isSecureContext) {
+                showToast('Диктування працює лише на сторінці, відкритій через https://.');
+                return;
+            }
+            if (dictation) {
+                const sameField = dictation.field.id === fieldId;
+                stopDictation();
+                if (sameField) return;
+            }
+            startDictation(document.getElementById(fieldId), btn);
+        }
+
+        function startDictation(field, btn) {
+            // Новий екземпляр на кожну сесію: повторний start() на старому об'єкті кидає InvalidStateError
+            const rec = new SpeechRecognition();
+            rec.lang = 'uk-UA';
+            rec.continuous = !isMobile;
+            rec.interimResults = true;
+            rec.maxAlternatives = 1;
+
+            const base = field.value.replace(/\s+$/, '');
+            const session = { rec, field, btn };
+
+            rec.onresult = (event) => {
+                // Збираємо весь текст сесії з нуля — так фрази не дублюються
+                let spoken = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    spoken += event.results[i][0].transcript + ' ';
                 }
+                spoken = spoken.replace(/\s+/g, ' ').trim();
+                if (!spoken) return;
+                if (!base || /[.!?]$/.test(base)) spoken = spoken.charAt(0).toUpperCase() + spoken.slice(1);
+                field.value = base ? `${base} ${spoken}` : spoken;
             };
 
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error', event.error);
-                showToast('Помилка мікрофона: ' + event.error);
-                stopDictation();
+            rec.onerror = (event) => {
+                if (event.error === 'aborted') return;
+                console.error('Speech recognition error:', event.error);
+                showToast(DICTATION_ERRORS[event.error] || ('Помилка розпізнавання: ' + event.error));
             };
 
-            recognition.onend = () => {
-                stopDictation();
+            rec.onend = () => {
+                if (dictation === session) resetDictationUI();
             };
-        } else {
-            console.warn('Speech Recognition API not supported in this browser.');
-            // Hide mic buttons if unsupported
-            document.querySelectorAll('button[aria-label="Диктувати"]').forEach(btn => btn.style.display = 'none');
-        }
 
-        // Initialize App
-        function init() {
-            setTheme(isDarkMode);
-            setDefaultDate();
-            renderEntries();
+            dictation = session;
+            btn.classList.add('mic-active');
+            btn.innerHTML = STOP_ICON;
+            btn.setAttribute('aria-label', 'Зупинити диктування');
+            field.classList.add('ring-2', 'ring-rose-500');
+            document.getElementById('dictationStatus').classList.remove('hidden');
 
-            // Theme toggle listener
-            document.getElementById('themeToggle').addEventListener('click', () => {
-                isDarkMode = !isDarkMode;
-                setTheme(isDarkMode);
-                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            });
-
-            // Form submit listener
-            document.getElementById('diaryForm').addEventListener('submit', handleFormSubmit);
-        }
-
-        // Theme handling
-        function setTheme(dark) {
-            if (dark) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
+            try {
+                rec.start();
+            } catch (e) {
+                console.error('Recognition start error:', e);
+                showToast('Не вдалося запустити мікрофон. Спробуйте ще раз.');
+                resetDictationUI();
             }
         }
 
-        // Set default date to now
+        function stopDictation() {
+            if (!dictation) return;
+            const { rec } = dictation;
+            resetDictationUI();
+            try { rec.stop(); } catch (e) { /* вже зупинено */ }
+        }
+
+        function resetDictationUI() {
+            if (!dictation) return;
+            const { btn, field } = dictation;
+            btn.classList.remove('mic-active');
+            btn.innerHTML = MIC_ICON;
+            btn.setAttribute('aria-label', 'Диктувати');
+            field.classList.remove('ring-2', 'ring-rose-500');
+            document.getElementById('dictationStatus').classList.add('hidden');
+            dictation = null;
+        }
+
+        // ---------- Toast ----------
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), message.length > 60 ? 6000 : 3000);
+        }
+
+        // ---------- Entries ----------
         function setDefaultDate() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('entryDate').value = now.toISOString().slice(0, 16);
         }
 
-        // Toast Notification Function
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
-            
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // Dictation Toggle
-        function toggleDictation(fieldId, btnElement) {
-            if (!recognition) {
-                showToast("Ваш браузер не підтримує голосове введення.");
-                return;
-            }
-
-            if (isDictating && currentDictationField === fieldId) {
-                // Stop dictation
-                recognition.stop();
-                return;
-            }
-
-            if (isDictating) {
-                // Was dictating elsewhere, stop it first
-                recognition.stop();
-                stopDictation();
-            }
-
-            // Start new dictation
-            currentDictationField = fieldId;
-            currentMicButton = btnElement;
-            isDictating = true;
-            
-            currentMicButton.classList.add('mic-active');
-            try {
-                recognition.start();
-                showToast("Говоріть...");
-            } catch (e) {
-                console.error("Recognition start error", e);
-                stopDictation();
-            }
-        }
-
-        function stopDictation() {
-            isDictating = false;
-            if (currentMicButton) {
-                currentMicButton.classList.remove('mic-active');
-            }
-            currentDictationField = null;
-            currentMicButton = null;
-        }
-
-        // Handle Form Submission
         function handleFormSubmit(e) {
             e.preventDefault();
+            stopDictation();
 
-            const newEntry = {
-                id: Date.now().toString(),
-                date: document.getElementById('entryDate').value,
-                situation: document.getElementById('field-situation').value.trim(),
-                thoughts: document.getElementById('field-thoughts').value.trim(),
-                emotions: document.getElementById('field-emotions').value.trim(),
-                body: document.getElementById('field-body').value.trim(),
-                reaction: document.getElementById('field-reaction').value.trim(),
-            };
+            const entry = { id: Date.now().toString(), date: document.getElementById('entryDate').value };
+            FIELDS.forEach(f => { entry[f.key] = document.getElementById('field-' + f.key).value.trim(); });
 
-            entries.unshift(newEntry); // Add to beginning
-            localStorage.setItem('emotionDiaryEntries', JSON.stringify(entries));
-            
+            if (!FIELDS.some(f => entry[f.key])) {
+                showToast('Заповніть хоча б одне поле.');
+                return;
+            }
+
+            entries.unshift(entry);
+            saveEntries();
             renderEntries();
             document.getElementById('diaryForm').reset();
             setDefaultDate();
-            
             showToast('Запис успішно збережено!');
         }
 
-        // Render Entries to DOM
+        function formatDate(value) {
+            return new Date(value).toLocaleString('uk-UA', {
+                day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+
         function renderEntries() {
             const container = document.getElementById('entriesContainer');
             const emptyState = document.getElementById('emptyState');
-            
-            // Clear current entries except empty state
-            Array.from(container.children).forEach(child => {
-                if(child.id !== 'emptyState') container.removeChild(child);
-            });
-
-            if (entries.length === 0) {
-                emptyState.style.display = 'block';
-                return;
-            }
-            
-            emptyState.style.display = 'none';
+            container.querySelectorAll('.entry-card').forEach(el => el.remove());
+            emptyState.style.display = entries.length ? 'none' : 'block';
 
             entries.forEach(entry => {
-                const dateObj = new Date(entry.date);
-                const dateString = dateObj.toLocaleString('uk-UA', { 
-                    day: '2-digit', month: '2-digit', year: 'numeric', 
-                    hour: '2-digit', minute:'2-digit' 
-                });
-
                 const card = document.createElement('article');
-                card.className = 'entry-card bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-5 transition theme-transition';
-                
-                let contentHTML = `
-                    <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-sm font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-1">
-                            <i class="ph ph-calendar-blank"></i> ${dateString}
+                card.className = 'entry-card bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300';
+
+                const body = FIELDS.filter(f => entry[f.key]).map(f => `
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1">${f.short}</p>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">${escapeHTML(entry[f.key])}</p>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                        <span class="inline-flex items-center gap-1.5 text-sm font-bold text-sky-600 dark:text-sky-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            ${escapeHTML(formatDate(entry.date))}
                         </span>
-                        <button onclick="deleteEntry('${entry.id}')" class="text-gray-400 hover:text-red-500 transition no-print" aria-label="Видалити запис">
-                            <i class="ph ph-trash text-lg"></i>
+                        <button type="button" onclick="deleteEntry('${entry.id}')" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 no-print" aria-label="Видалити запис" title="Видалити запис">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>
-                    <div class="space-y-3 text-sm">
+                    <div class="space-y-4">${body}</div>
                 `;
-
-                const fields = [
-                    { label: 'Ситуація', val: entry.situation, icon: 'ph-map-pin' },
-                    { label: 'Думки', val: entry.thoughts, icon: 'ph-brain' },
-                    { label: 'Емоції', val: entry.emotions, icon: 'ph-heart' },
-                    { label: 'Тілесні відчуття', val: entry.body, icon: 'ph-person' },
-                    { label: 'Реакція', val: entry.reaction, icon: 'ph-person-simple-walk' }
-                ];
-
-                fields.forEach(f => {
-                    if (f.val) {
-                        contentHTML += `
-                            <div>
-                                <strong class="flex items-center gap-1 text-gray-700 dark:text-gray-300 mb-1">
-                                    <i class="ph ${f.icon}"></i> ${f.label}:
-                                </strong>
-                                <p class="text-gray-600 dark:text-gray-400 whitespace-pre-wrap ml-5">${f.val}</p>
-                            </div>
-                        `;
-                    }
-                });
-
-                contentHTML += `</div>`;
-                card.innerHTML = contentHTML;
                 container.appendChild(card);
             });
         }
 
-        // Delete entry
         function deleteEntry(id) {
-            // Using a simple custom confirm approach would be better, but standard confirm is disallowed.
-            // For simplicity and adhering to strict rules, deleting directly with an undo toast is best UX, 
-            // but we'll just delete directly for now.
+            if (!confirm('Видалити цей запис? Цю дію не можна скасувати.')) return;
             entries = entries.filter(e => e.id !== id);
-            localStorage.setItem('emotionDiaryEntries', JSON.stringify(entries));
+            saveEntries();
             renderEntries();
             showToast('Запис видалено');
         }
 
-        // Export to PDF (Using browser print to PDF feature)
+        // ---------- Export ----------
         function exportToPDF() {
-            if (entries.length === 0) {
-                showToast("Немає записів для експорту.");
-                return;
-            }
+            if (!entries.length) { showToast('Немає записів для експорту.'); return; }
             window.print();
         }
 
-        // Markdown Generation
         function generateMarkdown() {
-            if (entries.length === 0) return "Немає записів.";
-
-            let md = "# Мій Щоденник Емоцій\n\n";
-            
+            let md = '# Мій Щоденник Емоцій\n\n';
             entries.forEach(entry => {
-                const dateString = new Date(entry.date).toLocaleString('uk-UA');
-                md += `## 🗓 ${dateString}\n\n`;
-                
-                if (entry.situation) md += `**Ситуація:**\n${entry.situation}\n\n`;
-                if (entry.thoughts) md += `**Думки:**\n${entry.thoughts}\n\n`;
-                if (entry.emotions) md += `**Емоції:**\n${entry.emotions}\n\n`;
-                if (entry.body) md += `**Тілесні відчуття:**\n${entry.body}\n\n`;
-                if (entry.reaction) md += `**Реакція:**\n${entry.reaction}\n\n`;
-                
-                md += `---\n\n`;
+                md += `## 🗓 ${formatDate(entry.date)}\n\n`;
+                FIELDS.forEach(f => { if (entry[f.key]) md += `**${f.short}:**\n${entry[f.key]}\n\n`; });
+                md += '---\n\n';
             });
-
             return md;
         }
 
         function openMarkdownModal() {
-            if (entries.length === 0) {
-                showToast("Немає записів для експорту.");
-                return;
-            }
+            if (!entries.length) { showToast('Немає записів для експорту.'); return; }
             const modal = document.getElementById('markdownModal');
-            const textarea = document.getElementById('markdownOutput');
-            
-            textarea.value = generateMarkdown();
-            
+            document.getElementById('markdownOutput').value = generateMarkdown();
             modal.classList.remove('hidden');
-            // Trigger reflow
             void modal.offsetWidth;
             modal.classList.add('opacity-100');
         }
@@ -529,32 +436,31 @@
         function closeMarkdownModal() {
             const modal = document.getElementById('markdownModal');
             modal.classList.remove('opacity-100');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        function copyMarkdown() {
+        async function copyMarkdown() {
             const textarea = document.getElementById('markdownOutput');
-            textarea.select();
-            textarea.setSelectionRange(0, 99999); /* For mobile devices */
-
             try {
-                // Using fallback for generic compatibility since clipboard API in iframe can be tricky
-                document.execCommand('copy');
-                showToast('Markdown успішно скопійовано!');
-                closeMarkdownModal();
-            } catch (err) {
-                showToast('Не вдалося скопіювати текст.');
+                await navigator.clipboard.writeText(textarea.value);
+            } catch (e) {
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+                if (!document.execCommand('copy')) { showToast('Не вдалося скопіювати текст.'); return; }
+                window.getSelection().removeAllRanges();
             }
-            
-            // Clear selection
-            window.getSelection().removeAllRanges();
+            showToast('Markdown успішно скопійовано!');
+            closeMarkdownModal();
         }
 
-        // Run initialization on load
-        window.onload = init;
-
+        // ---------- Init ----------
+        renderFields();
+        setDefaultDate();
+        renderEntries();
+        document.getElementById('diaryForm').addEventListener('submit', handleFormSubmit);
+        document.getElementById('markdownModal').addEventListener('click', (e) => {
+            if (e.target.id === 'markdownModal') closeMarkdownModal();
+        });
     </script>
 </body>
 </html>
