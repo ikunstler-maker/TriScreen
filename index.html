@@ -262,13 +262,56 @@
         <!-- Прикріплені вкладки навігації (Опитування / Результати / Історія) -->
         <div class="bg-slate-50/95 dark:bg-slate-950/95 backdrop-blur-md pb-3 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="grid grid-cols-3 gap-2 sm:gap-3 items-start">
-                    <button type="button" id="top-nav-tests" onclick="toggleTestsModal()" class="nav-tab-btn py-2.5 px-2 text-xs sm:text-base font-bold text-slate-900 dark:text-white flex items-center justify-center text-center">
-                        <span>Опитування</span>
-                    </button>
+                <div class="grid grid-cols-3 gap-2 sm:gap-3 items-start relative">
+                    
+                    <!-- Вкладка 1: Методики (з випадаючим меню) -->
+                    <div class="w-full text-left sm:relative" id="methodologies-dropdown-wrapper">
+                        <button type="button" 
+                                id="top-nav-tests" 
+                                onclick="toggleMethodologiesDropdown(event)" 
+                                class="nav-tab-btn w-full py-2.5 px-1 sm:px-2 text-xs sm:text-base font-bold text-slate-900 dark:text-white flex items-center justify-center text-center gap-1 sm:gap-1.5 transition">
+                            <span>Методики</span>
+                            <svg id="methodologies-arrow" class="w-3.5 h-3.5 transition-transform duration-200 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Випадаюче меню: на смартфоні розтягується на всю ширину 3 вкладок, на ПК — точно по ширині Методики -->
+                        <div id="methodologies-dropdown-menu" 
+                             class="hidden absolute top-full left-0 right-0 w-full sm:right-auto sm:w-full mt-2 rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 p-1.5 z-50 transition-all">
+                            
+                            <!-- 1. Психодіагностика -->
+                            <button type="button" 
+                                    onclick="openPsychodiagnosticsAction()" 
+                                    class="w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-900/40 hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-2.5 transition">
+                                <span class="text-lg">📋</span>
+                                <div>
+                                    <div class="font-bold leading-tight">Психодіагностика</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 font-normal mt-0.5">7 клінічних опитувальників</div>
+                                </div>
+                            </button>
+
+                            <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+
+                            <!-- 2. Самоспостереження -->
+                            <button type="button" 
+                                    onclick="openSelfMonitoringModal()" 
+                                    class="w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/40 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-2.5 transition">
+                                <span class="text-lg">📔</span>
+                                <div>
+                                    <div class="font-bold leading-tight">Самоспостереження</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 font-normal mt-0.5">Щоденник емоцій та EntroLog</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Вкладка 2: Результати -->
                     <button type="button" id="top-nav-results" onclick="calculateAndShowResults(); switchTab('results');" class="nav-tab-btn py-2.5 px-2 text-xs sm:text-base font-bold text-sky-600 dark:text-sky-400 flex items-center justify-center text-center">
                         <span>Результати</span>
                     </button>
+
+                    <!-- Вкладка 3: Історія -->
                     <button type="button" id="top-nav-history" onclick="switchTab('history')" class="nav-tab-btn py-2.5 px-2 text-xs sm:text-base font-bold text-lime-600 dark:text-lime-400 flex items-center justify-center text-center">
                         <span>Історія</span>
                     </button>
@@ -530,6 +573,61 @@
                 </div>
 
                 
+            </div>
+
+            <!-- Секція: Щоденники самоспостереження (в уніфікованому стилі карток TriScreen) -->
+            <div class="mt-8 mb-6 max-w-4xl mx-auto px-1 sm:px-2">
+                <div class="flex items-center space-x-2 mb-3.5">
+                    <span class="text-lg">📔</span>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">Щоденники самоспостереження</h2>
+                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">КПТ та ресурс</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    
+                    <!-- Картка 1: Щоденник емоцій -->
+                    <a href="emotion-journal.html" 
+                    class="bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <span class="text-sky-700 dark:text-sky-400 font-bold text-lg group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">
+                                    Щоденник емоцій <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">КПТ</span>
+                                </span>
+                                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">Саморегуляція</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+                                Фіксація думок, автоматичних реакцій, емоцій та поведінкових патернів з можливістю голосового надиктовування.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-sky-200/50 dark:border-sky-800/40 text-[11px]">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">🧠 ABC-модель</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">🎙️ Голосовий ввід</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📑 PDF / MD</span>
+                        </div>
+                    </a>
+
+                    <!-- Картка 2: EntroLog -->
+                    <a href="entrolog/" 
+                    class="bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <span class="text-emerald-700 dark:text-emerald-400 font-bold text-lg group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">
+                                    EntroLog <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Ресурс</span>
+                                </span>
+                                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100/70 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">Енергобаланс</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+                                Облік відновлення та витрат енергії: виявлення енергетичних витоків та інвестицій ресурсу для запобігання вигоранню.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 pt-2.5 border-t border-emerald-200/50 dark:border-emerald-800/40 text-[11px]">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">⚡ Трекер сил</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">🔋 Баланс відновлення</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium">📊 Антивигорання</span>
+                        </div>
+                    </a>
+
+                </div>
             </div>
 
             <!-- Застереження -->
@@ -1835,6 +1933,10 @@
                         <a href="privacy-policy.html" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">Політика конфіденційності</a>
                         <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
                         <a href="terms-of-use.html" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">Правила користування</a>
+                        <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+                        <a href="emotion-journal.html" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">Щоденник емоцій</a>
+                        <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+                        <a href="entrolog/" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">EntroLog</a>
                     </h5>
                     <p class="mt-1">Дана сторінка є автономним локальним застосунком. Усі персональні дані обробляються виключно на вашому пристрої і нікуди не передаються.</p>
                 </div>
@@ -4188,7 +4290,82 @@
             switchTab('results');
             setTimeout(() => { document.getElementById('dashboard-summary').scrollIntoView({ behavior: 'smooth' }); }, 100);
         }
+
+        /* --- КЕРУВАННЯ МЕНЮ «МЕТОДИКИ» ТА ВІКНАМИ --- */
+        function toggleMethodologiesDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('methodologies-dropdown-menu');
+            const arrow = document.getElementById('methodologies-arrow');
+            if (!menu) return;
+
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (arrow) arrow.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
+        }
+
+        function closeMethodologiesDropdown() {
+            const menu = document.getElementById('methodologies-dropdown-menu');
+            const arrow = document.getElementById('methodologies-arrow');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
+        }
+
+        // 1. Відкрити поп-ап психодіагностичних опитувань
+        function openPsychodiagnosticsAction() {
+            closeMethodologiesDropdown();
+            if (typeof switchTab === 'function') switchTab('welcome');
+            if (typeof toggleTestsModal === 'function') toggleTestsModal();
+        }
+
+        // 2. Відкрити поп-ап Самоспостереження (плавна поява)
+        function openSelfMonitoringModal() {
+            closeMethodologiesDropdown();
+            const modal = document.getElementById('self-monitoring-modal');
+            const content = document.getElementById('self-monitoring-modal-content');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                if (content) content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        // Плавне закриття поп-апу Самоспостереження
+        function closeSelfMonitoringModal() {
+            const modal = document.getElementById('self-monitoring-modal');
+            const content = document.getElementById('self-monitoring-modal-content');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            if (content) content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Закриття випадаючого списку при кліку в будь-яке інше місце сторінки
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('methodologies-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeMethodologiesDropdown();
+            }
+        });
+
+        // Закриття вікон клавішею Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMethodologiesDropdown();
+                closeSelfMonitoringModal();
+            }
+        });
     </script>
+
 <!-- ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ (КНОПКА ТА МОДАЛЬНЕ ВІКНО) -->
     <!-- Плаваюча кнопка -->
     <button onclick="toggleFeedbackModal()" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-2xl focus:outline-none print-only-hide" title="Залишити відгук">
@@ -4346,7 +4523,72 @@
                 </button>
             </div>
         </div>
-    </div> <div id="feedback-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО: САМОСПОСТЕРЕЖЕННЯ (ОКРЕМЕ АВТОНОМНЕ ВІКНО) -->
+    <div id="self-monitoring-modal" class="fixed inset-0 z-[65] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 no-print" onclick="if(event.target === this) closeSelfMonitoringModal()">
+        <div id="self-monitoring-modal-content" class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 max-w-lg w-full border border-slate-200 dark:border-slate-800 shadow-2xl relative transition-transform duration-300 transform scale-95">
+            
+            <!-- Заголовок та кнопка закриття -->
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">📔</span>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">Самоспостереження</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Практики щоденного моніторингу та ресурсу</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeSelfMonitoringModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center text-sm font-bold transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Картки щоденників -->
+            <div class="space-y-3">
+                <!-- 1. Щоденник емоцій -->
+                <a href="emotion-journal.html" class="block bg-sky-50/60 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800/50 p-4 rounded-2xl hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-md transition group text-left">
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <span class="text-sky-700 dark:text-sky-400 font-bold text-base group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors">
+                            Щоденник емоцій <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">КПТ</span>
+                        </span>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-sky-100/70 dark:bg-sky-900/50 text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60">
+                            Відкрити ➔
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+                        Фіксація думок, автоматичних реакцій, емоцій та поведінкових патернів із голосовим надиктовуванням.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 pt-2 border-t border-sky-200/50 dark:border-sky-800/40 text-[10px] sm:text-[11px]">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">🧠 ABC-модель</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">🎙️ Аудіо</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📑 PDF / MD</span>
+                    </div>
+                </a>
+
+                <!-- 2. EntroLog -->
+                <a href="entrolog/" class="block bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition group text-left">
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <span class="text-emerald-700 dark:text-emerald-400 font-bold text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">
+                            EntroLog <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Ресурс</span>
+                        </span>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100/70 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
+                            Відкрити ➔
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+                        Облік витоків та відновлення енергії: аналіз справ-підживлень для профілактики вигорання.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 pt-2 border-t border-emerald-200/50 dark:border-emerald-800/40 text-[10px] sm:text-[11px]">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">⚡ Трекер сил</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">🔋 Баланс відновлення</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-medium">📊 Антивигорання</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="fixed inset-0 z-[60] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
         <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col transition-transform duration-300 transform scale-95" id="feedback-modal-content">
             
             <!-- Шапка модалки -->
