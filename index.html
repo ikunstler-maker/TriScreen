@@ -82,7 +82,32 @@
                 color: #0f172a !important; 
             }
             
+            /* iOS рахує 100vw від ширини екрана телефона навіть під час друку —
+               знімаємо обмеження, щоб звіт займав усю ширину аркуша */
+            html, body, main {
+                width: auto !important;
+                max-width: none !important;
+                min-width: 0 !important;
+                overflow: visible !important;
+            }
+            body { display: block !important; min-height: 0 !important; }
+
+            /* Темна тема PDF: темний аркуш замість білого */
+            html.dark, html.dark body {
+                background: #020617 !important;
+                color: #e2e8f0 !important;
+            }
+            html.dark .print-only img:not([alt*="Donatello"]):not([alt*="QR"]) {
+                filter: grayscale(100%) brightness(0%) invert(1) !important;
+            }
+
+            /* Таблиці та картки не розриваються посередині рядка */
+            table { width: 100% !important; }
+            thead { display: table-header-group; }
+            tr, td, th { page-break-inside: avoid; break-inside: avoid; }
+
             .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+            .glow-effect { animation: none !important; }
             .print-only-hide { display: none !important; }
             .test-section { display: block !important; }
             .test-section.print-only-hide { display: none !important; }
@@ -607,7 +632,7 @@
                     </a>
 
                     <!-- Картка 2: EntroLog -->
-                    <a href="entrolog/" 
+                    <a href="entrolog.html" 
                     class="bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-xl cursor-pointer transition transform hover:-translate-y-1 hover:shadow-md text-left group flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-1">
@@ -1192,16 +1217,16 @@
             </div>
 
             <!-- Print Only Header -->
-            <div class="hidden print-only mb-6 border-b border-slate-300 pb-4">
+            <div class="hidden print-only mb-6 border-b border-slate-300 dark:border-slate-700 pb-4">
                 <div class="flex justify-between items-center gap-4">
                     <div class="flex flex-col items-start gap-1.5">
                         <div class="flex items-center gap-2.5">
                             <img src="https://raw.githubusercontent.com/ikunstler-maker/TriScreen/main/Logo-TriScreen-260926V1-favicon.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-contain print-color-exact" style="width: 40px; height: 40px;">
-                            <span class="text-xl font-black text-sky-700 tracking-tight print-color-exact">TriScreen</span>
+                            <span class="text-xl font-black text-sky-700 dark:text-sky-400 tracking-tight print-color-exact">TriScreen</span>
                         </div>
                         <div>
-                            <h1 class="text-xl font-extrabold text-slate-900">Звіт психологічного опитування</h1>
-                            <p id="print-header-scales" class="text-xs text-slate-600 mt-0.5 font-medium">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ, АУДИТ</p>
+                            <h1 class="text-xl font-extrabold text-slate-900 dark:text-white">Звіт психологічного опитування</h1>
+                            <p id="print-header-scales" class="text-xs text-slate-600 dark:text-slate-400 mt-0.5 font-medium">Шкали: GAD-7, PCL-5, PHQ-9, DES-II, LEC-5, TMCQ, АУДИТ</p>
                         </div>
                     </div>
 
@@ -1936,7 +1961,7 @@
                         <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
                         <a href="emotion-journal.html" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">Щоденник емоцій</a>
                         <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
-                        <a href="entrolog/" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">EntroLog</a>
+                        <a href="entrolog.html" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4">EntroLog</a>
                     </h5>
                     <p class="mt-1">Дана сторінка є автономним локальним застосунком. Усі персональні дані обробляються виключно на вашому пристрої і нікуди не передаються.</p>
                 </div>
@@ -2085,7 +2110,7 @@
         }
 
         // Автоматичне підлаштування відкритих блоків при ресайзі
-        window.addEventListener('resize', () => {
+        function syncOpenDetailSections() {
             const isMobile = window.innerWidth < 768;
             const desktopContainer = document.getElementById('desktop-details-container');
             ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'].forEach(id => {
@@ -2101,7 +2126,8 @@
                     }
                 }
             });
-        });
+        }
+        window.addEventListener('resize', syncOpenDetailSections);
 
         // Керування компактною панеллю експорту
         function toggleExportPanel() {
@@ -3208,7 +3234,35 @@
             if(elAll) elAll.checked = allChecked;
         }
 
+        // Приблизна ширина області друку аркуша A4/Letter (без полів) у CSS-пікселях
+        const PRINT_PAGE_CONTENT_WIDTH = 720;
+        let pendingPrintCleanup = null;
+
+        // Мобільні браузери (особливо iOS) під час друку обчислюють медіазапити за шириною екрана телефона,
+        // тому PDF верстався як вузька мобільна сторінка. Копіюємо адаптивні правила (sm/md/lg),
+        // які відповідають ширині аркуша, у стиль друку — так PDF виглядає як експорт з комп'ютера.
+        function buildPrintBreakpointRules(layoutWidth) {
+            const rules = [];
+            const collect = (ruleList) => {
+                for (const rule of ruleList) {
+                    if (rule.type !== CSSRule.MEDIA_RULE) continue;
+                    const m = rule.media.mediaText.match(/^\(min-width:\s*(\d+(?:\.\d+)?)px\)$/);
+                    if (m && layoutWidth >= parseFloat(m[1])) {
+                        for (const inner of rule.cssRules) rules.push(inner.cssText);
+                    }
+                }
+            };
+            for (const sheet of document.styleSheets) {
+                if (sheet.ownerNode && sheet.ownerNode.id === 'print-custom-style') continue;
+                try { collect(sheet.cssRules); } catch (e) { /* сторонні стилі (шрифти) недоступні — пропускаємо */ }
+            }
+            return rules.join('\n');
+        }
+
         function handlePrintCustom() {
+            // Якщо попередній експорт ще не відновив інтерфейс — відновлюємо зараз
+            if (pendingPrintCleanup) pendingPrintCleanup();
+
             const allExportKeys = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'];
             
             // 1. Налаштування теми та масштабу друку
@@ -3256,7 +3310,12 @@
                 styleEl.id = 'print-custom-style';
                 document.head.appendChild(styleEl);
             }
+            const printLayoutWidth = PRINT_PAGE_CONTENT_WIDTH / scale;
+            const breakpointRules = window.innerWidth < printLayoutWidth ? buildPrintBreakpointRules(printLayoutWidth) : '';
+
             styleEl.innerHTML = `@media print { 
+                ${breakpointRules}
+                ${printTheme === 'dark' ? '@page { background: #020617; }' : ''}
                 body { zoom: ${scale}; } 
                 tr, td, th, .test-section, .summary-card, .bg-white { page-break-inside: avoid !important; break-inside: avoid !important; }
                 h2, h3, h4 { page-break-after: avoid !important; break-after: avoid !important; }
@@ -3326,6 +3385,16 @@
             // 5. Керування видимістю карток та детальних звітів перед друком
             const elementsToRestore = [];
 
+            // На мобільному розгорнуті блоки живуть між картками (mobile-slot) — для PDF
+            // збираємо всі детальні розділи після карток у сталому порядку, як на комп'ютері
+            const desktopContainer = document.getElementById('desktop-details-container');
+            if (desktopContainer) {
+                allExportKeys.forEach(key => {
+                    const sec = document.getElementById(`section-${key}`);
+                    if (sec) desktopContainer.appendChild(sec);
+                });
+            }
+
             allExportKeys.forEach(key => {
                 const isIncluded = checkedKeys.includes(key);
                 const card = document.getElementById(`summary-card-${key}`);
@@ -3363,7 +3432,18 @@
             });
 
             // 6. Відновлення інтерфейсу після завершення друку
+            const printStartedAt = Date.now();
+            let printReturned = false;
+            let cleanedUp = false;
+
             const cleanup = () => {
+                if (cleanedUp) return;
+                cleanedUp = true;
+                pendingPrintCleanup = null;
+                window.removeEventListener('afterprint', onAfterPrint);
+                document.removeEventListener('pointerdown', onUserReturn, true);
+                document.removeEventListener('keydown', onUserReturn, true);
+
                 document.title = originalTitle;
 
                 if (wasDark) html.classList.add('dark');
@@ -3383,14 +3463,28 @@
                 if (typeof applyResultsFilterAndOrder === 'function') {
                     applyResultsFilterAndOrder();
                 }
-
-                window.removeEventListener('afterprint', cleanup);
+                syncOpenDetailSections();
             };
 
-            window.addEventListener('afterprint', cleanup);
-            setTimeout(cleanup, 5000);
+            // На iOS/Android вікно друку не блокує сторінку: afterprint може прийти одразу,
+            // а назву файлу (document.title) система бере лише тоді, коли користувач зберігає PDF.
+            // Тому раннє afterprint ігноруємо і відновлюємо інтерфейс, коли користувач повернувся до сторінки.
+            const onAfterPrint = () => {
+                if (Date.now() - printStartedAt >= 1500) cleanup();
+            };
+            const onUserReturn = () => {
+                if (printReturned) cleanup();
+            };
+
+            pendingPrintCleanup = cleanup;
+            window.addEventListener('afterprint', onAfterPrint);
+            document.addEventListener('pointerdown', onUserReturn, true);
+            document.addEventListener('keydown', onUserReturn, true);
 
             window.print();
+            printReturned = true;
+            // Десктопні браузери блокують сторінку, доки відкрите вікно друку, — тоді відновлюємо одразу
+            if (Date.now() - printStartedAt >= 1500) cleanup();
         }
 
         function calculateAgeString(dobStr, assessmentDateStr) {
@@ -4566,7 +4660,7 @@
                 </a>
 
                 <!-- 2. EntroLog -->
-                <a href="entrolog/" class="block bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition group text-left">
+                <a href="entrolog.html" class="block bg-emerald-50/60 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 rounded-2xl hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-md transition group text-left">
                     <div class="flex items-center justify-between gap-2 mb-1.5">
                         <span class="text-emerald-700 dark:text-emerald-400 font-bold text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">
                             EntroLog <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Ресурс</span>
