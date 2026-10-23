@@ -3259,26 +3259,202 @@
             return rules.join('\n');
         }
 
+        // Ширина аркуша звіту для мобільного експорту (CSS px). iOS верстає друк за шириною вікна
+        // і не масштабує її під папір, тому 700px вміщується в область друку і A4, і US Letter.
+        const MOBILE_PRINT_SHEET_WIDTH = 700;
+
+        // Назва файлу: TriScreen_[ID-Ім'я]_[Шкали]_[yy-mm-dd]_[hhmm]
+        function buildExportFileName(checkedKeys) {
+            const rawName = document.getElementById('patient-name')?.value.trim();
+            let namePart = rawName ? rawName.replace(/\s+/g, '-').replace(/[\\/:*?"<>|]/g, '') : 'Респондент';
+            if (!namePart) namePart = 'Респондент';
+
+            const scaleFileMap = {
+                'gad7': 'GAD7',
+                'pcl5': 'PCL5',
+                'phq9': 'PHQ9',
+                'des2': 'DES2',
+                'lec5': 'LEC5',
+                'tmcq': 'TMCQ',
+                'audit': 'АУДИТ'
+            };
+            const scalesFilePart = checkedKeys.length ? checkedKeys.map(k => scaleFileMap[k]).join('-') : 'Без-шкал';
+
+            let datePart = '';
+            const dateVal = document.getElementById('assessment-date')?.value;
+            if (dateVal && dateVal.includes('-')) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) {
+                    const yy = parts[0].slice(-2);
+                    const mm = parts[1].padStart(2, '0');
+                    const dd = parts[2].padStart(2, '0');
+                    datePart = `${yy}-${mm}-${dd}`;
+                }
+            }
+            if (!datePart) {
+                const now = new Date();
+                const yy = String(now.getFullYear()).slice(-2);
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                datePart = `${yy}-${mm}-${dd}`;
+            }
+
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const timePart = `${hh}${min}`;
+
+            return `TriScreen_${namePart}_${scalesFilePart}_${datePart}_${timePart}`;
+        }
+
+        function isMobileExportDevice() {
+            const ua = navigator.userAgent || '';
+            return /iPhone|iPad|iPod|Android/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
+        // Мобільний експорт: звіт відкривається в окремій вкладці, вже зверстаній під аркуш
+        // (тема, ширина, вибрані шкали, назва файлу). Основна сторінка не змінюється, тому
+        // вікно друку iOS/Android, яке малює PDF асинхронно, завжди бачить правильний стан.
+        function openMobilePrintWindow({ allExportKeys, checkedKeys, printTheme, scale, fileName }) {
+            const source = document.getElementById('content-results');
+            if (!source) return false;
+            const printWin = window.open('', '_blank');
+            if (!printWin) return false;
+
+            const report = source.cloneNode(true);
+            report.classList.remove('hidden');
+            report.querySelectorAll('.no-print, .print-only-hide').forEach(el => el.remove());
+            report.querySelectorAll('.print-only').forEach(el => el.classList.remove('hidden'));
+
+            // Картки лише вибраних шкал, а детальні розділи — після карток у сталому порядку
+            const details = report.querySelector('#desktop-details-container');
+            allExportKeys.forEach(key => {
+                const card = report.querySelector(`#summary-card-${key}`);
+                const sec = report.querySelector(`#section-${key}`);
+                const slot = report.querySelector(`#mobile-slot-${key}`);
+                if (checkedKeys.includes(key)) {
+                    if (card) card.classList.remove('hidden');
+                    if (sec) {
+                        sec.classList.remove('hidden');
+                        if (details) details.appendChild(sec);
+                    }
+                } else {
+                    if (card) card.remove();
+                    if (sec) sec.remove();
+                }
+                if (slot) slot.remove();
+            });
+            report.querySelectorAll('[onclick]').forEach(el => {
+                el.removeAttribute('onclick');
+                el.removeAttribute('role');
+                el.removeAttribute('tabindex');
+            });
+
+            const isDark = printTheme === 'dark';
+            const pageBg = isDark ? '#020617' : '#ffffff';
+            const esc = (str) => String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const pageStyles = Array.from(document.querySelectorAll('style'))
+                .filter(el => el.id !== 'print-custom-style')
+                .map(el => el.textContent)
+                .join('\n');
+            const sheetLayoutWidth = Math.round(MOBILE_PRINT_SHEET_WIDTH / scale);
+            const breakpointRules = buildPrintBreakpointRules(sheetLayoutWidth);
+
+            const docHtml = `<!DOCTYPE html>
+<html lang="uk" class="${isDark ? 'dark' : ''}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=${MOBILE_PRINT_SHEET_WIDTH + 24}">
+<title>${esc(fileName)}</title>
+<base href="${esc(location.href)}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>${pageStyles}</style>
+<style>
+${breakpointRules}
+@page { margin: 10mm; ${isDark ? 'background: #020617;' : ''} }
+html, body { background: ${pageBg} !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+html, body, main { width: auto !important; max-width: none !important; overflow: visible !important; }
+body { margin: 0; padding: 0 12px 24px; }
+.sheet { width: ${sheetLayoutWidth}px; zoom: ${scale}; margin: 0 auto; }
+.print-only img:not([alt*="Donatello"]):not([alt*="QR"]) { filter: grayscale(100%) brightness(0%)${isDark ? ' invert(1)' : ''} !important; }
+.glow-effect { animation: none !important; }
+.shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+.test-section, .summary-card, tr, td, th { page-break-inside: avoid; break-inside: avoid; }
+h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+thead { display: table-header-group; }
+.export-toolbar { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 0 -12px 20px; padding: 16px 12px; background: #0f172a; color: #e2e8f0; font: 600 26px/1.3 Inter, sans-serif; }
+.export-toolbar button { font: inherit; border: 0; border-radius: 14px; padding: 16px 26px; cursor: pointer; }
+.export-toolbar .btn-print { background: #0284c7; color: #fff; }
+.export-toolbar .btn-close { background: #334155; color: #e2e8f0; }
+.export-toolbar .hint { flex-basis: 100%; font-weight: 400; font-size: 20px; color: #94a3b8; }
+@media print {
+    .export-toolbar { display: none !important; }
+    body { padding: 0; }
+    .sheet { margin: 0; }
+}
+</style>
+</head>
+<body class="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans">
+<div class="export-toolbar">
+    <button type="button" class="btn-print" onclick="window.print()">🖨️ Зберегти PDF / Друк</button>
+    <button type="button" class="btn-close" onclick="window.close()">✕ Закрити</button>
+    <div class="hint">У вікні друку натисніть «Поділитися» ⬆️ → «Зберегти у Файли». Назва файлу: ${esc(fileName)}.pdf</div>
+</div>
+<div class="sheet"><main>${report.outerHTML}</main></div>
+<script>
+    window.addEventListener('load', function () { setTimeout(function () { window.print(); }, 600); });
+<\/script>
+</body>
+</html>`;
+
+            printWin.document.open();
+            printWin.document.write(docHtml);
+            printWin.document.close();
+            return true;
+        }
+
         function handlePrintCustom() {
             // Якщо попередній експорт ще не відновив інтерфейс — відновлюємо зараз
             if (pendingPrintCleanup) pendingPrintCleanup();
 
             const allExportKeys = ['gad7', 'pcl5', 'phq9', 'des2', 'lec5', 'tmcq', 'audit'];
-            
-            // 1. Налаштування теми та масштабу друку
-            const html = document.documentElement;
-            const wasDark = html.classList.contains('dark');
             const printTheme = document.getElementById('print-theme-select') ? document.getElementById('print-theme-select').value : 'light';
             const scale = document.getElementById('print-scale-slider') ? (document.getElementById('print-scale-slider').value / 100) : 0.8;
 
-            if (printTheme === 'light') html.classList.remove('dark');
-            else html.classList.add('dark');
-
-            // 2. Визначаємо тільки ті тести, які включено в експорт (відмічені чекбоксами)
+            // Визначаємо тільки ті тести, які включено в експорт (відмічені чекбоксами)
             const checkedKeys = allExportKeys.filter(key => {
                 const chk = document.getElementById(`chk-export-${key}`);
                 return chk && chk.checked;
             });
+
+            // Оновлення переліку шкал у шапці PDF (лише включені)
+            const scaleHeaderMap = {
+                'gad7': 'GAD-7',
+                'pcl5': 'PCL-5',
+                'phq9': 'PHQ-9',
+                'des2': 'DES-II',
+                'lec5': 'LEC-5',
+                'tmcq': 'TMCQ',
+                'audit': 'АУДИТ'
+            };
+            const headerScalesText = checkedKeys.map(k => scaleHeaderMap[k]).join(', ');
+            const printScalesEl = document.getElementById('print-header-scales');
+            if (printScalesEl) {
+                printScalesEl.textContent = headerScalesText ? `Шкали: ${headerScalesText}` : 'Шкали: не обрано';
+            }
+
+            const fileName = buildExportFileName(checkedKeys);
+
+            if (isMobileExportDevice() && openMobilePrintWindow({ allExportKeys, checkedKeys, printTheme, scale, fileName })) {
+                return;
+            }
+
+            // Десктопний експорт: друкуємо поточну сторінку
+            // 1. Налаштування теми друку
+            const html = document.documentElement;
+            const wasDark = html.classList.contains('dark');
+            if (printTheme === 'light') html.classList.remove('dark');
+            else html.classList.add('dark');
 
             // Формуємо списки жорсткого приховування невідмічених та показу відмічених за ID селекторами
             const hideSelectors = [];
@@ -3323,64 +3499,8 @@
                 ${showRules}
             }`;
 
-            // 3. Оновлення переліку шкал у шапці PDF (лише включені)
-            const scaleHeaderMap = {
-                'gad7': 'GAD-7',
-                'pcl5': 'PCL-5',
-                'phq9': 'PHQ-9',
-                'des2': 'DES-II',
-                'lec5': 'LEC-5',
-                'tmcq': 'TMCQ',
-                'audit': 'АУДИТ'
-            };
-            const headerScalesText = checkedKeys.map(k => scaleHeaderMap[k]).join(', ');
-            const printScalesEl = document.getElementById('print-header-scales');
-            if (printScalesEl) {
-                printScalesEl.textContent = headerScalesText ? `Шкали: ${headerScalesText}` : 'Шкали: не обрано';
-            }
-
-            // 4. Формування назви файлу: TriScreen_[ID-Ім'я]_[Шкали]_[yy-mm-dd]_[hhmm]
-            const rawName = document.getElementById('patient-name')?.value.trim();
-            let namePart = rawName ? rawName.replace(/\s+/g, '-').replace(/[\\/:*?"<>|]/g, '') : 'Респондент';
-            if (!namePart) namePart = 'Респондент';
-
-            const scaleFileMap = {
-                'gad7': 'GAD7',
-                'pcl5': 'PCL5',
-                'phq9': 'PHQ9',
-                'des2': 'DES2',
-                'lec5': 'LEC5',
-                'tmcq': 'TMCQ',
-                'audit': 'АУДИТ'
-            };
-            const scalesFilePart = checkedKeys.length ? checkedKeys.map(k => scaleFileMap[k]).join('-') : 'Без-шкал';
-
-            let datePart = '';
-            const dateVal = document.getElementById('assessment-date')?.value;
-            if (dateVal && dateVal.includes('-')) {
-                const parts = dateVal.split('-');
-                if (parts.length === 3) {
-                    const yy = parts[0].slice(-2);
-                    const mm = parts[1].padStart(2, '0');
-                    const dd = parts[2].padStart(2, '0');
-                    datePart = `${yy}-${mm}-${dd}`;
-                }
-            }
-            if (!datePart) {
-                const now = new Date();
-                const yy = String(now.getFullYear()).slice(-2);
-                const mm = String(now.getMonth() + 1).padStart(2, '0');
-                const dd = String(now.getDate()).padStart(2, '0');
-                datePart = `${yy}-${mm}-${dd}`;
-            }
-
-            const now = new Date();
-            const hh = String(now.getHours()).padStart(2, '0');
-            const min = String(now.getMinutes()).padStart(2, '0');
-            const timePart = `${hh}${min}`;
-
             const originalTitle = document.title;
-            document.title = `TriScreen_${namePart}_${scalesFilePart}_${datePart}_${timePart}`;
+            document.title = fileName;
 
             // 5. Керування видимістю карток та детальних звітів перед друком
             const elementsToRestore = [];
