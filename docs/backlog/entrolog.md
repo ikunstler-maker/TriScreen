@@ -1,5 +1,5 @@
 # EntroLog
 ## Next by plan
-1. ENTRO-1 — Decide source-of-truth: import source into repo vs. keep separate repo with build-and-copy
+(none — frozen, see `docs/decisions/2026-11-24-entro-1-keep-prebuilt-bundle.md`)
 ## Known gaps / follow-ups
-- Source code not in this repo; only prebuilt bundle (`entrolog/`)
+- No source code; changes require a rewrite with source in repo (`entrolog/`)
