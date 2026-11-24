@@ -1,6 +1,7 @@
 # CI / process
 ## Next by plan
-1. CI-2 — GitHub Actions: HTML validation + internal link check on every PR
-2. CI-3 — Fix broken links found by CI-2
+(stage 1 done)
 ## Known gaps / follow-ups
 - Repo history is "Add files via upload" commits; future work via PRs only
+- Accessibility rules (labels, heading levels) not checked yet (`.htmlvalidate.json`)
+- Branch protection "require checks to pass" on `main` not enabled (owner, GitHub settings)
