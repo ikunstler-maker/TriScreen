@@ -4171,7 +4171,7 @@ thead { display: table-header-group; }
             }
             return null;
         }
-        const isValidAnswer = (spec, k, v) => /^\d{1,3}$/.test(k) && Number(k) < spec.count && typeof v === 'number' && spec.values.includes(v);
+        const isValidAnswer = (spec, k, v) => /^(0|[1-9]\d{0,2})$/.test(k) && Number(k) < spec.count && typeof v === 'number' && spec.values.includes(v);
 
         // Display / reuse copy of answers: only valid items survive (never raw strings into the forms)
         function cleanHistoryAnswers(test, answers) {
@@ -4346,7 +4346,8 @@ thead { display: table-header-group; }
                         }
                         // Verification read: another tab/device may have written at the same moment
                         await new Promise(r => setTimeout(r, HISTORY_VERIFY_DELAY_MS + Math.floor(Math.random() * 300)));
-                        remote = await readRemoteHistory(gen);
+                        try { remote = await readRemoteHistory(gen); }
+                        catch (e) { if (e instanceof DriveError && e.kind !== 'stale' && e.kind !== 'auth') e.afterWrite = true; throw e; }
                     }
                     if (gen !== historyGeneration) throw new DriveError('stale', 0);
                     driveHistoryFileId = remote.fileId;
@@ -4377,6 +4378,7 @@ thead { display: table-header-group; }
             const keep = hasPendingHistory()
                 ? ' Незбережені зміни залишаються на цій сторінці, поки вона відкрита: натисніть «Спробувати ще раз» в Історії.'
                 : ' Натисніть «Спробувати ще раз» в Історії.';
+            if (error.afterWrite) return '⚠️ Зміни записано на Google Drive, але перевірити запис не вдалося.' + keep;
             if (error.kind === 'network') return '⚠️ Немає з\'єднання з Google Drive, нічого не записано.' + keep;
             if (error.kind === 'format') return '⚠️ Файл історії на Google Drive має неочікуваний вміст. Щоб не пошкодити його, нічого не записано.' + keep;
             if (error.kind === 'conflict') return '⚠️ Історію одночасно змінено в іншій вкладці чи на іншому пристрої, запис не підтверджено.' + keep;
@@ -4464,7 +4466,7 @@ thead { display: table-header-group; }
             const n = carriedAdds.length;
             const question = carriedDeletes.length
                 ? `Є незбережені зміни з попереднього входу (результатів: ${n}, видалень: ${carriedDeletes.length}). Зберегти їх у цей акаунт Google? Якщо ви увійшли в інший акаунт, натисніть «Скасувати».`
-                : `Є ${n} незбережених результатів з попереднього входу. Зберегти їх у цей акаунт Google? Якщо ви увійшли в інший акаунт, натисніть «Скасувати».`;
+                : `Є незбережені результати з попереднього входу (кількість: ${n}). Зберегти їх у цей акаунт Google? Якщо ви увійшли в інший акаунт, натисніть «Скасувати».`;
             const ok = confirm(question);
             const adds = carriedAdds, dels = carriedDeletes;
             carriedAdds = []; carriedDeletes = [];
