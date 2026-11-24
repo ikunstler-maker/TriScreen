@@ -23,7 +23,6 @@
     
     <!-- Google Identity & APIs -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://apis.google.com/js/api.js"></script>
     <!-- Chart.js для графіків -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -2959,7 +2958,7 @@
                     const sum = items.reduce((acc, it) => acc + (it.val || 0), 0);
                     const max = items.reduce((acc, it) => acc + it.max, 0);
                     return `<tr class="bg-sky-50/60 dark:bg-sky-900/20 font-bold text-slate-900 dark:text-white print-color-exact"><td class="${cell}">${comp.name}</td><td class="${cell} text-right">${sum}</td><td class="${cell} text-right">${max}</td></tr>`
-                        + items.map(it => `<tr><td class="${cell} pl-7 text-slate-600 dark:text-slate-300">${it.label}</td><td class="${cell} text-right">${it.val !== undefined ? it.val : '—'}</td><td class="${cell} text-right text-slate-500 dark:text-slate-400">${it.max}</td></tr>`).join('');
+                        + items.map(it => `<tr><td class="${cell} pl-7 text-slate-600 dark:text-slate-300">${it.label}</td><td class="${cell} text-right">${it.val !== undefined ? escapeHTML(it.val) : '—'}</td><td class="${cell} text-right text-slate-500 dark:text-slate-400">${it.max}</td></tr>`).join('');
                 }).join('');
             }
 
@@ -4125,19 +4124,26 @@ thead { display: table-header-group; }
 
         // Sync model (TEST-1): the Drive file stays a plain JSON array of entries.
         // Local changes wait in pendingAdds / pendingDeletes until a write is confirmed.
-        // Every write = fresh read of the remote file + pending changes, so other tabs/devices are not overwritten.
+        // Every write = fresh read of the remote file + pending changes, then a verification read,
+        // so other tabs/devices are not overwritten and deleted entries are not resurrected.
         let historyLoadState = 'idle';      // 'idle' | 'loading' | 'ok' | 'error'
         let historyLastError = null;        // DriveError of the last failed sync, or null
         let pendingAdds = [];               // entries created locally, not yet confirmed on Drive
         const pendingDeletes = new Set();   // ids deleted locally, not yet confirmed on Drive
-        const savedSignatures = new Set();  // tests saved or queued in this page session (duplicate guard)
+        // Changes left over from an expired session: written only after the user confirms the account
+        let carriedAdds = [], carriedDeletes = [];
+        let historyGeneration = 0;          // bumped on sign-in / sign-out / expiry; stale syncs are discarded
         let historySyncChain = Promise.resolve();
         const DRIVE_FILES_URL = 'https://www.googleapis.com/drive/v3/files';
         const DRIVE_UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
         const HISTORY_TEST_NAMES = ['GAD-7', 'PCL-5', 'PHQ-9', 'DES-II', 'LEC-5', 'TMCQ', 'АУДИТ', 'AUDIT'];
+        const HISTORY_MAX_WRITE_ATTEMPTS = 3;
+        // Drive has no conditional writes: wait a moment before the verification read so that a write
+        // from another tab/device that was in flight at the same time is already visible
+        const HISTORY_VERIFY_DELAY_MS = 1000;
 
         class DriveError extends Error {
-            // kind: 'auth' (token expired / no access), 'network', 'server', 'format'
+            // kind: 'auth' (token expired / no access), 'network', 'server', 'format', 'conflict', 'stale'
             constructor(kind, status) { super(kind + (status ? ' ' + status : '')); this.kind = kind; this.status = status || 0; }
         }
 
@@ -4151,15 +4157,43 @@ thead { display: table-header-group; }
         const historyDatePart = d => String(d || '').split(' ')[0];
         const historySignature = e => e.test + '|' + historyDatePart(e.date) + '|' + canonicalJSON(e.answers || {});
 
-        // Normalise an entry for display; returns null for entries that cannot be shown
+        // Answer shapes the app itself produces: integer item index → one of that test's option values
+        function historyAnswerSpec(test) {
+            const vals = opts => opts.map(o => o.value);
+            switch (test) {
+                case 'GAD-7': return { count: GAD7_QUESTIONS.length, values: vals(GAD7_OPTIONS) };
+                case 'PCL-5': return { count: PCL5_QUESTIONS.length, values: vals(PCL5_OPTIONS) };
+                case 'PHQ-9': return { count: PHQ9_QUESTIONS.length, values: vals(PHQ9_OPTIONS) };
+                case 'DES-II': return { count: DES2_QUESTIONS.length, values: DES2_OPTIONS.slice() };
+                case 'LEC-5': return { count: LEC5_QUESTIONS.length, values: vals(LEC5_OPTIONS) };
+                case 'TMCQ': return { count: TMCQ_P_QUESTIONS.length, values: vals(TMCQ_FREQ_OPTIONS) };
+                case 'АУДИТ': case 'AUDIT': return { count: AUDIT_QUESTIONS.length, values: [...new Set([...vals(AUDIT_FREQ_OPTIONS), ...vals(AUDIT_Q2_OPTIONS), ...vals(AUDIT_Q9_10_OPTIONS)])] };
+            }
+            return null;
+        }
+        const isValidAnswer = (spec, k, v) => /^\d{1,3}$/.test(k) && Number(k) < spec.count && typeof v === 'number' && spec.values.includes(v);
+
+        // Display / reuse copy of answers: only valid items survive (never raw strings into the forms)
+        function cleanHistoryAnswers(test, answers) {
+            const out = {};
+            const spec = historyAnswerSpec(test);
+            if (!spec || !isPlainObject(answers)) return out;
+            Object.keys(answers).forEach(k => { if (isValidAnswer(spec, k, answers[k])) out[k] = answers[k]; });
+            return out;
+        }
+
+        // Normalise an entry for display; returns null for entries that cannot be shown.
+        // Remote entries themselves are never rewritten by this.
         function sanitizeHistoryEntry(e) {
             if (!hasHistoryId(e)) return null;
+            if (typeof e.total !== 'number' || !Number.isFinite(e.total)) return null;
+            const test = typeof e.test === 'string' ? e.test : String(e.test ?? '');
             return {
                 id: String(e.id),
                 date: typeof e.date === 'string' ? e.date : String(e.date ?? ''),
-                test: typeof e.test === 'string' ? e.test : String(e.test ?? ''),
+                test,
                 total: e.total,
-                answers: isPlainObject(e.answers) ? e.answers : {}
+                answers: cleanHistoryAnswers(test, e.answers)
             };
         }
 
@@ -4170,7 +4204,12 @@ thead { display: table-header-group; }
             pendingAdds.forEach(e => { if (!ids.has(e.id) && !pendingDeletes.has(e.id)) { list.push(e); ids.add(e.id); } });
             return list;
         }
-        const hasPendingHistory = () => pendingAdds.length > 0 || pendingDeletes.size > 0;
+        const hasPendingHistory = () => pendingAdds.length > 0 || pendingDeletes.size > 0 || carriedAdds.length > 0 || carriedDeletes.length > 0;
+        function pendingSuccessMessage() {
+            if (pendingAdds.length) return '✅ Збережено в історію на Google Drive';
+            if (pendingDeletes.size) return '🗑️ Зміни в історії записано на Google Drive';
+            return '✅ Історію завантажено';
+        }
 
         function enqueueHistorySync(fn) {
             const p = historySyncChain.then(fn, fn);
@@ -4178,12 +4217,18 @@ thead { display: table-header-group; }
             return p;
         }
 
-        async function driveFetch(url, opts = {}) {
+        // Every request is tied to a session generation: after sign-out/sign-in/expiry nothing more is sent
+        async function driveFetch(gen, url, opts = {}) {
+            if (gen !== historyGeneration) throw new DriveError('stale', 0);
             if (!accessToken) throw new DriveError('auth', 0);
             let res;
             try {
                 res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), 'Authorization': `Bearer ${accessToken}` } });
-            } catch (e) { throw new DriveError('network', 0); }
+            } catch (e) {
+                if (gen !== historyGeneration) throw new DriveError('stale', 0);
+                throw new DriveError('network', 0);
+            }
+            if (gen !== historyGeneration) throw new DriveError('stale', 0);
             if (res.status === 401) throw new DriveError('auth', 401);
             if (res.status === 403) {
                 let body = '';
@@ -4195,8 +4240,8 @@ thead { display: table-header-group; }
         }
 
         // Reads one history file; throws on any failure (never returns "empty" for an error)
-        async function readDriveHistoryFile(fileId) {
-            const res = await driveFetch(`${DRIVE_FILES_URL}/${encodeURIComponent(fileId)}?alt=media`);
+        async function readDriveHistoryFile(gen, fileId) {
+            const res = await driveFetch(gen, `${DRIVE_FILES_URL}/${encodeURIComponent(fileId)}?alt=media`);
             if (!res.ok) throw new DriveError('server', res.status);
             let data;
             try { data = JSON.parse(await res.text()); } catch (e) { throw new DriveError('format', res.status); }
@@ -4205,8 +4250,8 @@ thead { display: table-header-group; }
         }
 
         // Fresh read of the remote state. fileId === null only when the list call succeeded with zero files.
-        async function readRemoteHistory() {
-            const listRes = await driveFetch(DRIVE_FILES_URL + "?spaces=appDataFolder&q=name='triscreen_history.json' and trashed=false&fields=files(id, name, createdTime)");
+        async function readRemoteHistory(gen) {
+            const listRes = await driveFetch(gen, DRIVE_FILES_URL + "?spaces=appDataFolder&q=name='triscreen_history.json' and trashed=false&fields=files(id, name, createdTime)");
             if (!listRes.ok) throw new DriveError('server', listRes.status);
             let listData;
             try { listData = await listRes.json(); } catch (e) { throw new DriveError('format', listRes.status); }
@@ -4215,28 +4260,35 @@ thead { display: table-header-group; }
             if (files.length === 0) return { fileId: null, entries: [], duplicates: [] };
 
             const primary = files.find(f => f.id === driveHistoryFileId) || files[0];
-            const entries = await readDriveHistoryFile(primary.id);
+            const entries = await readDriveHistoryFile(gen, primary.id);
             // Older versions could create several history files: merge them (deleted only after a successful write)
             const duplicates = [];
             for (const f of files) {
                 if (f.id === primary.id) continue;
-                try { duplicates.push({ id: f.id, entries: await readDriveHistoryFile(f.id) }); }
+                try { duplicates.push({ id: f.id, entries: await readDriveHistoryFile(gen, f.id) }); }
                 catch (e) {
-                    if (e.kind === 'auth') throw e;
+                    if (e.kind === 'auth' || e.kind === 'stale') throw e;
                     console.warn('Файл-дублікат історії не прочитано, його залишено без змін:', e.message);
                 }
             }
+            const known = new Set(entries.map(canonicalJSON));
+            const ids = new Set(entries.filter(hasHistoryId).map(e => String(e.id)));
             duplicates.forEach(d => d.entries.forEach(entry => {
-                if (!hasHistoryId(entry)) return;
-                if (!entries.some(ex => hasHistoryId(ex) && (String(ex.id) === String(entry.id) || (ex.test === entry.test && ex.date === entry.date)))) entries.push(entry);
+                if (hasHistoryId(entry) && ids.has(String(entry.id))) return;            // same id
+                if (known.has(canonicalJSON(entry))) return;                              // identical entry
+                if (hasHistoryId(entry) && entries.some(ex => hasHistoryId(ex) && ex.test === entry.test && ex.date === entry.date &&
+                    ex.total === entry.total && canonicalJSON(ex.answers) === canonicalJSON(entry.answers))) return; // same result saved twice
+                entries.push(entry);
+                known.add(canonicalJSON(entry));
+                if (hasHistoryId(entry)) ids.add(String(entry.id));
             }));
             return { fileId: primary.id, entries, duplicates };
         }
 
-        async function writeRemoteHistory(fileId, arr) {
+        async function writeRemoteHistory(gen, fileId, arr) {
             const fileContent = JSON.stringify(arr, null, 2);
             if (fileId) {
-                const res = await driveFetch(`${DRIVE_UPLOAD_URL}/${encodeURIComponent(fileId)}?uploadType=media`, {
+                const res = await driveFetch(gen, `${DRIVE_UPLOAD_URL}/${encodeURIComponent(fileId)}?uploadType=media`, {
                     method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: fileContent
                 });
                 if (!res.ok) throw new DriveError('server', res.status);
@@ -4249,7 +4301,7 @@ thead { display: table-header-group; }
             const multipartRequestBody =
                 delimiter + 'Content-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
                 delimiter + 'Content-Type: application/json\r\n\r\n' + fileContent + close_delim;
-            const res = await driveFetch(`${DRIVE_UPLOAD_URL}?uploadType=multipart`, {
+            const res = await driveFetch(gen, `${DRIVE_UPLOAD_URL}?uploadType=multipart`, {
                 method: 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + boundary }, body: multipartRequestBody
             });
             if (!res.ok) throw new DriveError('server', res.status);
@@ -4258,47 +4310,57 @@ thead { display: table-header-group; }
             return created && typeof created.id === 'string' ? created.id : null;
         }
 
-        // One serialized sync step: fresh read → apply pending → write if needed.
-        // Resolves { ok, wrote } or { ok: false, error }.
+        // One serialized sync step: fresh read → apply pending → write → verification read (repeat on conflict).
+        // Resolves { ok, wrote } or { ok: false, error } ; error.kind === 'stale' means "discard silently".
         function syncHistory(options = {}) {
             return enqueueHistorySync(async () => {
+                const gen = historyGeneration;
                 if (!accessToken) return { ok: false, error: new DriveError('auth', 0) };
                 if (historyLoadState !== 'ok') historyLoadState = 'loading';
                 updateHistorySyncBanner();
                 try {
-                    const remote = await readRemoteHistory();
+                    let remote = await readRemoteHistory(gen);
                     if (options.clearAll) {
                         remote.entries.forEach(e => { if (hasHistoryId(e)) pendingDeletes.add(String(e.id)); });
                     }
                     const addsSnap = pendingAdds.slice();
                     const delSnap = new Set(pendingDeletes);
-                    let result = remote.entries.filter(e => !(hasHistoryId(e) && delSnap.has(String(e.id))));
-                    if (options.clearAll) result = result.filter(hasHistoryId); // also drop unreadable leftovers
-                    const resultIds = new Set(result.filter(hasHistoryId).map(e => String(e.id)));
-                    let changed = result.length !== remote.entries.length || remote.duplicates.length > 0;
-                    addsSnap.forEach(e => {
-                        if (!resultIds.has(e.id) && !delSnap.has(e.id)) { result.push(e); resultIds.add(e.id); changed = true; }
-                    });
-                    if (changed) {
-                        const newId = await writeRemoteHistory(remote.fileId, result);
+                    const needsWrite = r => r.duplicates.length > 0 ||
+                        (options.clearAll && r.entries.some(e => !hasHistoryId(e))) ||
+                        r.entries.some(e => hasHistoryId(e) && delSnap.has(String(e.id))) ||
+                        addsSnap.some(a => !delSnap.has(a.id) && !r.entries.some(e => hasHistoryId(e) && String(e.id) === a.id));
+                    let wrote = false, attempts = 0;
+                    while (needsWrite(remote)) {
+                        if (attempts >= HISTORY_MAX_WRITE_ATTEMPTS) throw new DriveError('conflict', 0);
+                        attempts++;
+                        let result = remote.entries.filter(e => !(hasHistoryId(e) && delSnap.has(String(e.id))));
+                        if (options.clearAll) result = result.filter(hasHistoryId); // also drop unreadable leftovers
+                        const resultIds = new Set(result.filter(hasHistoryId).map(e => String(e.id)));
+                        addsSnap.forEach(e => { if (!resultIds.has(e.id) && !delSnap.has(e.id)) { result.push(e); resultIds.add(e.id); } });
+                        const newId = await writeRemoteHistory(gen, remote.fileId, result);
                         driveHistoryFileId = newId || remote.fileId;
+                        wrote = true;
                         for (const d of remote.duplicates) {
-                            try { await driveFetch(`${DRIVE_FILES_URL}/${encodeURIComponent(d.id)}`, { method: 'DELETE' }); }
-                            catch (e) { console.warn('Не вдалося видалити файл-дублікат історії:', e.message); }
+                            try { await driveFetch(gen, `${DRIVE_FILES_URL}/${encodeURIComponent(d.id)}`, { method: 'DELETE' }); }
+                            catch (e) { if (e.kind === 'stale') throw e; console.warn('Не вдалося видалити файл-дублікат історії:', e.message); }
                         }
-                    } else {
-                        driveHistoryFileId = remote.fileId;
+                        // Verification read: another tab/device may have written at the same moment
+                        await new Promise(r => setTimeout(r, HISTORY_VERIFY_DELAY_MS + Math.floor(Math.random() * 300)));
+                        remote = await readRemoteHistory(gen);
                     }
+                    if (gen !== historyGeneration) throw new DriveError('stale', 0);
+                    driveHistoryFileId = remote.fileId;
                     // Only what this write covered is confirmed; changes made meanwhile stay pending
                     pendingAdds = pendingAdds.filter(e => !addsSnap.includes(e));
                     delSnap.forEach(id => pendingDeletes.delete(id));
-                    testHistory = result.map(sanitizeHistoryEntry).filter(Boolean);
+                    testHistory = remote.entries.map(sanitizeHistoryEntry).filter(Boolean);
                     historyLoadState = 'ok';
                     historyLastError = null;
                     updateHistoryUI();
-                    return { ok: true, wrote: changed };
+                    return { ok: true, wrote };
                 } catch (err) {
                     const error = err instanceof DriveError ? err : new DriveError('format', 0);
+                    if (error.kind === 'stale' || gen !== historyGeneration) return { ok: false, error: new DriveError('stale', 0) };
                     if (!(err instanceof DriveError)) console.warn('Помилка синхронізації історії:', err);
                     if (historyLoadState !== 'ok') historyLoadState = 'error';
                     historyLastError = error;
@@ -4312,9 +4374,12 @@ thead { display: table-header-group; }
         function historyErrorMessage(error) {
             if (!error) return '';
             if (error.kind === 'auth') return 'Сесія Google завершилась. Натисніть «Увійти», щоб дозберегти результати.';
-            const keep = ' Результати не втрачено, поки ця сторінка відкрита: натисніть «Спробувати ще раз» в Історії.';
+            const keep = hasPendingHistory()
+                ? ' Незбережені зміни залишаються на цій сторінці, поки вона відкрита: натисніть «Спробувати ще раз» в Історії.'
+                : ' Натисніть «Спробувати ще раз» в Історії.';
             if (error.kind === 'network') return '⚠️ Немає з\'єднання з Google Drive, нічого не записано.' + keep;
             if (error.kind === 'format') return '⚠️ Файл історії на Google Drive має неочікуваний вміст. Щоб не пошкодити його, нічого не записано.' + keep;
+            if (error.kind === 'conflict') return '⚠️ Історію одночасно змінено в іншій вкладці чи на іншому пристрої, запис не підтверджено.' + keep;
             return `⚠️ Google Drive тимчасово не відповідає${error.status ? ' (помилка ' + error.status + ')' : ''}, нічого не записано.` + keep;
         }
 
@@ -4368,34 +4433,72 @@ thead { display: table-header-group; }
             if (note) { note.textContent = msg || ''; note.style.display = msg ? '' : 'none'; }
         }
 
-        // Token expired / access lost: sign out in the UI but keep unsaved changes in memory
+        // Drops everything that belongs to the signed-in account from memory and the page
+        function resetHistorySession() {
+            historyGeneration++;
+            testHistory = [];
+            driveHistoryFileId = null;
+            historyLoadState = 'idle';
+            historyLastError = null;
+            updateHistoryUI();
+        }
+
+        // Token expired / access lost: sign out, forget the account's history, keep only unsaved changes
         function handleSessionExpired() {
             accessToken = null;
-            historyLoadState = 'idle';
+            carriedAdds = carriedAdds.concat(pendingAdds);
+            carriedDeletes = carriedDeletes.concat([...pendingDeletes]);
+            pendingAdds = [];
+            pendingDeletes.clear();
+            resetHistorySession();
             setSignedInUI(false);
             setUnauthNote('Сесія Google завершилась. Натисніть «Увійти», щоб дозберегти результати.');
         }
 
-        // Resolves to the result of the sync, shows the outcome to the user
+        // After a successful load in a new session: ask before writing changes from the previous sign-in
+        let offeringCarried = false;
+        function offerCarriedChanges() {
+            if (offeringCarried || !accessToken || historyLoadState !== 'ok') return null;
+            if (!carriedAdds.length && !carriedDeletes.length) return null;
+            offeringCarried = true;
+            const n = carriedAdds.length;
+            const question = carriedDeletes.length
+                ? `Є незбережені зміни з попереднього входу (результатів: ${n}, видалень: ${carriedDeletes.length}). Зберегти їх у цей акаунт Google? Якщо ви увійшли в інший акаунт, натисніть «Скасувати».`
+                : `Є ${n} незбережених результатів з попереднього входу. Зберегти їх у цей акаунт Google? Якщо ви увійшли в інший акаунт, натисніть «Скасувати».`;
+            const ok = confirm(question);
+            const adds = carriedAdds, dels = carriedDeletes;
+            carriedAdds = []; carriedDeletes = [];
+            offeringCarried = false;
+            if (!ok) { updateHistoryUI(); return null; }
+            pendingAdds.push(...adds);
+            dels.forEach(id => pendingDeletes.add(id));
+            updateHistoryUI();
+            return reportHistorySync(syncHistory(), pendingSuccessMessage());
+        }
+
+        // Shows the outcome of a sync to the user; stale (previous session) results are ignored
         function reportHistorySync(promise, successMsg) {
             return promise.then(r => {
-                if (r.ok) { if (successMsg) showHistoryToast(successMsg, 'success'); }
-                else showHistoryToast(historyErrorMessage(r.error), 'error');
+                if (r.ok) {
+                    if (successMsg) showHistoryToast(successMsg, 'success');
+                    if (carriedAdds.length || carriedDeletes.length) setTimeout(offerCarriedChanges, 0);
+                } else if (r.error && r.error.kind !== 'stale') showHistoryToast(historyErrorMessage(r.error), 'error');
                 return r;
             });
         }
 
         function queueHistoryEntries(candidates) {
+            // Duplicate guard: only against what is in history now (confirmed + pending)
             const existing = new Set(getDisplayHistory().map(historySignature));
             const fresh = candidates.filter(c => {
                 const sig = historySignature(c);
-                if (savedSignatures.has(sig) || existing.has(sig)) return false;
-                savedSignatures.add(sig);
+                if (existing.has(sig)) return false;
+                existing.add(sig);
                 return true;
             });
             if (fresh.length === 0) {
                 // Nothing new; if an earlier save is still pending, retry it instead
-                if (hasPendingHistory()) return reportHistorySync(syncHistory(), '✅ Збережено в історію на Google Drive');
+                if (pendingAdds.length || pendingDeletes.size) return reportHistorySync(syncHistory(), pendingSuccessMessage());
                 showHistoryToast('Ці результати вже збережено', 'info');
                 return Promise.resolve({ ok: true, wrote: false });
             }
@@ -4406,7 +4509,7 @@ thead { display: table-header-group; }
 
         function retryHistorySync() {
             if (!accessToken) { setSignedInUI(false); return; }
-            return reportHistorySync(syncHistory(), hasPendingHistory() ? '✅ Збережено в історію на Google Drive' : '✅ Історію завантажено');
+            return reportHistorySync(syncHistory(), pendingSuccessMessage());
         }
 
         let googleAuthAttempts = 0;
@@ -4422,12 +4525,12 @@ thead { display: table-header-group; }
                     client_id: GOOGLE_CLIENT_ID, scope: SCOPES,
                     callback: (resp) => {
                         if (!resp || resp.error || !resp.access_token) { console.warn('Вхід Google не завершено:', resp && resp.error); return; }
+                        resetHistorySession();
                         accessToken = resp.access_token;
                         setUnauthNote('');
                         setSignedInUI(true);
-                        // Fresh load; any results kept from an expired session are written right after
-                        const hadPending = hasPendingHistory();
-                        reportHistorySync(syncHistory(), hadPending ? '✅ Збережено в історію на Google Drive' : '');
+                        // Fresh load; changes kept from an expired session are offered right after it succeeds
+                        reportHistorySync(syncHistory(), '');
                     }
                 });
             } catch (e) {
@@ -4445,14 +4548,10 @@ thead { display: table-header-group; }
                 accessToken = null;
                 pendingAdds = [];
                 pendingDeletes.clear();
-                savedSignatures.clear();
-                testHistory = [];
-                driveHistoryFileId = null;
-                historyLoadState = 'idle';
-                historyLastError = null;
+                carriedAdds = []; carriedDeletes = [];
+                resetHistorySession();
                 setUnauthNote('');
                 setSignedInUI(false);
-                updateHistoryUI();
             } else if (!tokenClient || typeof tokenClient.requestAccessToken !== 'function') {
                 showHistoryToast('Сервіс входу Google зараз недоступний. Перевірте з\'єднання або вимкніть блокувальник і оновіть сторінку.', 'error');
             } else {
@@ -4496,6 +4595,7 @@ thead { display: table-header-group; }
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
+        // Strict check of one imported entry: only shapes the app itself produces are accepted
         function validateImportedEntry(e) {
             if (!isPlainObject(e)) return null;
             if (typeof e.id !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(e.id)) return null;
@@ -4503,13 +4603,11 @@ thead { display: table-header-group; }
             if (!HISTORY_TEST_NAMES.includes(e.test)) return null;
             if (typeof e.total !== 'number' || !Number.isFinite(e.total)) return null;
             if (!isPlainObject(e.answers)) return null;
+            const spec = historyAnswerSpec(e.test);
             const answers = {};
-            for (const [k, v] of Object.entries(e.answers)) {
-                if (k.length > 32) return null;
-                if (typeof v === 'number') { if (!Number.isFinite(v)) return null; }
-                else if (typeof v === 'string') { if (v.length > 1000) return null; }
-                else return null;
-                answers[k] = v;
+            for (const k of Object.keys(e.answers)) {
+                if (!isValidAnswer(spec, k, e.answers[k])) return null;
+                answers[k] = e.answers[k];
             }
             return { id: e.id, date: e.date, test: e.test, total: e.total, answers };
         }
@@ -4523,8 +4621,10 @@ thead { display: table-header-group; }
                 return;
             }
             if (file.size > 5 * 1024 * 1024) { showHistoryToast('Файл завеликий (понад 5 МБ). Оберіть резервну копію TriScreen.', 'error'); return; }
+            const gen = historyGeneration;
             let data;
             try { data = JSON.parse(await file.text()); } catch (e) { data = undefined; }
+            if (gen !== historyGeneration) return;
             if (!Array.isArray(data)) { showHistoryToast('Це не схоже на резервну копію історії TriScreen (очікується JSON-масив записів).', 'error'); return; }
             const known = new Set(getDisplayHistory().map(e => e.id));
             const valid = [];
@@ -4538,11 +4638,10 @@ thead { display: table-header-group; }
             const summary = `Додано ${valid.length}, пропущено ${skipped}`;
             if (valid.length === 0) { showHistoryToast(summary, 'info'); return { ok: true, added: 0, skipped }; }
             pendingAdds.push(...valid);
-            valid.forEach(e => savedSignatures.add(historySignature(e)));
             updateHistoryUI();
             const r = await syncHistory();
             if (r.ok) showHistoryToast(`✅ ${summary}. Записано на Google Drive.`, 'success');
-            else showHistoryToast(`${summary}. ${historyErrorMessage(r.error)}`, 'error');
+            else if (r.error.kind !== 'stale') showHistoryToast(`${summary}. ${historyErrorMessage(r.error)}`, 'error');
             return { ...r, added: valid.length, skipped };
         }
         
@@ -4763,13 +4862,15 @@ thead { display: table-header-group; }
             document.getElementById('assessment-date').value = dateStr;
             
             // Завантажуємо відповіді з історії назад у пам'ять
+            // Validated copy: editing the form later must not change the history entry
             dayTests.forEach(test => {
-                if (test.test === 'GAD-7') userState.gad7 = test.answers || {};
-                if (test.test === 'PCL-5') { userState.pcl5CritA = 'yes'; userState.pcl5 = test.answers || {}; }
-                if (test.test === 'PHQ-9') userState.phq9 = test.answers || {};
-                if (test.test === 'DES-II') userState.des2 = test.answers || {};
-                if (test.test === 'LEC-5') userState.lec5 = test.answers || {};
-                if (test.test === 'TMCQ') userState.tmcqP = test.answers || {};
+                const answers = cleanHistoryAnswers(test.test, test.answers);
+                if (test.test === 'GAD-7') userState.gad7 = answers;
+                if (test.test === 'PCL-5') { userState.pcl5CritA = 'yes'; userState.pcl5 = answers; }
+                if (test.test === 'PHQ-9') userState.phq9 = answers;
+                if (test.test === 'DES-II') userState.des2 = answers;
+                if (test.test === 'LEC-5') userState.lec5 = answers;
+                if (test.test === 'TMCQ') userState.tmcqP = answers;
             });
             
             // Оновлюємо інтерфейс
