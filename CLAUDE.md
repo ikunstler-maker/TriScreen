@@ -39,7 +39,7 @@ Solved problems: `docs/TROUBLESHOOTING.md` (grep before debugging). Terms: `docs
 - No AI model IDs in commits/PRs.
 
 ## Architecture
-- Static site on GitHub Pages from `main` root: `index.html` (main app, very large), `emotion-journal.html`, `updates.html`, legal pages, `entrolog/` (prebuilt React+Vite bundle, source not in repo).
+- Static site on GitHub Pages from `main` root: `index.html` (main app, very large), `emotion-journal.html`, `updates.html`, legal pages, `entrolog/` (frozen prebuilt React+Vite bundle, no source exists).
 - Invariants: no backend; user data stays in the browser (localStorage) unless owner approves; keep URLs stable; Ukrainian UI.
 - Code, identifiers, commits in English.
 
