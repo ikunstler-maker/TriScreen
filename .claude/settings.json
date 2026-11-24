@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": [
+      "Read(./entrolog/assets/**)",
+      "Read(./node_modules/**)",
+      "Read(./dist/**)",
+      "Read(./package-lock.json)",
+      "Read(./**/*.png)",
+      "Read(./**/*.jpg)",
+      "Read(./**/*.webp)",
+      "Read(./**/*.svg)",
+      "Read(./**/*.min.js)",
+      "Read(./**/*.map)"
+    ]
+  }
+}
