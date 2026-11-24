@@ -9,3 +9,12 @@
 
 Owner: «Погоджую ризикову зміну. Починай в режимі оркестрації» (high-risk approval for user data, start delayed by 2 h at owner's request).
 Source: audit 2026-11-24 (4 reviewer agents, findings re-checked against code).
+
+| Date | Decision | What and why |
+|---|---|---|
+| 2026-11-24 | Strict answer validation for display/import | Reviewers found stored XSS via imported/Drive answers reaching TMCQ table. Answers loaded into forms or imported must be canonical item indices with that test's option values; invalid imported entries are rejected; Drive entries are never rewritten by this filter. |
+| 2026-11-24 | Results after expired session go to a new account only with consent | Reviewer reproduced account A's PHQ-9 written into account B's Drive. Carried results are hidden and written only after a confirm on the next sign-in. |
+| 2026-11-24 | Verified writes | After each write the file is re-read (~1 s later); missing changes are re-merged (max 3 attempts), otherwise a conflict message keeps them pending. Drive has no conditional writes, so an overwrite later than this window is still possible (rare). |
+| 2026-11-24 | Removed unused `apis.google.com/js/api.js` | No code uses `gapi` after the rewrite; one third-party host fewer. |
+
+Orchestration: implementer ×1, security reviewer ×1, quality reviewer ×1 (each re-verified after fixes).

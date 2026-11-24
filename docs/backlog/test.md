@@ -1,7 +1,7 @@
 # Tests, results, history
 Source: audit 2026-11-24 (blocks А–Г). Block А = TEST-1.
 ## Next by plan
-1. TEST-1 — Drive history safety (block А): safe sync, honest save status, delete confirm, no duplicates, backup/restore
+1. ~~TEST-1 — Drive history safety (block А)~~ — done
 2. Block Б — answers loss during a test (needs owner approval: draft storage = new localStorage data)
    - Reload / tab close / Back loses all answers; no `beforeunload`, no history/hash per tab (`switchTab`)
    - Footer links (policy/terms/updates) open in same tab → answers lost on return via «На головну»
@@ -26,3 +26,4 @@ Source: audit 2026-11-24 (blocks А–Г). Block А = TEST-1.
    - Crisis hotlines not `tel:` links; subpages miss favicon/meta; two h1 on subpages
 ## Known gaps / follow-ups
 - Google sign-in does not survive reload (token kept in memory only, by design)
+- Drive has no conditional writes: two devices saving within the same ~1 s window can still lose one write (TEST-1 verifies and retries, rare)
