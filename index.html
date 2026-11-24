@@ -1863,9 +1863,15 @@
 
                 <div id="history-unauth-msg" class="text-center py-12">
                     <p class="text-slate-500 dark:text-slate-400 mb-4">Будь ласка, увійдіть через Google (кнопка вгорі), щоб переглядати та зберігати свою історію.</p>
+                    <p id="history-unauth-note" class="text-sm font-semibold text-amber-700 dark:text-amber-400" style="display:none"></p>
                 </div>
 
                 <div id="history-content" class="hidden space-y-8">
+                    <!-- Sync problem banner (TEST-1) -->
+                    <div id="history-sync-banner" class="p-4 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-sm text-amber-800 dark:text-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="display:none">
+                        <p id="history-sync-banner-text" class="font-medium"></p>
+                        <button type="button" id="history-sync-retry" onclick="retryHistorySync()" class="shrink-0 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-sm transition">Спробувати ще раз</button>
+                    </div>
                     <!-- Filters -->
                     <div class="flex flex-col sm:flex-row justify-between gap-4 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
                         <select id="history-test-filter" onchange="updateHistoryUI()" class="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm font-medium focus:ring-2 focus:ring-sky-500 outline-none">
@@ -1912,7 +1918,12 @@
                     <div>
                         <div class="flex justify-between items-end mb-3">
                             <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">Збережені записи</h3>
-                            <button onclick="clearHistoryData()" class="text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-semibold hover:underline">Видалити всю історію</button>
+                            <div class="flex flex-wrap justify-end items-center gap-x-4 gap-y-2">
+                                <button type="button" id="btn-history-export" onclick="exportHistoryBackup()" class="text-xs text-sky-700 hover:text-sky-800 dark:text-sky-400 font-semibold hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed">⬇️ Завантажити копію</button>
+                                <button type="button" id="btn-history-import" onclick="document.getElementById('history-import-input').click()" class="text-xs text-sky-700 hover:text-sky-800 dark:text-sky-400 font-semibold hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed">⬆️ Відновити з файлу</button>
+                                <input type="file" id="history-import-input" accept="application/json,.json" class="hidden" style="display:none" aria-label="Файл резервної копії історії" onchange="importHistoryBackup(this)">
+                                <button onclick="clearHistoryData()" class="text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-semibold hover:underline">Видалити всю історію</button>
+                            </div>
                         </div>
                         <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
                             <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap">
@@ -4029,16 +4040,14 @@ thead { display: table-header-group; }
 
             // AUTO-SAVE TO HISTORY ONLY IF 'ЗАНЕСТИ В ІСТОРІЮ' WAS CLICKED
             if (accessToken && shouldSaveToHistory) {
-                let savedAny = false;
+                const candidates = [];
                 const saveTest = (testName, scoresObj, totalScore) => {
                     // ЗБЕРІГАЄМО З ТОЧНИМ ЧАСОМ, ЩОБ МОЖНА БУЛО ЗАНОСИТИ КІЛЬКА РАЗІВ НА ДЕНЬ
                     const entryDate = dateVal !== "Не вказано" ? dateVal : new Date().toISOString().split('T')[0];
                     const entryTime = new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
                     const fullDateStr = `${entryDate} ${entryTime}`;
-                    
-                    // ВИДАЛЕНО ФІЛЬТР, ЯКИЙ ПЕРЕЗАПИСУВАВ ДАНІ ЗА ОДИН ДЕНЬ
-                    testHistory.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 5), date: fullDateStr, test: testName, total: totalScore, answers: scoresObj });
-                    savedAny = true;
+                    // Copy answers so later edits in the form do not change a queued entry
+                    candidates.push({ id: Date.now().toString() + Math.random().toString(36).substr(2, 5), date: fullDateStr, test: testName, total: totalScore, answers: JSON.parse(JSON.stringify(scoresObj || {})) });
                 };
 
                 if(isGad7Complete) saveTest('GAD-7', userState.gad7, gad7Sum);
@@ -4049,9 +4058,8 @@ thead { display: table-header-group; }
                 if(isTmcqComplete) saveTest('TMCQ', userState.tmcqP, tmcqScores.p);
                 if(isAuditComplete) saveTest('АУДИТ', userState.audit, auditSum);
                 
-                if (savedAny) {
-                    saveHistoryToDrive();
-                    alert('✅ Ваші результати успішно занесено в історію на Google Drive!');
+                if (candidates.length) {
+                    historySaveRequest = queueHistoryEntries(candidates);
                 } else {
                     alert('⚠️ Немає повністю завершених тестів для збереження в історію. Будь ласка, дайте відповіді на всі запитання обраного тесту.');
                 }
@@ -4059,6 +4067,7 @@ thead { display: table-header-group; }
         }
 
         let shouldSaveToHistory = false;
+        let historySaveRequest = null; // promise of the save started by the last calculateAndSave()
         function calculateAndSave(btnElement) {
             // Перевіряємо, чи користувач увійшов у Google
             if (!accessToken) {
@@ -4068,25 +4077,39 @@ thead { display: table-header-group; }
                 return;
             }
             
+            historySaveRequest = null;
             shouldSaveToHistory = true;
             calculateAndShowResults();
             shouldSaveToHistory = false;
-            
-            // "Тихе" збереження: візуально змінюємо кнопку без перемикання вкладок
-            if (btnElement) {
-                const originalHTML = btnElement.innerHTML;
-                const originalClasses = btnElement.className;
-                
-                // Зберігаємо нейтральний фон кнопки, підсвічуючи лише текст та рамку
-                btnElement.className = "min-w-0 py-2.5 px-3 bg-slate-100 dark:bg-slate-800 border border-lime-500/70 text-lime-600 dark:text-lime-400 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm";
-                btnElement.innerHTML = '<span>✅ Збережено!</span>';
-                
-                // Повертаємо початковий вигляд через 3 секунди
-                setTimeout(() => {
+            const request = historySaveRequest;
+            historySaveRequest = null;
+            if (!request || !btnElement) return;
+
+            // "Тихе" збереження: кнопка показує «✅ Збережено!» лише після реального запису на Google Drive
+            if (btnElement.dataset.saving === '1') return;
+            const originalHTML = btnElement.innerHTML;
+            const originalClasses = btnElement.className;
+            btnElement.dataset.saving = '1';
+            btnElement.setAttribute('aria-busy', 'true');
+            btnElement.innerHTML = '<span>⏳ Зберігаємо…</span>';
+            request.then(result => {
+                btnElement.removeAttribute('aria-busy');
+                if (result && result.ok) {
+                    // Зберігаємо нейтральний фон кнопки, підсвічуючи лише текст та рамку
+                    btnElement.className = "min-w-0 py-2.5 px-3 bg-slate-100 dark:bg-slate-800 border border-lime-500/70 text-lime-600 dark:text-lime-400 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-sm";
+                    btnElement.innerHTML = '<span>✅ Збережено!</span>';
+                    // Повертаємо початковий вигляд через 3 секунди
+                    setTimeout(() => {
+                        btnElement.innerHTML = originalHTML;
+                        btnElement.className = originalClasses;
+                        delete btnElement.dataset.saving;
+                    }, 3000);
+                } else {
                     btnElement.innerHTML = originalHTML;
                     btnElement.className = originalClasses;
-                }, 3000);
-            }
+                    delete btnElement.dataset.saving;
+                }
+            });
         }
 
         // ==========================================
@@ -4100,23 +4123,317 @@ thead { display: table-header-group; }
         let chartTotalInstance = null, chartQuestionInstance = null;
         let currentTimeFilter = 'month';
 
+        // Sync model (TEST-1): the Drive file stays a plain JSON array of entries.
+        // Local changes wait in pendingAdds / pendingDeletes until a write is confirmed.
+        // Every write = fresh read of the remote file + pending changes, so other tabs/devices are not overwritten.
+        let historyLoadState = 'idle';      // 'idle' | 'loading' | 'ok' | 'error'
+        let historyLastError = null;        // DriveError of the last failed sync, or null
+        let pendingAdds = [];               // entries created locally, not yet confirmed on Drive
+        const pendingDeletes = new Set();   // ids deleted locally, not yet confirmed on Drive
+        const savedSignatures = new Set();  // tests saved or queued in this page session (duplicate guard)
+        let historySyncChain = Promise.resolve();
+        const DRIVE_FILES_URL = 'https://www.googleapis.com/drive/v3/files';
+        const DRIVE_UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
+        const HISTORY_TEST_NAMES = ['GAD-7', 'PCL-5', 'PHQ-9', 'DES-II', 'LEC-5', 'TMCQ', 'АУДИТ', 'AUDIT'];
+
+        class DriveError extends Error {
+            // kind: 'auth' (token expired / no access), 'network', 'server', 'format'
+            constructor(kind, status) { super(kind + (status ? ' ' + status : '')); this.kind = kind; this.status = status || 0; }
+        }
+
+        const isPlainObject = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+        const hasHistoryId = e => isPlainObject(e) && e.id !== undefined && e.id !== null && e.id !== '';
+        function canonicalJSON(v) {
+            if (Array.isArray(v)) return '[' + v.map(canonicalJSON).join(',') + ']';
+            if (isPlainObject(v)) return '{' + Object.keys(v).sort().map(k => JSON.stringify(k) + ':' + canonicalJSON(v[k])).join(',') + '}';
+            return JSON.stringify(v === undefined ? null : v);
+        }
+        const historyDatePart = d => String(d || '').split(' ')[0];
+        const historySignature = e => e.test + '|' + historyDatePart(e.date) + '|' + canonicalJSON(e.answers || {});
+
+        // Normalise an entry for display; returns null for entries that cannot be shown
+        function sanitizeHistoryEntry(e) {
+            if (!hasHistoryId(e)) return null;
+            return {
+                id: String(e.id),
+                date: typeof e.date === 'string' ? e.date : String(e.date ?? ''),
+                test: typeof e.test === 'string' ? e.test : String(e.test ?? ''),
+                total: e.total,
+                answers: isPlainObject(e.answers) ? e.answers : {}
+            };
+        }
+
+        // What the user sees: confirmed entries + not yet saved ones, minus not yet confirmed deletions
+        function getDisplayHistory() {
+            const list = testHistory.filter(e => !pendingDeletes.has(e.id));
+            const ids = new Set(list.map(e => e.id));
+            pendingAdds.forEach(e => { if (!ids.has(e.id) && !pendingDeletes.has(e.id)) { list.push(e); ids.add(e.id); } });
+            return list;
+        }
+        const hasPendingHistory = () => pendingAdds.length > 0 || pendingDeletes.size > 0;
+
+        function enqueueHistorySync(fn) {
+            const p = historySyncChain.then(fn, fn);
+            historySyncChain = p.catch(() => {});
+            return p;
+        }
+
+        async function driveFetch(url, opts = {}) {
+            if (!accessToken) throw new DriveError('auth', 0);
+            let res;
+            try {
+                res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), 'Authorization': `Bearer ${accessToken}` } });
+            } catch (e) { throw new DriveError('network', 0); }
+            if (res.status === 401) throw new DriveError('auth', 401);
+            if (res.status === 403) {
+                let body = '';
+                try { body = (await res.clone().text()).toLowerCase(); } catch (e) {}
+                if (/ratelimit|rate limit|quota|limitexceeded/.test(body)) throw new DriveError('server', 403);
+                throw new DriveError('auth', 403);
+            }
+            return res;
+        }
+
+        // Reads one history file; throws on any failure (never returns "empty" for an error)
+        async function readDriveHistoryFile(fileId) {
+            const res = await driveFetch(`${DRIVE_FILES_URL}/${encodeURIComponent(fileId)}?alt=media`);
+            if (!res.ok) throw new DriveError('server', res.status);
+            let data;
+            try { data = JSON.parse(await res.text()); } catch (e) { throw new DriveError('format', res.status); }
+            if (!Array.isArray(data)) throw new DriveError('format', res.status);
+            return data;
+        }
+
+        // Fresh read of the remote state. fileId === null only when the list call succeeded with zero files.
+        async function readRemoteHistory() {
+            const listRes = await driveFetch(DRIVE_FILES_URL + "?spaces=appDataFolder&q=name='triscreen_history.json' and trashed=false&fields=files(id, name, createdTime)");
+            if (!listRes.ok) throw new DriveError('server', listRes.status);
+            let listData;
+            try { listData = await listRes.json(); } catch (e) { throw new DriveError('format', listRes.status); }
+            if (!isPlainObject(listData) || !Array.isArray(listData.files)) throw new DriveError('format', listRes.status);
+            const files = listData.files.filter(f => isPlainObject(f) && typeof f.id === 'string' && f.id);
+            if (files.length === 0) return { fileId: null, entries: [], duplicates: [] };
+
+            const primary = files.find(f => f.id === driveHistoryFileId) || files[0];
+            const entries = await readDriveHistoryFile(primary.id);
+            // Older versions could create several history files: merge them (deleted only after a successful write)
+            const duplicates = [];
+            for (const f of files) {
+                if (f.id === primary.id) continue;
+                try { duplicates.push({ id: f.id, entries: await readDriveHistoryFile(f.id) }); }
+                catch (e) {
+                    if (e.kind === 'auth') throw e;
+                    console.warn('Файл-дублікат історії не прочитано, його залишено без змін:', e.message);
+                }
+            }
+            duplicates.forEach(d => d.entries.forEach(entry => {
+                if (!hasHistoryId(entry)) return;
+                if (!entries.some(ex => hasHistoryId(ex) && (String(ex.id) === String(entry.id) || (ex.test === entry.test && ex.date === entry.date)))) entries.push(entry);
+            }));
+            return { fileId: primary.id, entries, duplicates };
+        }
+
+        async function writeRemoteHistory(fileId, arr) {
+            const fileContent = JSON.stringify(arr, null, 2);
+            if (fileId) {
+                const res = await driveFetch(`${DRIVE_UPLOAD_URL}/${encodeURIComponent(fileId)}?uploadType=media`, {
+                    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: fileContent
+                });
+                if (!res.ok) throw new DriveError('server', res.status);
+                return fileId;
+            }
+            const metadata = { name: 'triscreen_history.json', parents: ['appDataFolder'] };
+            const boundary = '-------314159265358979323846';
+            const delimiter = "\r\n--" + boundary + "\r\n";
+            const close_delim = "\r\n--" + boundary + "--";
+            const multipartRequestBody =
+                delimiter + 'Content-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) +
+                delimiter + 'Content-Type: application/json\r\n\r\n' + fileContent + close_delim;
+            const res = await driveFetch(`${DRIVE_UPLOAD_URL}?uploadType=multipart`, {
+                method: 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + boundary }, body: multipartRequestBody
+            });
+            if (!res.ok) throw new DriveError('server', res.status);
+            let created = null;
+            try { created = await res.json(); } catch (e) {}
+            return created && typeof created.id === 'string' ? created.id : null;
+        }
+
+        // One serialized sync step: fresh read → apply pending → write if needed.
+        // Resolves { ok, wrote } or { ok: false, error }.
+        function syncHistory(options = {}) {
+            return enqueueHistorySync(async () => {
+                if (!accessToken) return { ok: false, error: new DriveError('auth', 0) };
+                if (historyLoadState !== 'ok') historyLoadState = 'loading';
+                updateHistorySyncBanner();
+                try {
+                    const remote = await readRemoteHistory();
+                    if (options.clearAll) {
+                        remote.entries.forEach(e => { if (hasHistoryId(e)) pendingDeletes.add(String(e.id)); });
+                    }
+                    const addsSnap = pendingAdds.slice();
+                    const delSnap = new Set(pendingDeletes);
+                    let result = remote.entries.filter(e => !(hasHistoryId(e) && delSnap.has(String(e.id))));
+                    if (options.clearAll) result = result.filter(hasHistoryId); // also drop unreadable leftovers
+                    const resultIds = new Set(result.filter(hasHistoryId).map(e => String(e.id)));
+                    let changed = result.length !== remote.entries.length || remote.duplicates.length > 0;
+                    addsSnap.forEach(e => {
+                        if (!resultIds.has(e.id) && !delSnap.has(e.id)) { result.push(e); resultIds.add(e.id); changed = true; }
+                    });
+                    if (changed) {
+                        const newId = await writeRemoteHistory(remote.fileId, result);
+                        driveHistoryFileId = newId || remote.fileId;
+                        for (const d of remote.duplicates) {
+                            try { await driveFetch(`${DRIVE_FILES_URL}/${encodeURIComponent(d.id)}`, { method: 'DELETE' }); }
+                            catch (e) { console.warn('Не вдалося видалити файл-дублікат історії:', e.message); }
+                        }
+                    } else {
+                        driveHistoryFileId = remote.fileId;
+                    }
+                    // Only what this write covered is confirmed; changes made meanwhile stay pending
+                    pendingAdds = pendingAdds.filter(e => !addsSnap.includes(e));
+                    delSnap.forEach(id => pendingDeletes.delete(id));
+                    testHistory = result.map(sanitizeHistoryEntry).filter(Boolean);
+                    historyLoadState = 'ok';
+                    historyLastError = null;
+                    updateHistoryUI();
+                    return { ok: true, wrote: changed };
+                } catch (err) {
+                    const error = err instanceof DriveError ? err : new DriveError('format', 0);
+                    if (!(err instanceof DriveError)) console.warn('Помилка синхронізації історії:', err);
+                    if (historyLoadState !== 'ok') historyLoadState = 'error';
+                    historyLastError = error;
+                    if (error.kind === 'auth') handleSessionExpired();
+                    updateHistoryUI();
+                    return { ok: false, error };
+                }
+            });
+        }
+
+        function historyErrorMessage(error) {
+            if (!error) return '';
+            if (error.kind === 'auth') return 'Сесія Google завершилась. Натисніть «Увійти», щоб дозберегти результати.';
+            const keep = ' Результати не втрачено, поки ця сторінка відкрита: натисніть «Спробувати ще раз» в Історії.';
+            if (error.kind === 'network') return '⚠️ Немає з\'єднання з Google Drive, нічого не записано.' + keep;
+            if (error.kind === 'format') return '⚠️ Файл історії на Google Drive має неочікуваний вміст. Щоб не пошкодити його, нічого не записано.' + keep;
+            return `⚠️ Google Drive тимчасово не відповідає${error.status ? ' (помилка ' + error.status + ')' : ''}, нічого не записано.` + keep;
+        }
+
+        let historyToastTimer = null;
+        function showHistoryToast(message, kind = 'info') {
+            const el = document.getElementById('history-toast');
+            if (!el) return;
+            el.textContent = message;
+            el.classList.remove('border-rose-300', 'dark:border-rose-700', 'border-lime-500/70', 'border-slate-200', 'dark:border-slate-700');
+            if (kind === 'error') el.classList.add('border-rose-300', 'dark:border-rose-700');
+            else if (kind === 'success') el.classList.add('border-lime-500/70');
+            else el.classList.add('border-slate-200', 'dark:border-slate-700');
+            el.style.display = '';
+            clearTimeout(historyToastTimer);
+            historyToastTimer = setTimeout(() => { el.style.display = 'none'; }, kind === 'error' ? 10000 : 4000);
+        }
+
+        function updateHistorySyncBanner() {
+            const banner = document.getElementById('history-sync-banner');
+            const text = document.getElementById('history-sync-banner-text');
+            const retry = document.getElementById('history-sync-retry');
+            let msg = '';
+            if (historyLoadState === 'error') {
+                msg = 'Не вдалося завантажити історію з Google Drive. Нові результати поки не записано, щоб не пошкодити наявні.';
+            } else if (historyLoadState === 'ok' && historyLastError && hasPendingHistory()) {
+                msg = 'Частину змін ще не записано на Google Drive. Вони збережуться після успішної повторної спроби.';
+            }
+            if (banner && text) { text.textContent = msg; banner.style.display = msg ? '' : 'none'; }
+            if (retry) retry.disabled = historyLoadState === 'loading';
+            const backupReady = historyLoadState === 'ok';
+            ['btn-history-export', 'btn-history-import'].forEach(id => {
+                const b = document.getElementById(id);
+                if (!b) return;
+                b.disabled = !backupReady;
+                b.title = backupReady ? '' : 'Доступно після успішного завантаження історії з Google Drive';
+            });
+        }
+
+        function setSignedInUI(signedIn) {
+            document.getElementById('auth-btn-text').textContent = signedIn ? 'Вийти' : 'Увійти';
+            document.getElementById('btn-google-login').classList.toggle('ring-2', signedIn);
+            document.getElementById('btn-google-login').classList.toggle('ring-emerald-500', signedIn);
+            document.getElementById('btn-google-login').classList.toggle('bg-emerald-50', signedIn);
+            document.getElementById('btn-google-login').classList.toggle('dark:bg-emerald-900/30', signedIn);
+            document.getElementById('history-unauth-msg').classList.toggle('hidden', signedIn);
+            document.getElementById('history-content').classList.toggle('hidden', !signedIn);
+        }
+
+        function setUnauthNote(msg) {
+            const note = document.getElementById('history-unauth-note');
+            if (note) { note.textContent = msg || ''; note.style.display = msg ? '' : 'none'; }
+        }
+
+        // Token expired / access lost: sign out in the UI but keep unsaved changes in memory
+        function handleSessionExpired() {
+            accessToken = null;
+            historyLoadState = 'idle';
+            setSignedInUI(false);
+            setUnauthNote('Сесія Google завершилась. Натисніть «Увійти», щоб дозберегти результати.');
+        }
+
+        // Resolves to the result of the sync, shows the outcome to the user
+        function reportHistorySync(promise, successMsg) {
+            return promise.then(r => {
+                if (r.ok) { if (successMsg) showHistoryToast(successMsg, 'success'); }
+                else showHistoryToast(historyErrorMessage(r.error), 'error');
+                return r;
+            });
+        }
+
+        function queueHistoryEntries(candidates) {
+            const existing = new Set(getDisplayHistory().map(historySignature));
+            const fresh = candidates.filter(c => {
+                const sig = historySignature(c);
+                if (savedSignatures.has(sig) || existing.has(sig)) return false;
+                savedSignatures.add(sig);
+                return true;
+            });
+            if (fresh.length === 0) {
+                // Nothing new; if an earlier save is still pending, retry it instead
+                if (hasPendingHistory()) return reportHistorySync(syncHistory(), '✅ Збережено в історію на Google Drive');
+                showHistoryToast('Ці результати вже збережено', 'info');
+                return Promise.resolve({ ok: true, wrote: false });
+            }
+            pendingAdds.push(...fresh);
+            updateHistoryUI();
+            return reportHistorySync(syncHistory(), '✅ Збережено в історію на Google Drive');
+        }
+
+        function retryHistorySync() {
+            if (!accessToken) { setSignedInUI(false); return; }
+            return reportHistorySync(syncHistory(), hasPendingHistory() ? '✅ Збережено в історію на Google Drive' : '✅ Історію завантажено');
+        }
+
+        let googleAuthAttempts = 0;
         function initGoogleAuth() {
-            if(typeof google === 'undefined' || typeof gapi === 'undefined') return setTimeout(initGoogleAuth, 500);
-            gapi.load('client', async () => {
-                await gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] });
+            const hasGis = typeof google !== 'undefined' && google.accounts && google.accounts.oauth2;
+            if (!hasGis) {
+                // Give the Google script ~20 s to load, then stop polling (handleAuthClick explains the problem)
+                if (++googleAuthAttempts < 40) setTimeout(initGoogleAuth, 500);
+                return;
+            }
+            try {
                 tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GOOGLE_CLIENT_ID, scope: SCOPES,
                     callback: (resp) => {
-                        if (resp.error) return console.error(resp);
+                        if (!resp || resp.error || !resp.access_token) { console.warn('Вхід Google не завершено:', resp && resp.error); return; }
                         accessToken = resp.access_token;
-                        document.getElementById('auth-btn-text').textContent = 'Вийти';
-                        document.getElementById('btn-google-login').classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-900/30');
-                        document.getElementById('history-unauth-msg').classList.add('hidden');
-                        document.getElementById('history-content').classList.remove('hidden');
-                        loadHistoryFromDrive();
+                        setUnauthNote('');
+                        setSignedInUI(true);
+                        // Fresh load; any results kept from an expired session are written right after
+                        const hadPending = hasPendingHistory();
+                        reportHistorySync(syncHistory(), hadPending ? '✅ Збережено в історію на Google Drive' : '');
                     }
                 });
-            });
+            } catch (e) {
+                console.warn('Не вдалося ініціалізувати вхід Google:', e);
+                tokenClient = undefined;
+            }
         }
         
         const oldOnload = window.onload;
@@ -4124,144 +4441,109 @@ thead { display: table-header-group; }
 
         function handleAuthClick() {
             if (accessToken) {
-                google.accounts.oauth2.revoke(accessToken, () => {});
+                if (hasPendingHistory() && !confirm('Є незбережені результати. Вийти і втратити їх?')) return;
                 accessToken = null;
-                document.getElementById('auth-btn-text').textContent = 'Увійти';
-                document.getElementById('btn-google-login').classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-900/30');
-                document.getElementById('history-unauth-msg').classList.remove('hidden');
-                document.getElementById('history-content').classList.add('hidden');
+                pendingAdds = [];
+                pendingDeletes.clear();
+                savedSignatures.clear();
                 testHistory = [];
                 driveHistoryFileId = null;
-            } else { 
-                tokenClient.requestAccessToken({prompt: 'consent'}); 
-            }
-        }
-
-        async function loadHistoryFromDrive() {
-            if (!accessToken) return;
-            try {
-                const listRes = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='triscreen_history.json' and trashed=false&fields=files(id, name, createdTime)", {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                });
-                const listData = await listRes.json();
-
-                if (listData.files && listData.files.length > 0) {
-                    driveHistoryFileId = listData.files[0].id;
-                    
-                    const contentRes = await fetch(`https://www.googleapis.com/drive/v3/files/${driveHistoryFileId}?alt=media`, {
-                        headers: { 'Authorization': `Bearer ${accessToken}` }
-                    });
-                    
-                    if (contentRes.ok) {
-                        const loadedData = await contentRes.json();
-                        testHistory = Array.isArray(loadedData) ? loadedData : [];
-                    }
-
-                    // Об'єднання старих дублікатів файлів, якщо вони накопичилися раніше
-                    if (listData.files.length > 1) {
-                        for (let i = 1; i < listData.files.length; i++) {
-                            try {
-                                const dupRes = await fetch(`https://www.googleapis.com/drive/v3/files/${listData.files[i].id}?alt=media`, {
-                                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                                });
-                                if (dupRes.ok) {
-                                    const dupData = await dupRes.json();
-                                    if (Array.isArray(dupData)) {
-                                        dupData.forEach(entry => {
-                                            if (!testHistory.some(existing => existing.id === entry.id || (existing.test === entry.test && existing.date === entry.date))) {
-                                                testHistory.push(entry);
-                                            }
-                                        });
-                                    }
-                                }
-                                fetch(`https://www.googleapis.com/drive/v3/files/${listData.files[i].id}`, {
-                                    method: 'DELETE',
-                                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                                });
-                            } catch (e) {
-                                console.warn('Помилка обробки файлу-дубліката:', e);
-                            }
-                        }
-                        saveHistoryToDrive();
-                    }
-                } else {
-                    driveHistoryFileId = null;
-                    testHistory = [];
-                }
-
+                historyLoadState = 'idle';
+                historyLastError = null;
+                setUnauthNote('');
+                setSignedInUI(false);
                 updateHistoryUI();
-            } catch (err) { 
-                console.error('Помилка завантаження історії з Google Drive:', err); 
+            } else if (!tokenClient || typeof tokenClient.requestAccessToken !== 'function') {
+                showHistoryToast('Сервіс входу Google зараз недоступний. Перевірте з\'єднання або вимкніть блокувальник і оновіть сторінку.', 'error');
+            } else {
+                tokenClient.requestAccessToken({ prompt: 'select_account' });
             }
         }
 
-        async function saveHistoryToDrive() {
-            if (!accessToken) return;
-            try {
-                const fileContent = JSON.stringify(testHistory, null, 2);
-
-                if (driveHistoryFileId) {
-                    const updateRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveHistoryFileId}?uploadType=media`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: fileContent
-                    });
-                    if (updateRes.ok) {
-                        updateHistoryUI();
-                        return;
-                    }
-                }
-
-                const metadata = {
-                    name: 'triscreen_history.json',
-                    parents: ['appDataFolder']
-                };
-
-                const boundary = '-------314159265358979323846';
-                const delimiter = "\r\n--" + boundary + "\r\n";
-                const close_delim = "\r\n--" + boundary + "--";
-
-                const multipartRequestBody =
-                    delimiter +
-                    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-                    JSON.stringify(metadata) +
-                    delimiter +
-                    'Content-Type: application/json\r\n\r\n' +
-                    fileContent +
-                    close_delim;
-
-                const createRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'multipart/related; boundary=' + boundary
-                    },
-                    body: multipartRequestBody
-                });
-
-                if (createRes.ok) {
-                    const newFile = await createRes.json();
-                    driveHistoryFileId = newFile.id;
-                }
-                updateHistoryUI();
-            } catch (err) { 
-                console.error('Помилка запису в Google Drive:', err); 
-            }
-        }
-
-        function deleteHistoryItem(id) { 
-            testHistory = testHistory.filter(i => i.id !== id); 
-            saveHistoryToDrive(); 
+        function deleteHistoryItem(id) {
+            id = String(id);
+            if (!confirm('Видалити цей запис з історії? Цю дію неможливо скасувати.')) return;
+            pendingDeletes.add(id);
+            updateHistoryUI();
+            return reportHistorySync(syncHistory(), '🗑️ Запис видалено з Google Drive');
         }
 
         function clearHistoryData() { 
             if(confirm("Видалити ВСЮ історію з Google Drive? Цю дію неможливо скасувати.")) { 
-                testHistory = []; 
-                saveHistoryToDrive(); 
+                pendingAdds = [];
+                getDisplayHistory().forEach(e => pendingDeletes.add(e.id));
+                updateHistoryUI();
+                return reportHistorySync(syncHistory({ clearAll: true }), '🗑️ Історію видалено з Google Drive');
             } 
+        }
+
+        // ---------- Backup: export / import (TEST-1) ----------
+        function exportHistoryBackup() {
+            if (!accessToken || historyLoadState !== 'ok') {
+                showHistoryToast('Копію можна завантажити після успішного завантаження історії з Google Drive.', 'error');
+                return;
+            }
+            const d = new Date();
+            const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const blob = new Blob([JSON.stringify(getDisplayHistory(), null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `triscreen-history-${stamp}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function validateImportedEntry(e) {
+            if (!isPlainObject(e)) return null;
+            if (typeof e.id !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(e.id)) return null;
+            if (typeof e.date !== 'string' || !/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?$/.test(e.date)) return null;
+            if (!HISTORY_TEST_NAMES.includes(e.test)) return null;
+            if (typeof e.total !== 'number' || !Number.isFinite(e.total)) return null;
+            if (!isPlainObject(e.answers)) return null;
+            const answers = {};
+            for (const [k, v] of Object.entries(e.answers)) {
+                if (k.length > 32) return null;
+                if (typeof v === 'number') { if (!Number.isFinite(v)) return null; }
+                else if (typeof v === 'string') { if (v.length > 1000) return null; }
+                else return null;
+                answers[k] = v;
+            }
+            return { id: e.id, date: e.date, test: e.test, total: e.total, answers };
+        }
+
+        async function importHistoryBackup(input) {
+            const file = input && input.files && input.files[0];
+            if (input) input.value = '';
+            if (!file) return;
+            if (!accessToken || historyLoadState !== 'ok') {
+                showHistoryToast('Відновлення доступне після входу та успішного завантаження історії з Google Drive.', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) { showHistoryToast('Файл завеликий (понад 5 МБ). Оберіть резервну копію TriScreen.', 'error'); return; }
+            let data;
+            try { data = JSON.parse(await file.text()); } catch (e) { data = undefined; }
+            if (!Array.isArray(data)) { showHistoryToast('Це не схоже на резервну копію історії TriScreen (очікується JSON-масив записів).', 'error'); return; }
+            const known = new Set(getDisplayHistory().map(e => e.id));
+            const valid = [];
+            let skipped = 0;
+            data.forEach(raw => {
+                const e = validateImportedEntry(raw);
+                if (!e || known.has(e.id)) { skipped++; return; }
+                known.add(e.id);
+                valid.push(e);
+            });
+            const summary = `Додано ${valid.length}, пропущено ${skipped}`;
+            if (valid.length === 0) { showHistoryToast(summary, 'info'); return { ok: true, added: 0, skipped }; }
+            pendingAdds.push(...valid);
+            valid.forEach(e => savedSignatures.add(historySignature(e)));
+            updateHistoryUI();
+            const r = await syncHistory();
+            if (r.ok) showHistoryToast(`✅ ${summary}. Записано на Google Drive.`, 'success');
+            else showHistoryToast(`${summary}. ${historyErrorMessage(r.error)}`, 'error');
+            return { ...r, added: valid.length, skipped };
         }
         
         // ==========================================
@@ -4352,7 +4634,7 @@ thead { display: table-header-group; }
             updateChartsOnly();
         }
 
-        function updateHistoryUI() { populateQuestionDropdown(); updateChartsOnly(); updateHistoryTable(); }
+        function updateHistoryUI() { updateHistorySyncBanner(); populateQuestionDropdown(); updateChartsOnly(); updateHistoryTable(); }
 
         function populateQuestionDropdown() {
             const test = document.getElementById('history-test-filter').value;
@@ -4373,7 +4655,7 @@ thead { display: table-header-group; }
         function updateChartsOnly() {
             if (typeof Chart === 'undefined') return;
             const test = document.getElementById('history-test-filter').value;
-            let data = testHistory.filter(i => i.test === test).sort((a, b) => {
+            let data = getDisplayHistory().filter(i => i.test === test).sort((a, b) => {
                 // Парсимо дату з часом для правильного сортування
                 const parseDate = (dStr) => {
                     const parts = dStr.split(' ');
@@ -4451,7 +4733,7 @@ thead { display: table-header-group; }
             const tbody = document.getElementById('history-table-body');
             if (!tbody) return;
 
-            let data = [...testHistory];
+            let data = getDisplayHistory();
             if (test !== 'all') {
                 data = data.filter(i => i.test === test || (test === 'АУДИТ' && i.test === 'AUDIT') || (test === 'AUDIT' && i.test === 'АУДИТ'));
             }
@@ -4461,11 +4743,21 @@ thead { display: table-header-group; }
                 tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500 italic">Немає збережених записів</td></tr>`; 
                 return;
             }
-            tbody.innerHTML = data.map(i => `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800/50"><td class="px-4 py-3 font-medium">${i.date}</td><td class="px-4 py-3"><span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800 font-bold">${i.test}</span></td><td class="px-4 py-3 text-right font-bold text-slate-900 dark:text-white">${i.total}</td><td class="px-4 py-3 text-center flex justify-center gap-2"><button onclick="exportHistoryDay('${i.date}')" class="p-1.5 text-sky-600 hover:text-sky-800 bg-sky-50 dark:bg-sky-900/30 dark:text-sky-400 rounded-lg border border-sky-200 dark:border-sky-800 transition shadow-sm" title="Відкрити всі тести за цей день у Результатах"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg></button><button onclick="deleteHistoryItem('${i.id}')" class="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 dark:bg-rose-900/30 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800 transition shadow-sm" title="Видалити запис"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`).join('');
+            if (!tbody.dataset.actionsBound) {
+                // Row buttons use data attributes (no values inside inline JS)
+                tbody.addEventListener('click', ev => {
+                    const btn = ev.target.closest('button[data-history-action]');
+                    if (!btn || !tbody.contains(btn)) return;
+                    if (btn.dataset.historyAction === 'day') exportHistoryDay(btn.dataset.historyDate);
+                    else if (btn.dataset.historyAction === 'delete') deleteHistoryItem(btn.dataset.historyId);
+                });
+                tbody.dataset.actionsBound = '1';
+            }
+            tbody.innerHTML = data.map(i => `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-100 dark:border-slate-800/50"><td class="px-4 py-3 font-medium">${escapeHTML(i.date)}</td><td class="px-4 py-3"><span class="bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 text-xs px-2 py-0.5 rounded border border-sky-200 dark:border-sky-800 font-bold">${escapeHTML(i.test)}</span></td><td class="px-4 py-3 text-right font-bold text-slate-900 dark:text-white">${escapeHTML(i.total)}</td><td class="px-4 py-3 text-center flex justify-center gap-2"><button type="button" data-history-action="day" data-history-date="${escapeHTML(i.date)}" class="p-1.5 text-sky-600 hover:text-sky-800 bg-sky-50 dark:bg-sky-900/30 dark:text-sky-400 rounded-lg border border-sky-200 dark:border-sky-800 transition shadow-sm" title="Відкрити всі тести за цей день у Результатах"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg></button><button type="button" data-history-action="delete" data-history-id="${escapeHTML(i.id)}" class="p-1.5 text-rose-500 hover:text-rose-700 bg-rose-50 dark:bg-rose-900/30 dark:text-rose-400 rounded-lg border border-rose-200 dark:border-rose-800 transition shadow-sm" title="Видалити запис"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`).join('');
         }
 
         function exportHistoryDay(dateStr) {
-            const dayTests = testHistory.filter(t => t.date === dateStr);
+            const dayTests = getDisplayHistory().filter(t => t.date === dateStr);
             if (dayTests.length === 0) return;
             resetForm(); // Очищаємо поточні дані
             document.getElementById('assessment-date').value = dateStr;
@@ -4885,5 +5177,7 @@ thead { display: table-header-group; }
             }
         }
     </script>
+    <!-- History save status (TEST-1) -->
+    <div id="history-toast" role="status" aria-live="polite" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[100] px-4 py-3 rounded-xl shadow-lg border text-sm font-medium bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100" style="display:none"></div>
 </body>
 </html>
